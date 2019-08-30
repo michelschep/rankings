@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rankings.Web.Models
 {
     public class ProfileViewModel
     {
         [Display(Name = "Email Address")]
-        public string EmailAddress { get; }
+        public string EmailAddress { get; set; } // set needed for POST edit
 
         [Display(Name = "Display Name")]
-        public string DisplayName { get; }
+        public string DisplayName { get; set; }
 
         public ProfileViewModel()
         {

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Rankings.Web.Controllers;
 
 namespace Rankings.Web
 {
@@ -48,6 +49,7 @@ namespace Rankings.Web
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IRankingService, TestRankingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
