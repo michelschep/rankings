@@ -39,6 +39,14 @@ namespace Rankings.Web
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Player",
+                    policy => policy.RequireRole("Admin", "Player"));
+                options.AddPolicy("Admin",
+                    policy => policy.RequireRole("Admin"));
+            });
+
             services.AddMvc(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()

@@ -8,7 +8,7 @@ using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "Player")]
     public class ProfilesController : Controller
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

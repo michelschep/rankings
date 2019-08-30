@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.UnitTests", "Ranki
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.Web", "Rankings.Web\Rankings.Web.csproj", "{3EF16AB6-6707-4BF9-840E-F6327FEB61B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.Core", "Rankings.Core\Rankings.Core.csproj", "{9EDA6233-DA6E-4DE6-AD8D-FC2174570201}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.Infrastructure", "Rankings.Infrastructure\Rankings.Infrastructure.csproj", "{623C3320-233F-487B-AD56-B30785A132A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{3EF16AB6-6707-4BF9-840E-F6327FEB61B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EF16AB6-6707-4BF9-840E-F6327FEB61B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EF16AB6-6707-4BF9-840E-F6327FEB61B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EDA6233-DA6E-4DE6-AD8D-FC2174570201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EDA6233-DA6E-4DE6-AD8D-FC2174570201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EDA6233-DA6E-4DE6-AD8D-FC2174570201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EDA6233-DA6E-4DE6-AD8D-FC2174570201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{623C3320-233F-487B-AD56-B30785A132A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{623C3320-233F-487B-AD56-B30785A132A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{623C3320-233F-487B-AD56-B30785A132A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{623C3320-233F-487B-AD56-B30785A132A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
