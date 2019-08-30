@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Services\" />
-    <Folder Include="SharedKernel\" />
   </ItemGroup>
 
 </Project>
