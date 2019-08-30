@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Services;
 using Rankings.Web.Controllers;
 
 namespace Rankings.Web

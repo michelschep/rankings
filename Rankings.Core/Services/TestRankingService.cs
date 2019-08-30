@@ -3,9 +3,9 @@ using System.Linq;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 
-namespace Rankings.Web.Controllers
+namespace Rankings.Core.Services
 {
-    class TestRankingService : IRankingService
+    public class TestRankingService : IRankingService
     {
         private readonly List<Profile> _repository;
 
