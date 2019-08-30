@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rankings.Core.Interfaces;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers

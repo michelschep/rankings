@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Rankings.Core.Entities;
+using Rankings.Core.Interfaces;
 
 namespace Rankings.Web.Controllers
 {

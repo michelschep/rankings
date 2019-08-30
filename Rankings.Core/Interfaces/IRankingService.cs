@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Rankings.Core.Entities;
 
-namespace Rankings.Web.Controllers
+namespace Rankings.Core.Interfaces
 {
     public interface IRankingService
     {

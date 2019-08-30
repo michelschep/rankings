@@ -1,4 +1,4 @@
-﻿namespace Rankings.Web.Controllers
+﻿namespace Rankings.Core.Entities
 {
     public class Profile
     {
