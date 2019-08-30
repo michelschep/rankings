@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -66,63 +65,6 @@ namespace Rankings.Web.Controllers
             var profile = _rankingService.ProfileFor(email);
             var profileViewModel = new ProfileViewModel(profile.EmailAddress, profile.DisplayName);
             return profileViewModel;
-        }
-    }
-
-    public interface IRankingService
-    {
-        IEnumerable<Profile> Profiles();
-        void ActivateProfile(string email, string displayName);
-        Profile ProfileFor(string email);
-        void UpdateDisplayName(string emailAddress, string displayName);
-    }
-
-    class TestRankingService : IRankingService
-    {
-        private readonly List<Profile> _repository;
-
-        public TestRankingService()
-        {
-            _repository = new List<Profile>();
-        }
-
-        public IEnumerable<Profile> Profiles()
-        {
-            return _repository;
-        }
-
-        public void ActivateProfile(string email, string displayName)
-        {
-            if (_repository.Any(profile => profile.EmailAddress == email))
-                return;
-
-            _repository.Add(new Profile(email, displayName));
-        }
-
-        public Profile ProfileFor(string email)
-        {
-            return _repository.Single(profile => profile.EmailAddress == email);
-        }
-
-        public void UpdateDisplayName(string emailAddress, string displayName)
-        {
-            var profile = _repository.Single(p => p.EmailAddress == emailAddress);
-
-            _repository.Remove(profile);
-            _repository.Add(new Profile(emailAddress, displayName));
-        }
-    }
-
-    public class Profile
-    {
-        public string EmailAddress { get; }
-
-        public string DisplayName { get; }
-
-        public Profile(string emailAddress, string displayName)
-        {
-            EmailAddress = emailAddress;
-            DisplayName = displayName;
         }
     }
 }
