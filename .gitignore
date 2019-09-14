@@ -330,3 +330,5 @@ ASALocalRun/
 .mfractor/
 
 Rankings.Web/appsettings.local.json
+
+Rankings.Web/appsettings.development.json
