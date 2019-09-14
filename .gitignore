@@ -332,3 +332,5 @@ ASALocalRun/
 Rankings.Web/appsettings.local.json
 
 Rankings.Web/appsettings.development.json
+
+Rankings.Web/appsettings.production.json
