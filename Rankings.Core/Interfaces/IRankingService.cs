@@ -9,5 +9,6 @@ namespace Rankings.Core.Interfaces
         void ActivateProfile(string email, string displayName);
         Profile ProfileFor(string email);
         void UpdateDisplayName(string emailAddress, string displayName);
+        IEnumerable<GameType> GameTypes();
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Infrastructure.Data;
 using Rankings.Web.Controllers;
 
 namespace Rankings.Web
@@ -54,7 +55,15 @@ namespace Rankings.Web
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IRankingService, TestRankingService>();
+            services.AddSingleton<IRankingService, RankingService>((ctx) =>
+            {
+                var connectionFactory = new SqLiteDatabaseConnectionFactory();
+                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory);
+                var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
+
+                var connectionString = "Data Source=C:\\data\\databases\\vitas3.db";
+                return new RankingService(repositoryFactory.Create(connectionString));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

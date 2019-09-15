@@ -1,15 +1,22 @@
-﻿namespace Rankings.Core.Entities
-{
-    public class Profile
-    {
-        public string EmailAddress { get; }
+﻿using Rankings.Core.SharedKernel;
 
-        public string DisplayName { get; }
+namespace Rankings.Core.Entities
+{
+    public class Profile: BaseEntity
+    {
+        public string EmailAddress { get; set; }
+
+        public string DisplayName { get; set;  }
 
         public Profile(string emailAddress, string displayName)
         {
             EmailAddress = emailAddress;
             DisplayName = displayName;
         }
+    }
+    public class GameType: BaseEntity
+    {
+        public string Code { get; set;  }
+        public string DisplayName { get; set;  }
     }
 }

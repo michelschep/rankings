@@ -39,5 +39,10 @@ namespace Rankings.Core.Services
             _repository.Remove(profile);
             _repository.Add(new Profile(emailAddress, displayName));
         }
+
+        public IEnumerable<GameType> GameTypes()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

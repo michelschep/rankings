@@ -1,4 +1,7 @@
-﻿@model IEnumerable<Rankings.Web.Models.ProfileViewModel>
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authorization
+@model IEnumerable<Rankings.Web.Models.ProfileViewModel>
+@inject IAuthorizationService AuthorizationService
 
 <table class="table">
     <thead>
@@ -13,19 +16,23 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DisplayName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayName)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                    {
+                        @Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) 
+                        @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) 
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
