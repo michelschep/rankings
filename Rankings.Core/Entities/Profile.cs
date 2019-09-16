@@ -14,9 +14,4 @@ namespace Rankings.Core.Entities
             DisplayName = displayName;
         }
     }
-    public class GameType: BaseEntity
-    {
-        public string Code { get; set;  }
-        public string DisplayName { get; set;  }
-    }
 }

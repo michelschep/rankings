@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Rankings.Infrastructure.Data
@@ -22,30 +21,6 @@ namespace Rankings.Infrastructure.Data
             rankingContext.Database.EnsureCreated();
 
             return rankingContext;
-        }
-    }
-
-    public interface ISqLiteConnectionFactory
-    {
-        SqliteConnection CreateSqliteConnection(string connectionString);
-    }
-
-    public class SqLiteInMemoryConnectionFactory : ISqLiteConnectionFactory
-    {
-        public SqliteConnection CreateSqliteConnection(string connectionString)
-        {
-            var sqliteConnection = new SqliteConnection("DataSource=:memory:");
-            sqliteConnection.Open();
-
-            return sqliteConnection;
-        }
-    }
-
-    public class SqLiteDatabaseConnectionFactory : ISqLiteConnectionFactory
-    {
-        public SqliteConnection CreateSqliteConnection(string connectionString)
-        {
-            return new SqliteConnection(connectionString);
         }
     }
 }
