@@ -61,8 +61,8 @@ namespace Rankings.Web
                 var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory);
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
 
-                var connectionString = "Data Source=C:\\data\\databases\\vitas3.db";
-                return new RankingService(repositoryFactory.Create(connectionString));
+                // TODO what if setting is null or empty
+                return new RankingService(repositoryFactory.Create(Configuration["Database"]));
             });
         }
 
