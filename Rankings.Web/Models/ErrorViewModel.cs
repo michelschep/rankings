@@ -1,5 +1,3 @@
-using System;
-
 namespace Rankings.Web.Models
 {
     public class ErrorViewModel
