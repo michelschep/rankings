@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Web.Models;
 
@@ -20,11 +21,30 @@ namespace Rankings.Web.Controllers
         public IActionResult Index()
         {
             var gameTypes = _rankingService.GameTypes();
-            return View(gameTypes.Select(type => new GameTypeViewModel
+            var model = gameTypes.Select(type => new GameTypeViewModel
             {
                 Code = type.Code,
                 DisplayName = type.DisplayName
-            }));
+            }).ToList();
+
+            return View(model);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(GameTypeViewModel viewModel)
+        {
+            _rankingService.CreateGameType(new GameType
+            {
+                Code = viewModel.Code,
+                DisplayName = viewModel.DisplayName
+            });
+
+            return RedirectToAction("Index");
         }
     }
 }

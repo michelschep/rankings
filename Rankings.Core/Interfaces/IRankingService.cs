@@ -10,5 +10,6 @@ namespace Rankings.Core.Interfaces
         Profile ProfileFor(string email);
         void UpdateDisplayName(string emailAddress, string displayName);
         IEnumerable<GameType> GameTypes();
+        void CreateGameType(GameType gameType);
     }
 }

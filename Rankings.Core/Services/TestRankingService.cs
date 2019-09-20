@@ -44,5 +44,10 @@ namespace Rankings.Core.Services
         {
             throw new System.NotImplementedException();
         }
+
+        public void CreateGameType(GameType gameType)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

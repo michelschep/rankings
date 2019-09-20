@@ -45,5 +45,10 @@ namespace Rankings.Core.Services
         {
             return _repository.List<GameType>();
         }
+
+        public void CreateGameType(GameType gameType)
+        {
+            _repository.Add(gameType);
+        }
     }
 }
