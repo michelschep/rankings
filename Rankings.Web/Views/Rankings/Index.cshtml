@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Rankings.Web.Models.RankingViewModel>
+
+<p>
+    <a asp-controller="Games" asp-action="Create">Register a new game!</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ranking)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NamePlayer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ranking)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NamePlayer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Points)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
