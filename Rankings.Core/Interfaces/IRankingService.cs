@@ -5,11 +5,16 @@ namespace Rankings.Core.Interfaces
 {
     public interface IRankingService
     {
+        IEnumerable<Venue> GetVenues();
         IEnumerable<Profile> Profiles();
-        void ActivateProfile(string email, string displayName);
-        Profile ProfileFor(string email);
-        void UpdateDisplayName(string emailAddress, string displayName);
         IEnumerable<GameType> GameTypes();
+        IEnumerable<Game> Games();
+        Profile ProfileFor(string email);
+
         void CreateGameType(GameType gameType);
+        void ActivateProfile(string email, string displayName);
+        void UpdateDisplayName(string emailAddress, string displayName);
+        void RegisterGame(Game game);
+        void CreateVenue(Venue venue);
     }
 }

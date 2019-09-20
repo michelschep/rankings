@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
@@ -62,7 +63,10 @@ namespace Rankings.Web
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
 
                 // TODO what if setting is null or empty
-                return new RankingService(repositoryFactory.Create(Configuration["Database"]));
+                var repository = repositoryFactory.Create(Configuration["Database"]);
+                var rankingService = new RankingService(repository);
+                
+                return rankingService;
             });
         }
 

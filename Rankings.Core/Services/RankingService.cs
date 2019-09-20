@@ -50,5 +50,27 @@ namespace Rankings.Core.Services
         {
             _repository.Add(gameType);
         }
+
+        public IEnumerable<Game> Games()
+        {
+            return _repository.List<Game>();
+        }
+
+        public void RegisterGame(Game game)
+        {
+            game.RegistrationDate = DateTime.Now;
+
+            _repository.Add(game);
+        }
+
+        public void CreateVenue(Venue venue)
+        {
+            _repository.Add(venue);
+        }
+
+        public IEnumerable<Venue> GetVenues()
+        {
+            return _repository.List<Venue>();
+        }
     }
 }

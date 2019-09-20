@@ -13,5 +13,6 @@ namespace Rankings.Infrastructure.Data
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<GameType> GameTypes { get; set; }
         public DbSet<Game> Games { get; set; }
+        public DbSet<Venue> Venues { get; set; }
     }
 }
