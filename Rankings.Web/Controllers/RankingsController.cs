@@ -18,15 +18,6 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Index()
         {
-            List<RankingViewModel> model2 = new List<RankingViewModel>
-            {
-                new RankingViewModel {Points = 1200, NamePlayer = "Michel", Ranking = 1},
-                new RankingViewModel {Points = 1200, NamePlayer = "Geale", Ranking = 2},
-                new RankingViewModel {Points = 1200, NamePlayer = "Johannes", Ranking = 3},
-                new RankingViewModel {Points = 1200, NamePlayer = "Arjen", Ranking = 4},
-                new RankingViewModel {Points = 1200, NamePlayer = "Hans", Ranking = 5}
-            };
-
             var ranking = 1;
             var model = _rankingService
                 .Profiles()
