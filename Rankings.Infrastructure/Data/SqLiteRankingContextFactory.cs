@@ -17,6 +17,7 @@ namespace Rankings.Infrastructure.Data
             var connection = _connectionFactory.CreateSqliteConnection(connectionString);
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
             optionsBuilder.UseSqlite(connection);
+            
             var rankingContext = new RankingContext(optionsBuilder.Options);
             rankingContext.Database.EnsureCreated();
 

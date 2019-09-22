@@ -25,7 +25,7 @@ namespace Rankings.Web.Controllers
             var model = games.Select(type => new GameSummaryViewModel
             {
                 GameType = type.GameType.DisplayName,
-                Venue = type.Venue.DisplayName,
+                Venue = type.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = type.Player1.DisplayName,
                 NameSecondPlayer = type.Player2.DisplayName,
                 RegistrationDate = type.RegistrationDate,
@@ -52,9 +52,12 @@ namespace Rankings.Web.Controllers
             // TODO must be a better way. For now make it work and no per or mem issue.
             var players = _rankingService.Profiles().ToList();
             var gameTypes = _rankingService.GameTypes().ToList();
+            var venues = _rankingService.GetVenues().ToList();
+
             var game = new Game
             {
                 GameType = gameTypes.Single(type => type.Code == model.GameType),
+                Venue = venues.Single(profile => profile.Code == model.Venue),
                 Player1 = players.Single(profile => profile.EmailAddress == model.NameFirstPlayer),
                 Player2 = players.Single(profile => profile.EmailAddress == model.NameSecondPlayer),
                 Score1 = model.ScoreFirstPlayer,
