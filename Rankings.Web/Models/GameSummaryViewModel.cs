@@ -5,11 +5,13 @@ namespace Rankings.Web.Models
 {
     public class GameSummaryViewModel
     {
+        [Display(Name = "Id")]
+        public int Id { get; set; }
+
         [Display(Name = "Code")]
-
         public DateTime RegistrationDate { get; set; }
-        [Display(Name = "Type")]
 
+        [Display(Name = "Type")]
         public string GameType { get; set; }
         public string Venue { get; set; }
         [Display(Name = "Player")]

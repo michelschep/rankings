@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Rankings.Core.Entities;
 
 namespace Rankings.Core.Interfaces
@@ -16,5 +17,6 @@ namespace Rankings.Core.Interfaces
         void UpdateDisplayName(string emailAddress, string displayName);
         void RegisterGame(Game game);
         void CreateVenue(Venue venue);
+        void DeleteGame(int registrationDate);
     }
 }

@@ -5,61 +5,61 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RegistrationDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Venue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameFirstPlayer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameSecondPlayer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ScoreFirstPlayer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ScoreSecondPlayer)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.RegistrationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GameType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Venue)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NameFirstPlayer)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NameSecondPlayer)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ScoreFirstPlayer)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ScoreSecondPlayer)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistrationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GameType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Venue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameFirstPlayer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameSecondPlayer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ScoreFirstPlayer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.RegistrationDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GameType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Venue)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NameFirstPlayer)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NameSecondPlayer)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScoreFirstPlayer)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) |
+            @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) |
+            @Html.ActionLink("Delete", "Delete", new {Id = item.Id})
+        </td>
+    </tr>
 }
     </tbody>
 </table>

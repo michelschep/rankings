@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.SharedKernel;
 
 namespace Rankings.Core.Services
 {
@@ -66,6 +67,12 @@ namespace Rankings.Core.Services
         public void CreateVenue(Venue venue)
         {
             _repository.Add(venue);
+        }
+
+        public void DeleteGame(int Id)
+        {
+            var entity = _repository.List<Game>().Single(game => ((BaseEntity) game).Id == Id);
+            _repository.Delete(entity);
         }
 
         public IEnumerable<Venue> GetVenues()

@@ -35,6 +35,7 @@ namespace Rankings.Web.Controllers
                 .OrderByDescending(game => game.RegistrationDate);
             var model = games.Select(type => new GameSummaryViewModel
             {
+                Id = type.Id,
                 GameType = type.GameType.DisplayName,
                 Venue = type.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = type.Player1.DisplayName,
@@ -76,6 +77,12 @@ namespace Rankings.Web.Controllers
             };
 
             _rankingService.RegisterGame(game);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            _rankingService.DeleteGame(id);
             return RedirectToAction("Index");
         }
     }

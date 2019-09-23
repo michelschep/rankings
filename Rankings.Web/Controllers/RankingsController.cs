@@ -35,7 +35,7 @@ namespace Rankings.Web.Controllers
                 .ToList();
 
             Dictionary<Profile, decimal> ratings = new Dictionary<Profile, decimal>();
-            foreach (var profile in players)
+            foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
             {
                 ratings.Add(profile, 1200);
             }
