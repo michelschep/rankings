@@ -21,7 +21,12 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Index()
         {
-            var games = _rankingService.Games();
+            // TODO fix loading entities
+            var players = _rankingService.Profiles();
+            var venues = _rankingService.GetVenues();
+            var gameTypes = _rankingService.GameTypes();
+
+            var games = _rankingService.Games().OrderByDescending(game => game.RegistrationDate);
             var model = games.Select(type => new GameSummaryViewModel
             {
                 GameType = type.GameType.DisplayName,

@@ -36,9 +36,9 @@ namespace Rankings.Core.Services
         public void UpdateDisplayName(string emailAddress, string displayName)
         {
             var profile = _repository.List<Profile>().Single(p => p.EmailAddress == emailAddress);
-
-            _repository.Delete(profile);
-            _repository.Add(new Profile(emailAddress, displayName));
+            profile.DisplayName = displayName;
+            //_repository.Delete(profile);
+            //_repository.Add(new Profile(emailAddress, displayName));
         }
 
         public IEnumerable<GameType> GameTypes()
