@@ -75,6 +75,15 @@ namespace Rankings.Core.Services
             _repository.Delete(entity);
         }
 
+        public void CreateProfile(Profile profile)
+        {
+            // TODO give feedback to client
+            if (_repository.List<Profile>().Any(profile1 => profile1.EmailAddress == profile.EmailAddress))
+                return;
+
+            _repository.Add(profile);
+        }
+
         public IEnumerable<Venue> GetVenues()
         {
             return _repository.List<Venue>();

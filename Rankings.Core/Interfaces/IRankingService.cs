@@ -18,5 +18,6 @@ namespace Rankings.Core.Interfaces
         void RegisterGame(Game game);
         void CreateVenue(Venue venue);
         void DeleteGame(int registrationDate);
+        void CreateProfile(Profile profile);
     }
 }

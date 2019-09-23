@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Web.Models;
 
@@ -28,6 +29,23 @@ namespace Rankings.Web.Controllers
             var list = _rankingService.Profiles().Select(profile => new ProfileViewModel(profile.EmailAddress, profile.DisplayName));
 
             return View(list);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(CreateProfileViewModel viewModel)
+        {
+            _rankingService.CreateProfile(new Profile
+            {
+                EmailAddress = viewModel.EmailAddress,
+                DisplayName = viewModel.DisplayName
+            });
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult Edit()

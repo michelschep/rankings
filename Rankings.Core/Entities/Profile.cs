@@ -8,6 +8,11 @@ namespace Rankings.Core.Entities
 
         public string DisplayName { get; set;  }
 
+        public Profile()
+        {
+
+        }
+
         public Profile(string emailAddress, string displayName)
         {
             EmailAddress = emailAddress;
