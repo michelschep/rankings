@@ -34,7 +34,7 @@ namespace Rankings.Web.Controllers
                 .OrderBy(game => game.RegistrationDate)
                 .ToList();
 
-            Dictionary<Profile, int> ratings = new Dictionary<Profile, int>();
+            Dictionary<Profile, decimal> ratings = new Dictionary<Profile, decimal>();
             foreach (var profile in players)
             {
                 ratings.Add(profile, 1200);
@@ -53,7 +53,7 @@ namespace Rankings.Web.Controllers
                     continue;
 
                 var max = Math.Max(game.Score1, game.Score2);
-                var factor = game.Score1 == game.Score2 ? game.Score1 + game.Score2 : 2 * max + 1;
+                var factor = game.Score1 == game.Score2 ? game.Score1 + game.Score2 : 2 * max - 1;
                 K = 27 + 5*factor;
                 var oldRatingPlayer1 = ratings[game.Player1];
                 var oldRatingPlayer2 = ratings[game.Player2];
@@ -63,30 +63,32 @@ namespace Rankings.Web.Controllers
                 var test = expectedOutcome2 + expectedOutcome1;
                 decimal actual1 = game.Score1 / ((decimal)game.Score1 + (decimal)game.Score2);
                 decimal actual2 = 1 - actual1;//Math.Round(game.Score2 / ((decimal)game.Score1 + (decimal)game.Score2), 2);
-                decimal newRatingPlayer1 = oldRatingPlayer1 + K * (actual1 - expectedOutcome1);
-                decimal newRatingPlayer2 = oldRatingPlayer2 + K * (actual2 - expectedOutcome2);
+                var outcome1 = (actual1 - expectedOutcome1);
+                decimal newRatingPlayer1 = oldRatingPlayer1 + K * outcome1;
+                var outcome2 = (actual2 - expectedOutcome2);
+                decimal newRatingPlayer2 = oldRatingPlayer2 + K * outcome2;
 
-                var r = K * (actual1 - expectedOutcome1) + K * (actual2 - expectedOutcome2);
+                var r = K * outcome1 + K * outcome2;
 
-                ratings[game.Player1] = (int)Math.Round(newRatingPlayer1, 0, MidpointRounding.AwayFromZero);
-                ratings[game.Player2] = (int)Math.Round(newRatingPlayer2, 0, MidpointRounding.AwayFromZero); ;
+                ratings[game.Player1] = newRatingPlayer1;
+                ratings[game.Player2] = newRatingPlayer2;
             }
 
             var model = ratings
                 .OrderByDescending(pair => pair.Value)
-                .Select(r => new RankingViewModel {Points = r.Value, NamePlayer = r.Key.DisplayName, Ranking = ranking++});
+                .Select(r => new RankingViewModel {Points = (int)Math.Round(r.Value,0,MidpointRounding.AwayFromZero), NamePlayer = r.Key.DisplayName, Ranking = ranking++});
 
             return View(model);
         }
 
-        private decimal CalculateExpectation(int oldRatingPlayer1, int oldRatingPlayer2)
+        private decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
         {
-            var n = 400;
-            int x = oldRatingPlayer1 - oldRatingPlayer2;
-            double exponent = -1 * (x / n);
-            decimal expected = 1 / (1 + (decimal)Math.Pow(10, exponent));
+            decimal n = 400;
+            decimal x = oldRatingPlayer1 - oldRatingPlayer2;
+            decimal exponent = -1 * (x / n);
+            decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
 
-            return Math.Round(expected, 2,MidpointRounding.AwayFromZero);
+            return expected;
         }
     }
 }
