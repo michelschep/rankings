@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
+using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Web.Models;
 
@@ -33,10 +34,10 @@ namespace Rankings.Web.Controllers
                 .OrderBy(game => game.RegistrationDate)
                 .ToList();
 
-            Dictionary<string, int> ratings = new Dictionary<string, int>();
+            Dictionary<Profile, int> ratings = new Dictionary<Profile, int>();
             foreach (var profile in players)
             {
-                ratings.Add(profile.EmailAddress, 1200);
+                ratings.Add(profile, 1200);
             }
 
             foreach (var game in games)
@@ -54,8 +55,8 @@ namespace Rankings.Web.Controllers
                 var max = Math.Max(game.Score1, game.Score2);
                 var factor = game.Score1 == game.Score2 ? game.Score1 + game.Score2 : 2 * max + 1;
                 K = 27 + 5*factor;
-                var oldRatingPlayer1 = ratings[game.Player1.EmailAddress];
-                var oldRatingPlayer2 = ratings[game.Player2.EmailAddress];
+                var oldRatingPlayer1 = ratings[game.Player1];
+                var oldRatingPlayer2 = ratings[game.Player2];
                 decimal expectedOutcome1 = CalculateExpectation(oldRatingPlayer1, oldRatingPlayer2);
                 decimal expectedOutcome2 = 1 -expectedOutcome1;//CalculateExpectation(oldRatingPlayer2, oldRatingPlayer1);
 
@@ -67,13 +68,13 @@ namespace Rankings.Web.Controllers
 
                 var r = K * (actual1 - expectedOutcome1) + K * (actual2 - expectedOutcome2);
 
-                ratings[game.Player1.EmailAddress] = (int)Math.Round(newRatingPlayer1, 0, MidpointRounding.AwayFromZero);
-                ratings[game.Player2.EmailAddress] = (int)Math.Round(newRatingPlayer2, 0, MidpointRounding.AwayFromZero); ;
+                ratings[game.Player1] = (int)Math.Round(newRatingPlayer1, 0, MidpointRounding.AwayFromZero);
+                ratings[game.Player2] = (int)Math.Round(newRatingPlayer2, 0, MidpointRounding.AwayFromZero); ;
             }
 
             var model = ratings
                 .OrderByDescending(pair => pair.Value)
-                .Select(r => new RankingViewModel {Points = r.Value, NamePlayer = r.Key, Ranking = ranking++});
+                .Select(r => new RankingViewModel {Points = r.Value, NamePlayer = r.Key.DisplayName, Ranking = ranking++});
 
             return View(model);
         }
