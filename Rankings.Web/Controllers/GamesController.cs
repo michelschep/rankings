@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Web.Models;
@@ -26,7 +27,12 @@ namespace Rankings.Web.Controllers
             var venues = _rankingService.GetVenues();
             var gameTypes = _rankingService.GameTypes();
 
-            var games = _rankingService.Games().OrderByDescending(game => game.RegistrationDate);
+            var games = _rankingService
+                .Games()
+                // TODO quick fix. Do not show same player games. 
+                // TODO edit game is missing and needed.
+                .Where(game => game.Player1.EmailAddress != game.Player2.EmailAddress)
+                .OrderByDescending(game => game.RegistrationDate);
             var model = games.Select(type => new GameSummaryViewModel
             {
                 GameType = type.GameType.DisplayName,
