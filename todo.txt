@@ -1,0 +1,9 @@
+- Do not show email address in list of players
+- In games list: code => registration date
+- ranking for each game type
+- Admin: crud for player list
+- validation
+  - do not enter same player name twice in game
+  - for tabletennis 0-0 is not allowed
+  
+  
