@@ -55,8 +55,8 @@ namespace Rankings.Web.Controllers
                 var max = Math.Max(game.Score1, game.Score2);
                 var factor = game.Score1 == game.Score2 ? game.Score1 + game.Score2 : 2 * max - 1;
 
-                var fibo = new int[9] {0, 1, 1, 2, 3, 5, 8, 13,21};
-                factor = fibo[factor];
+                var fibo = new int[6] {0, 1, 1, 2, 3, 5};
+                factor = factor > 5 ? 5 : fibo[factor];
 
                 K = 27 + 5 * factor;
                 var oldRatingPlayer1 = ratings[game.Player1];
