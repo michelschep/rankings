@@ -54,21 +54,39 @@ namespace Rankings.Web.Controllers
 
                 var max = Math.Max(game.Score1, game.Score2);
                 var factor = game.Score1 == game.Score2 ? game.Score1 + game.Score2 : 2 * max - 1;
-                K = 27 + 5*factor;
+
+                var fibo = new int[9] {0, 1, 1, 2, 3, 5, 8, 13,21};
+                factor = fibo[factor];
+
+                K = 27 + 5 * factor;
                 var oldRatingPlayer1 = ratings[game.Player1];
                 var oldRatingPlayer2 = ratings[game.Player2];
                 decimal expectedOutcome1 = CalculateExpectation(oldRatingPlayer1, oldRatingPlayer2);
-                decimal expectedOutcome2 = 1 -expectedOutcome1;//CalculateExpectation(oldRatingPlayer2, oldRatingPlayer1);
+                decimal expectedOutcome2 = 1 - expectedOutcome1;//CalculateExpectation(oldRatingPlayer2, oldRatingPlayer1);
 
                 var test = expectedOutcome2 + expectedOutcome1;
-                decimal actual1 = game.Score1 / ((decimal)game.Score1 + (decimal)game.Score2);
+                //decimal actual1 = game.Score1 / ((decimal)game.Score1 + (decimal)game.Score2);
+                //decimal actual1 = game.Score1 > game.Score2 ? 1 : 0;
+                decimal actual1 = game.Score1 > game.Score2 ? 1 : 0;
+                //actual1 += game.Score1 / ((decimal) game.Score1 + (decimal) game.Score2);
+                //actual1 = actual1 / 2;
+
+                decimal winnerEloDiff = game.Score1 > game.Score2
+                    ? oldRatingPlayer1 - oldRatingPlayer2
+                    : oldRatingPlayer2 - oldRatingPlayer1;
+
+                var marginOfVicoryMultiplier = (decimal)Math.Log(Math.Abs(game.Score1 - game.Score2) + 1) * (2.2m / (winnerEloDiff * 0.001m + 2.2m));
+
                 decimal actual2 = 1 - actual1;//Math.Round(game.Score2 / ((decimal)game.Score1 + (decimal)game.Score2), 2);
                 var outcome1 = (actual1 - expectedOutcome1);
-                decimal newRatingPlayer1 = oldRatingPlayer1 + K * outcome1;
-                var outcome2 = (actual2 - expectedOutcome2);
-                decimal newRatingPlayer2 = oldRatingPlayer2 + K * outcome2;
+                var player1Delta = K * outcome1 * marginOfVicoryMultiplier;
+                decimal newRatingPlayer1 = oldRatingPlayer1 + player1Delta;
 
-                var r = K * outcome1 + K * outcome2;
+                //var outcome2 = (actual2 - expectedOutcome2);
+                //var player2Delta = K * outcome2 * marginOfVicoryMultiplier;
+                decimal newRatingPlayer2 = oldRatingPlayer2 - player1Delta;
+
+                var r = newRatingPlayer1 + newRatingPlayer2;
 
                 ratings[game.Player1] = newRatingPlayer1;
                 ratings[game.Player2] = newRatingPlayer2;

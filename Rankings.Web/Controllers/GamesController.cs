@@ -77,7 +77,7 @@ namespace Rankings.Web.Controllers
             };
 
             _rankingService.RegisterGame(game);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Rankings");
         }
 
         public IActionResult Delete(int id)
