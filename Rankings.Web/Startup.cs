@@ -42,8 +42,10 @@ namespace Rankings.Web
             {
                 options.AddPolicy("Player",
                     policy => policy.RequireRole("Admin", "Player"));
-                options.AddPolicy("Admin",
+                options.AddPolicy("AdminPolicy",
                     policy => policy.RequireRole("Admin"));
+                options.AddPolicy("TestPolicy",
+                    policy => policy.RequireRole("Test"));
             });
 
             services.AddMvc(options =>

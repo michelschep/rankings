@@ -26,9 +26,13 @@
                     @Html.DisplayFor(modelItem => item.DisplayName)
                 </td>
                 <td>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "TestPolicy")).Succeeded)
                     {
                         @Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) 
+                        @Html.Raw(" | ")
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "TestPolicy")).Succeeded)
+                    {
                         @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) 
                     }
                 </td>
