@@ -58,7 +58,7 @@
                     @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) |
+                    @Html.ActionLink("Edit", "Edit", new {id=item.Id }) |
                     @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) |
                     @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
                     {

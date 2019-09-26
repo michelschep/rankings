@@ -117,6 +117,8 @@ namespace Rankings.Web.Controllers
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
 
+            _rankingService.Save(game);
+
             return RedirectToAction("Index", "Rankings");
         }
 

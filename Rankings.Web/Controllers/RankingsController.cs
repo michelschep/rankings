@@ -62,7 +62,7 @@ namespace Rankings.Web.Controllers
                 K = 27 + 5 * factor;
                 K = 42+5 +3;
                 K = 42 + 5*(game.Score1 + game.Score2);
-                //K = 100;
+                K = 50;
                 var oldRatingPlayer1 = ratings[game.Player1];
                 var oldRatingPlayer2 = ratings[game.Player2];
                 decimal expectedOutcome1 = CalculateExpectation(oldRatingPlayer1, oldRatingPlayer2);

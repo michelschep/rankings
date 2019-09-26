@@ -38,8 +38,7 @@ namespace Rankings.Core.Services
         {
             var profile = _repository.List<Profile>().Single(p => p.EmailAddress == emailAddress);
             profile.DisplayName = displayName;
-            //_repository.Delete(profile);
-            //_repository.Add(new Profile(emailAddress, displayName));
+            _repository.Update(profile);
         }
 
         public IEnumerable<GameType> GameTypes()
@@ -82,6 +81,11 @@ namespace Rankings.Core.Services
                 return;
 
             _repository.Add(profile);
+        }
+
+        public void Save(Game entity)
+        {
+            _repository.Update(entity);
         }
 
         public IEnumerable<Venue> GetVenues()
