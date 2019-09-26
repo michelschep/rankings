@@ -80,6 +80,46 @@ namespace Rankings.Web.Controllers
             return RedirectToAction("Index", "Rankings");
         }
 
+        public IActionResult Edit(int id)
+        {
+            var game = _rankingService.Games().Single(g => g.Id == id);
+
+            var viewModel = new CreateGameViewModel
+            {
+                Players = _rankingService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
+                GameTypes = _rankingService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _rankingService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code)),
+
+                Id = game.Id,
+                RegistrationDate = game.RegistrationDate,
+                NameFirstPlayer = game.Player1.EmailAddress,
+                NameSecondPlayer = game.Player2.EmailAddress,
+                GameType = game.GameType.Code,
+                ScoreFirstPlayer = game.Score1,
+                ScoreSecondPlayer = game.Score2,
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(CreateGameViewModel model)
+        {
+            // TODO must be a better way. For now make it work and no per or mem issue.
+            var venues = _rankingService.GetVenues().ToList();
+            var gameTypes = _rankingService.GameTypes().ToList();
+
+            var game = _rankingService.Games().Single(g => g.Id == model.Id);
+
+            game.RegistrationDate = model.RegistrationDate;
+            game.Venue =venues.Single(profile => profile.Code == model.Venue);
+            game.GameType = gameTypes.Single(type => type.Code == model.GameType);
+            game.Score1 = model.ScoreFirstPlayer;
+            game.Score2 = model.ScoreSecondPlayer;
+
+            return RedirectToAction("Index", "Rankings");
+        }
+
         public IActionResult Delete(int id)
         {
             _rankingService.DeleteGame(id);

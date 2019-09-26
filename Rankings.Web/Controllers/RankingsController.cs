@@ -58,7 +58,11 @@ namespace Rankings.Web.Controllers
                 var fibo = new int[6] {0, 1, 1, 2, 3, 5};
                 factor = factor > 5 ? 5 : fibo[factor];
 
+                //K = 42;//27 + 5 * factor;
                 K = 27 + 5 * factor;
+                K = 42+5 +3;
+                K = 42 + 5*(game.Score1 + game.Score2);
+                //K = 100;
                 var oldRatingPlayer1 = ratings[game.Player1];
                 var oldRatingPlayer2 = ratings[game.Player2];
                 decimal expectedOutcome1 = CalculateExpectation(oldRatingPlayer1, oldRatingPlayer2);

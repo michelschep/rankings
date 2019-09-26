@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -6,6 +7,12 @@ namespace Rankings.Web.Models
 {
     public class CreateGameViewModel
     {
+        public int Id { get; set; }
+
+        [Display(Name = "Registration Date")]
+        [Required]
+        public DateTime RegistrationDate { get; set; }
+
         [Display(Name = "Game Type")]
         [Required]
         public string GameType { get; set; }

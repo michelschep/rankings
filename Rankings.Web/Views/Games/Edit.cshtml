@@ -1,0 +1,67 @@
+﻿@model Rankings.Web.Models.CreateGameViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Edit Game</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RegistrationDate" class="control-label"></label>
+                <input asp-for="RegistrationDate" class="form-control" />
+                <span asp-validation-for="RegistrationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GameType" class="control-label"></label>
+                <select asp-for="GameType" class="form-control" asp-items="@Model.GameTypes">
+                </select>
+                <span asp-validation-for="GameType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Venue" class="control-label"></label>
+                <select asp-for="Venue" class="form-control" asp-items="@Model.Venues">
+                </select>
+                <span asp-validation-for="Venue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NameFirstPlayer" class="control-label"></label>
+                <select asp-for="NameFirstPlayer" class="form-control" asp-items="@Model.Players">
+                </select>
+                <span asp-validation-for="NameFirstPlayer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NameSecondPlayer" class="control-label"></label>
+                <select asp-for="NameSecondPlayer" class="form-control" asp-items="@Model.Players">
+                </select>
+                <span asp-validation-for="NameSecondPlayer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScoreFirstPlayer" class="control-label"></label>
+                <input asp-for="ScoreFirstPlayer" class="form-control" />
+                <span asp-validation-for="ScoreFirstPlayer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScoreSecondPlayer" class="control-label"></label>
+                <input asp-for="ScoreSecondPlayer" class="form-control" />
+                <span asp-validation-for="ScoreSecondPlayer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

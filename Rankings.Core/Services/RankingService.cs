@@ -23,7 +23,7 @@ namespace Rankings.Core.Services
 
         public void ActivateProfile(string email, string displayName)
         {
-            if (_repository.List<Profile>().Any(profile => profile.EmailAddress == email))
+            if (_repository.List<Profile>().Any(profile => profile.EmailAddress.ToLower() == email.ToLower()))
                 return;
 
             _repository.Add(new Profile(email, displayName));
