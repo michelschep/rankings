@@ -34,10 +34,18 @@ namespace Rankings.Web.Controllers
                 .OrderBy(game => game.RegistrationDate)
                 .ToList();
 
-            Dictionary<Profile, decimal> ratings = new Dictionary<Profile, decimal>();
+            Dictionary<Profile, PlayerStats> ratings = new Dictionary<Profile, PlayerStats>();
             foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
             {
-                ratings.Add(profile, 1200);
+                ratings.Add(profile, new PlayerStats()
+                {
+                    NumberOfGames = 0,
+                    NumberOfSetWins = 0,
+                    NumberOfSets = 0,
+                    NumberOfWins = 0,
+                    Ranking = 1200,
+                    //History = ""
+                });
             }
 
             foreach (var game in games)
@@ -65,7 +73,7 @@ namespace Rankings.Web.Controllers
                 K = 50;
                 var oldRatingPlayer1 = ratings[game.Player1];
                 var oldRatingPlayer2 = ratings[game.Player2];
-                decimal expectedOutcome1 = CalculateExpectation(oldRatingPlayer1, oldRatingPlayer2);
+                decimal expectedOutcome1 = CalculateExpectation(oldRatingPlayer1.Ranking, oldRatingPlayer2.Ranking);
                 decimal expectedOutcome2 = 1 - expectedOutcome1;//CalculateExpectation(oldRatingPlayer2, oldRatingPlayer1);
 
                 var test = expectedOutcome2 + expectedOutcome1;
@@ -76,29 +84,61 @@ namespace Rankings.Web.Controllers
                 //actual1 = actual1 / 2;
 
                 decimal winnerEloDiff = game.Score1 > game.Score2
-                    ? oldRatingPlayer1 - oldRatingPlayer2
-                    : oldRatingPlayer2 - oldRatingPlayer1;
+                    ? oldRatingPlayer1.Ranking - oldRatingPlayer2.Ranking
+                    : oldRatingPlayer2.Ranking - oldRatingPlayer1.Ranking;
 
                 var marginOfVicoryMultiplier = (decimal)Math.Log(Math.Abs(game.Score1 - game.Score2) + 1) * (2.2m / (winnerEloDiff * 0.001m + 2.2m));
 
                 decimal actual2 = 1 - actual1;//Math.Round(game.Score2 / ((decimal)game.Score1 + (decimal)game.Score2), 2);
                 var outcome1 = (actual1 - expectedOutcome1);
                 var player1Delta = K * outcome1 * marginOfVicoryMultiplier;
-                decimal newRatingPlayer1 = oldRatingPlayer1 + player1Delta;
+                decimal newRatingPlayer1 = oldRatingPlayer1.Ranking + player1Delta;
 
                 //var outcome2 = (actual2 - expectedOutcome2);
                 //var player2Delta = K * outcome2 * marginOfVicoryMultiplier;
-                decimal newRatingPlayer2 = oldRatingPlayer2 - player1Delta;
+                decimal newRatingPlayer2 = oldRatingPlayer2.Ranking - player1Delta;
 
                 var r = newRatingPlayer1 + newRatingPlayer2;
 
-                ratings[game.Player1] = newRatingPlayer1;
-                ratings[game.Player2] = newRatingPlayer2;
+                ratings[game.Player1].Ranking = newRatingPlayer1;
+                ratings[game.Player2].Ranking = newRatingPlayer2;
+
+                ratings[game.Player1].NumberOfGames += 1;
+                ratings[game.Player2].NumberOfGames += 1;
+
+                ratings[game.Player1].NumberOfWins += game.Score1 > game.Score2 ? 1 : 0;
+                ratings[game.Player2].NumberOfWins += game.Score2 > game.Score1 ? 1 : 0;
+
+//                if (game.Score1 > game.Score2)
+//                {
+//                    ratings[game.Player1].History += "W";
+//                    ratings[game.Player2].History += "L";
+//                }
+//
+//                if (game.Score1 == game.Score2)
+//                {
+//                    ratings[game.Player1].History += "D";
+//                    ratings[game.Player2].History += "D";
+//                }
+
+                ratings[game.Player1].NumberOfSets += game.Score1 + game.Score2;
+                ratings[game.Player2].NumberOfSets += game.Score1 + game.Score2;
+
+                ratings[game.Player1].NumberOfSetWins += game.Score1;
+                ratings[game.Player2].NumberOfSetWins += game.Score2;
             }
 
             var model = ratings
-                .OrderByDescending(pair => pair.Value)
-                .Select(r => new RankingViewModel {Points = (int)Math.Round(r.Value,0,MidpointRounding.AwayFromZero), NamePlayer = r.Key.DisplayName, Ranking = ranking++});
+                .OrderByDescending(pair => pair.Value.Ranking)
+                .Select(r => new RankingViewModel
+                {
+                    WinPercentage = (int)Math.Round((100m*r.Value.NumberOfWins/r.Value.NumberOfGames), 0, MidpointRounding.AwayFromZero),
+                    SetWinPercentage = (int)Math.Round((100m*r.Value.NumberOfSetWins/r.Value.NumberOfSets), 0, MidpointRounding.AwayFromZero),
+                    Points = (int)Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero), 
+                    NamePlayer = r.Key.DisplayName, 
+                    Ranking = ranking++,
+                    //History = r.Value.History.Substring(r.Value.History.Length - 3)//Reverse().Take(3).Reverse().
+                });
 
             return View(model);
         }
@@ -112,5 +152,15 @@ namespace Rankings.Web.Controllers
 
             return expected;
         }
+    }
+
+    public class PlayerStats
+    {
+        public decimal Ranking { get; set; }
+        public int NumberOfGames { get; set; }
+        public int NumberOfWins { get; set; }
+        public int NumberOfSets { get; set; }
+        public int NumberOfSetWins { get; set; }
+        //public string History { get; set; }
     }
 }

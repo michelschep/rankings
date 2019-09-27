@@ -16,7 +16,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.Points)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.WinPercentage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SetWinPercentage)
+            </th>
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.History) *@
+            @* </th> *@
         </tr>
     </thead>
     <tbody>
@@ -31,6 +39,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Points)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WinPercentage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SetWinPercentage)
+            </td>
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.History) *@
+            @* </td> *@
         </tr>
 }
     </tbody>
