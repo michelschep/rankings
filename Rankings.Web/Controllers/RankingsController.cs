@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
@@ -44,7 +43,7 @@ namespace Rankings.Web.Controllers
                     NumberOfSets = 0,
                     NumberOfWins = 0,
                     Ranking = 1200,
-                    //History = ""
+                    History = ""
                 });
             }
 
@@ -109,17 +108,23 @@ namespace Rankings.Web.Controllers
                 ratings[game.Player1].NumberOfWins += game.Score1 > game.Score2 ? 1 : 0;
                 ratings[game.Player2].NumberOfWins += game.Score2 > game.Score1 ? 1 : 0;
 
-//                if (game.Score1 > game.Score2)
-//                {
-//                    ratings[game.Player1].History += "W";
-//                    ratings[game.Player2].History += "L";
-//                }
-//
-//                if (game.Score1 == game.Score2)
-//                {
-//                    ratings[game.Player1].History += "D";
-//                    ratings[game.Player2].History += "D";
-//                }
+                if (game.Score1 > game.Score2)
+                {
+                    ratings[game.Player1].History += "W";
+                    ratings[game.Player2].History += "L";
+                }
+
+                if (game.Score1 < game.Score2)
+                {
+                    ratings[game.Player1].History += "L";
+                    ratings[game.Player2].History += "W";
+                }
+
+                if (game.Score1 == game.Score2)
+                {
+                    ratings[game.Player1].History += "D";
+                    ratings[game.Player2].History += "D";
+                }
 
                 ratings[game.Player1].NumberOfSets += game.Score1 + game.Score2;
                 ratings[game.Player2].NumberOfSets += game.Score1 + game.Score2;
@@ -137,7 +142,7 @@ namespace Rankings.Web.Controllers
                     Points = (int)Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero), 
                     NamePlayer = r.Key.DisplayName, 
                     Ranking = ranking++,
-                    //History = r.Value.History.Substring(r.Value.History.Length - 3)//Reverse().Take(3).Reverse().
+                    History = r.Value.History.ToCharArray().Reverse().ToList().Take(3).Reverse().ToList()//r.Value.History.Substring(r.Value.History.Length - 3 < 0 ? 0 : r.Value.History.Length-3)//Reverse().Take(3).Reverse().
                 });
 
             return View(model);
@@ -161,6 +166,6 @@ namespace Rankings.Web.Controllers
         public int NumberOfWins { get; set; }
         public int NumberOfSets { get; set; }
         public int NumberOfSetWins { get; set; }
-        //public string History { get; set; }
+        public string History { get; set; }
     }
 }

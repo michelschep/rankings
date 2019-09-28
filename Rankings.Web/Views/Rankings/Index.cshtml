@@ -22,9 +22,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.SetWinPercentage)
             </th>
-            @* <th> *@
-            @*     @Html.DisplayNameFor(model => model.History) *@
-            @* </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.History)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -45,9 +45,14 @@
             <td>
                 @Html.DisplayFor(modelItem => item.SetWinPercentage)
             </td>
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.History) *@
-            @* </td> *@
+            <td>
+                <ol class="results">
+                @foreach (var result in item.History)
+                {
+                    <li class="result"><div class="result--@result">@result</div></li>
+                }
+                </ol>
+            </td>
         </tr>
 }
     </tbody>

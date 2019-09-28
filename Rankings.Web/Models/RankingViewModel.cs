@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rankings.Web.Models
 {
     public class RankingViewModel
     {
-        [Display(Name = "Ranking")]
+        [Display(Name = "")]
         public int Ranking { get; set; }
 
         [Display(Name = "Player")]
@@ -16,10 +17,10 @@ namespace Rankings.Web.Models
         [Display(Name = "Win%")]
         public int WinPercentage { get; set; }
 
-        [Display(Name = "SetWin%")]
+        [Display(Name = "SetW%")]
         public int SetWinPercentage { get; set; }
 
-//        [Display(Name = "History")]
-//        public string History { get; set; }
+        [Display(Name = "History")]
+        public List<char> History { get; set; }
     }
 }
