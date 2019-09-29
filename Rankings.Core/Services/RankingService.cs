@@ -92,5 +92,182 @@ namespace Rankings.Core.Services
         {
             return _repository.List<Venue>();
         }
+
+        public Dictionary<Profile, PlayerStats> Ranking()
+        {
+            // TODO fix loading entities
+            var players = Profiles().ToList();
+            var gameTypes = GameTypes();
+            var venues = GetVenues();
+
+            var enumerable = Games().ToList();
+            var games = enumerable
+                .Where(game => game.GameType.Code == "tafeltennis")
+                .OrderBy(game => game.RegistrationDate)
+                .ToList();
+
+            var ratings = new Dictionary<Profile, PlayerStats>();
+            foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
+            {
+                ratings.Add(profile, new PlayerStats()
+                {
+                    NumberOfGames = 0,
+                    NumberOfSetWins = 0,
+                    NumberOfSets = 0,
+                    NumberOfWins = 0,
+                    Ranking = 1200,
+                    History = ""
+                });
+            }
+
+            foreach (var game in games)
+            {
+                // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
+                // For now ignore a 0-0
+                if (game.Score1 == 0 && game.Score2 == 0)
+                    continue;
+
+                // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
+                // It should not be possible to enter these games.
+                if (game.Player1.EmailAddress == game.Player2.EmailAddress)
+                    continue;
+
+                var oldRatingPlayer1 = ratings[game.Player1];
+                var oldRatingPlayer2 = ratings[game.Player2];
+
+                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.Ranking, oldRatingPlayer2.Ranking, game.Score1, game.Score2);
+
+                var newRatingPlayer1 = oldRatingPlayer1.Ranking + player1Delta;
+                var newRatingPlayer2 = oldRatingPlayer2.Ranking - player1Delta;
+
+                ratings[game.Player1].Ranking = newRatingPlayer1;
+                ratings[game.Player2].Ranking = newRatingPlayer2;
+
+                ratings[game.Player1].NumberOfGames += 1;
+                ratings[game.Player2].NumberOfGames += 1;
+
+                ratings[game.Player1].NumberOfWins += game.Score1 > game.Score2 ? 1 : 0;
+                ratings[game.Player2].NumberOfWins += game.Score2 > game.Score1 ? 1 : 0;
+
+                if (game.Score1 > game.Score2)
+                {
+                    ratings[game.Player1].History += "W";
+                    ratings[game.Player2].History += "L";
+                }
+
+                if (game.Score1 < game.Score2)
+                {
+                    ratings[game.Player1].History += "L";
+                    ratings[game.Player2].History += "W";
+                }
+
+                if (game.Score1 == game.Score2)
+                {
+                    ratings[game.Player1].History += "D";
+                    ratings[game.Player2].History += "D";
+                }
+
+                ratings[game.Player1].NumberOfSets += game.Score1 + game.Score2;
+                ratings[game.Player2].NumberOfSets += game.Score1 + game.Score2;
+
+                ratings[game.Player1].NumberOfSetWins += game.Score1;
+                ratings[game.Player2].NumberOfSetWins += game.Score2;
+            }
+
+            return ratings;
+        }
+
+        public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
+        {
+            var K = 50;
+
+            var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
+            decimal actualResult = gameScore1 > gameScore2 ? 1 : 0;
+
+            var winnerEloDiff = gameScore1 > gameScore2
+                ? ratingPlayer1 - ratingPlayer2
+                : ratingPlayer2 - ratingPlayer1;
+
+            var marginOfVicoryMultiplier = (decimal) Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) *
+                                           (2.2m / (winnerEloDiff * 0.001m + 2.2m));
+
+            var outcome1 = (actualResult - expectedOutcome1);
+            var player1Delta = K * outcome1 * marginOfVicoryMultiplier;
+
+            return player1Delta;
+        }
+
+        public decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
+        {
+            return ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
+        }
+
+        public decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfGames)
+        {
+            var expectationOneSet = ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
+
+            decimal total = 0;
+            for (var index = numberOfGames; index >= 0; --index)
+            {
+                var other = numberOfGames - index;
+                if (index < other)
+                    break;
+
+                total += ChangeWinningGameWithSpecifiedResult(index, other, expectationOneSet);
+            }
+
+            return total;
+        }
+
+        private decimal ChangeWinningGame(int numberOfGames, decimal expectedToWinSet)
+        {
+            var a = ChangeWinningGameWithSpecifiedResult(3, 0, expectedToWinSet);
+            var b = ChangeWinningGameWithSpecifiedResult(2, 1, expectedToWinSet);
+            var c = ChangeWinningGameWithSpecifiedResult(1, 2, expectedToWinSet);
+            var d = ChangeWinningGameWithSpecifiedResult(0, 3, expectedToWinSet);
+
+            return a + b;
+        }
+
+        private static decimal ExpectationOneSet(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
+        {
+            decimal n = 400;
+            decimal x = oldRatingPlayer1 - oldRatingPlayer2;
+            decimal exponent = -1 * (x / n);
+            decimal expected = (decimal) (1 / (1 + Math.Pow(10, (double) exponent)));
+
+            return expected;
+        }
+
+        private decimal ChangeWinningGameWithSpecifiedResult(int gameScore1, int gameScore2, decimal expectedToWinSet)
+        {
+            var numberOfSets = gameScore1 + gameScore2;
+
+            var changeWinningGameWithSpecifiedResult = (double)Factorial(numberOfSets) / (double)(Factorial(gameScore1) * Factorial(gameScore2))
+                                                       * Math.Pow((double)expectedToWinSet, gameScore1)
+                                                       * Math.Pow((double)(1 - expectedToWinSet), gameScore2);
+            return (decimal) changeWinningGameWithSpecifiedResult;
+        }
+
+        private int Factorial(int numberOfSets)
+        {
+            if (numberOfSets == 0)
+                return 1;
+
+            if (numberOfSets == 1)
+                return 1;
+
+            return numberOfSets * Factorial(numberOfSets - 1);
+        }
+    }
+
+    public class PlayerStats
+    {
+        public decimal Ranking { get; set; }
+        public int NumberOfGames { get; set; }
+        public int NumberOfWins { get; set; }
+        public int NumberOfSets { get; set; }
+        public int NumberOfSetWins { get; set; }
+        public string History { get; set; }
     }
 }
