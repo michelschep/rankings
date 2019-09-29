@@ -19,7 +19,7 @@ namespace Rankings.Infrastructure.Data
             optionsBuilder.UseSqlite(connection);
             
             var rankingContext = new RankingContext(optionsBuilder.Options);
-            rankingContext.Database.EnsureCreated();
+            rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
 
             return rankingContext;
         }
