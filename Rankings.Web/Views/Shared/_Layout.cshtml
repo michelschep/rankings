@@ -45,7 +45,7 @@
                         @*     $1$ <a class="nav-link text-dark" asp-area="" asp-controller="GameTypes" asp-action="Index">Game Types</a> #1# *@
                         @*     <a class="nav-link text-dark" asp-area="">Stats</a> *@
                         @* </li> *@
-                        @if ((await AuthorizationService.AuthorizeAsync(User, "TestPolicy")).Succeeded)
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="GameTypes" asp-action="Index">Game Types</a>

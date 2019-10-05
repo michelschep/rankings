@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
@@ -7,6 +8,7 @@ using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
 {
+    [Authorize(Policy = "AdminPolicy")]
     public class GameTypesController : Controller
     {
         private readonly IRankingService _rankingService;
