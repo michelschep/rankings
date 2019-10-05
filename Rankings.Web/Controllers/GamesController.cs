@@ -51,6 +51,7 @@ namespace Rankings.Web.Controllers
         {
             return View(new CreateGameViewModel
             {
+                NameFirstPlayer = User.Identity.Name,
                 Players = _rankingService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
                 GameTypes = _rankingService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
                 Venues = _rankingService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code))
