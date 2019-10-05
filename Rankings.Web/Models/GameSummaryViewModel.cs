@@ -8,8 +8,8 @@ namespace Rankings.Web.Models
         [Display(Name = "Id")]
         public int Id { get; set; }
 
-        [Display(Name = "Code")]
-        public DateTime RegistrationDate { get; set; }
+        [Display(Name = "Registration Date")]
+        public string RegistrationDate { get; set; }
 
         [Display(Name = "Type")]
         public string GameType { get; set; }
