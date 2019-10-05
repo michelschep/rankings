@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rankings.Core.Entities;
@@ -29,7 +31,7 @@ namespace Rankings.Web.Controllers
                 // TODO quick fix. Do not show same player games. 
                 // TODO edit game is missing and needed.
                 .Where(game => game.Player1.EmailAddress != game.Player2.EmailAddress)
-                .OrderByDescending(game => game.RegistrationDate);
+                .OrderByDescending(game => game.RegistrationDate).Take(10);
             var model = games.Select(type => new GameSummaryViewModel
             {
                 Id = type.Id,
@@ -37,7 +39,7 @@ namespace Rankings.Web.Controllers
                 Venue = type.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = type.Player1.DisplayName,
                 NameSecondPlayer = type.Player2.DisplayName,
-                RegistrationDate = type.RegistrationDate,
+                RegistrationDate = type.RegistrationDate.AddHours(2).Date.ToString("yyyy/MM/dd"),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2
             }).ToList();
@@ -108,7 +110,7 @@ namespace Rankings.Web.Controllers
 
             var game = _rankingService.Games().Single(g => g.Id == model.Id);
 
-            game.RegistrationDate = model.RegistrationDate;
+            //game.RegistrationDate = model.RegistrationDate;
             game.Venue =venues.Single(profile => profile.Code == model.Venue);
             game.GameType = gameTypes.Single(type => type.Code == model.GameType);
             game.Score1 = model.ScoreFirstPlayer;
@@ -119,6 +121,7 @@ namespace Rankings.Web.Controllers
             return RedirectToAction("Index", "Rankings");
         }
 
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult Delete(int id)
         {
             _rankingService.DeleteGame(id);
