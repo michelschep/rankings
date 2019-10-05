@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Services;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -22,21 +23,37 @@ namespace Rankings.Web.Controllers
             var ratings = _rankingService.Ranking();
             var ranking = 1;
 
-            var model = ratings
+            var model = ratings.Where(pair => pair.Value.NumberOfGames >= 5)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {
-                    WinPercentage = (int)Math.Round((100m*r.Value.NumberOfWins/r.Value.NumberOfGames), 0, MidpointRounding.AwayFromZero),
-                    SetWinPercentage = (int)Math.Round((100m*r.Value.NumberOfSetWins/r.Value.NumberOfSets), 0, MidpointRounding.AwayFromZero),
-                    Points = (int)Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero), 
+                    WinPercentage = Math.Round((100m*r.Value.NumberOfWins/r.Value.NumberOfGames), 0, MidpointRounding.AwayFromZero).ToString(),
+                    SetWinPercentage = Math.Round((100m*r.Value.NumberOfSetWins/r.Value.NumberOfSets), 0, MidpointRounding.AwayFromZero).ToString(),
+                    Points = Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero).ToString(), 
                     NamePlayer = r.Key.DisplayName, 
-                    Ranking = ranking++,
-                    History = r.Value.History.ToCharArray().Reverse().ToList().Take(3).Reverse().ToList()//r.Value.History.Substring(r.Value.History.Length - 3 < 0 ? 0 : r.Value.History.Length-3)//Reverse().Take(3).Reverse().
+                    Ranking = (ranking++).ToString(),
+                    History = ToHistory(r)//r.Value.History.Substring(r.Value.History.Length - 3 < 0 ? 0 : r.Value.History.Length-3)//Reverse().Take(3).Reverse().
                 });
 
-            return View(model);
+            var unranked = ratings.Where(pair => pair.Value.NumberOfGames < 5)
+                .OrderByDescending(pair => pair.Value.NumberOfGames)
+                .Select(r => new RankingViewModel
+                {
+                    WinPercentage = "-",
+                    SetWinPercentage = "-",
+                    Points = "-",
+                    NamePlayer = r.Key.DisplayName,
+                    Ranking = "",
+                    History = new List<char>()
+                });
+
+            return View(model.Union(unranked));
         }
 
+        private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
+        {
+            return r.Value.History.ToCharArray().Reverse().ToList().Take(5).Reverse().ToList();
+        }
     }
 
 }
