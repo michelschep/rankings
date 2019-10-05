@@ -7,19 +7,19 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th style="width: 20px;">
                 @Html.DisplayNameFor(model => model.Ranking)
             </th>
-            <th>
+            <th style="width: 200px;">
                 @Html.DisplayNameFor(model => model.NamePlayer)
             </th>
-            <th>
+            <th style="width: 100px;">
                 @Html.DisplayNameFor(model => model.Points)
             </th>
-            <th>
+            <th style="width: 100px;">
                 @Html.DisplayNameFor(model => model.WinPercentage)
             </th>
-            <th>
+            <th style="width: 100px;">
                 @Html.DisplayNameFor(model => model.SetWinPercentage)
             </th>
             <th>
@@ -30,19 +30,19 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            <td style="width: 20px;">
                 @Html.DisplayFor(modelItem => item.Ranking)
             </td>
-            <td>
+            <td style="width: 200px;">
                 @Html.DisplayFor(modelItem => item.NamePlayer)
             </td>
-            <td>
+            <td style="width: 100px;">
                 @Html.DisplayFor(modelItem => item.Points)
             </td>
-            <td>
+            <td style="width: 100px;">
                 @Html.DisplayFor(modelItem => item.WinPercentage)
             </td>
-            <td>
+            <td style="width: 100px;">
                 @Html.DisplayFor(modelItem => item.SetWinPercentage)
             </td>
             <td>

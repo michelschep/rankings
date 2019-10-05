@@ -31,7 +31,7 @@ namespace Rankings.Web.Controllers
                     SetWinPercentage = Math.Round((100m*r.Value.NumberOfSetWins/r.Value.NumberOfSets), 0, MidpointRounding.AwayFromZero).ToString(),
                     Points = Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero).ToString(), 
                     NamePlayer = r.Key.DisplayName, 
-                    Ranking = (ranking++).ToString(),
+                    Ranking = (ranking++).ToString() + ".",
                     History = ToHistory(r)//r.Value.History.Substring(r.Value.History.Length - 3 < 0 ? 0 : r.Value.History.Length-3)//Reverse().Take(3).Reverse().
                 });
 
