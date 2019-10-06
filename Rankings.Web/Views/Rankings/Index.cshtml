@@ -4,7 +4,7 @@
     <a asp-controller="Games" asp-action="Create">Register a new game!</a>
 </p>
 <p>A player needs to play at least 5 games to see it's ranking (and other stats)</p>
-<table class="table">
+<table class="table" style="table-layout: fixed;">
     <thead>
         <tr>
             <th style="width: 20px;">
@@ -22,7 +22,7 @@
             <th style="width: 100px;">
                 @Html.DisplayNameFor(model => model.SetWinPercentage)
             </th>
-            <th>
+            <th style="width: 300px;">
                 @Html.DisplayNameFor(model => model.History)
             </th>
         </tr>
@@ -45,13 +45,8 @@
             <td style="width: 100px;">
                 @Html.DisplayFor(modelItem => item.SetWinPercentage)
             </td>
-            <td>
-                <ol class="results">
-                @foreach (var result in item.History)
-                {
-                    <li class="result"><div class="result--@result">@result</div></li>
-                }
-                </ol>
+            <td style="width: 300px;">
+                <ol class="results">@foreach (var result in item.History){<li class="result"><div class="result--@result">@result</div></li>}</ol>
             </td>
         </tr>
 }
