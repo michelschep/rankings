@@ -49,10 +49,18 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Create()
         {
+            var profiles = _rankingService.Profiles().ToList();
+            var currentProfile = profiles.Single(profile => profile.EmailAddress == User.Identity.Name);
+            var oponentPlayers = profiles
+                .Where(profile => profile.EmailAddress != User.Identity.Name)
+                .OrderBy(profile => profile.DisplayName)
+                .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
+
             return View(new CreateGameViewModel
             {
                 NameFirstPlayer = User.Identity.Name,
-                Players = _rankingService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
+                Players = new SelectListItem[1] {new SelectListItem(currentProfile.DisplayName, currentProfile.EmailAddress) },
+                OpponentPlayers = oponentPlayers,
                 GameTypes = _rankingService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
                 Venues = _rankingService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code))
             });

@@ -20,13 +20,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="NameFirstPlayer" class="control-label"></label>
-                <select asp-for="NameFirstPlayer" class="form-control" asp-items="@Model.Players">
+                <select readonly="readonly" asp-for="NameFirstPlayer" class="form-control" asp-items="@Model.Players">
                 </select>
                 <span asp-validation-for="NameFirstPlayer" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="NameSecondPlayer" class="control-label"></label>
-                <select asp-for="NameSecondPlayer" class="form-control" asp-items="@Model.Players">
+                <select asp-for="NameSecondPlayer" class="form-control" asp-items="@Model.OpponentPlayers">
                 </select>
                 <span asp-validation-for="NameSecondPlayer" class="text-danger"></span>
             </div>

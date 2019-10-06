@@ -40,6 +40,7 @@ namespace Rankings.Web.Models
         public int ScoreSecondPlayer { get; set; }
 
         public IEnumerable<SelectListItem> Players { get; set; }
+        public IEnumerable<SelectListItem> OpponentPlayers { get; set; }
         public IEnumerable<SelectListItem> GameTypes { get; set; }
         public IEnumerable<SelectListItem> Venues { get; set; }
     }
