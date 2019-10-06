@@ -84,7 +84,7 @@ body {
 .result {
     display: inline-block;
     vertical-align: top;
-    margin-right: 3px;
+    margin-right: 0px;
 
     box-sizing: border-box;
     color: rgb(255, 255, 255);
@@ -96,7 +96,7 @@ body {
     list-style-image: none;
     list-style-position: outside;
     list-style-type: none;
-    margin-right: 3px;
+    margin-right: 0px;
     text-align: right;
     vertical-align: top;
 }
