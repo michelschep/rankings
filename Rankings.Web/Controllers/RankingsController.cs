@@ -42,7 +42,7 @@ namespace Rankings.Web.Controllers
                     WinPercentage = "-",
                     SetWinPercentage = "-",
                     Points = "-",
-                    NamePlayer = r.Key.DisplayName,
+                    NamePlayer = r.Key.DisplayName + " (" + r.Value.NumberOfGames + ")",
                     Ranking = "",
                     History = new List<char>()
                 });
