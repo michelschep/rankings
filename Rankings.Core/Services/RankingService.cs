@@ -70,7 +70,8 @@ namespace Rankings.Core.Services
 
         public void DeleteGame(int Id)
         {
-            var entity = _repository.List<Game>().Single(game => ((BaseEntity) game).Id == Id);
+            // TODO use getbyid to delete
+            var entity = _repository.GetById<Game>(Id);
             _repository.Delete(entity);
         }
 
