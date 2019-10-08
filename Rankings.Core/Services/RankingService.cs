@@ -97,12 +97,11 @@ namespace Rankings.Core.Services
         public Dictionary<Profile, PlayerStats> Ranking()
         {
             // TODO fix loading entities
-            var players = Profiles().ToList();
-            var gameTypes = GameTypes();
-            var venues = GetVenues();
+            //var players = Profiles().ToList();
+            //var gameTypes = GameTypes();
+            //var venues = GetVenues();
 
-            var enumerable = Games().ToList();
-            var games = enumerable
+            var games = Games().ToList()
                 .Where(game => game.GameType.Code == "tafeltennis")
                 .OrderBy(game => game.RegistrationDate)
                 .ToList();
