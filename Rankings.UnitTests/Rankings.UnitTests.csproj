@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rankings.Core\Rankings.Core.csproj" />
+    <ProjectReference Include="..\Rankings.Infrastructure\Rankings.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
