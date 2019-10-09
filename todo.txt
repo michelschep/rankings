@@ -1,5 +1,7 @@
+====================== technical debt ==============================================
 - unit tests for elo ranking calculation
-- refactor claculation
+- refactor calculation
+- add logging
 - get rid of ugly loading of missing entities (use include)
 - player can approve its game
 - player can disapprove its game
@@ -10,26 +12,35 @@
 
 - authorization
   - player can only edit his/her game
+  - admin can edit venues and game types
   
 - validation
   - do not enter same player name twice in game
   - name player unique
-  - for tabletennis 0-0 is not allowed
+  - for table tennis 0-0 is not allowed
   
 - Do not show email address in list of players
 
+====================== wishes ======================================================
+- add elo explanation page + calculator home page + matrix with possible elo points (opponents x results)
+- add comments game
+- games per player
+- all games gametype
+- avatar for player
+- doubles 
+- player can see readonly profile other players
+- player progress graph with elo score (time x elo, d3)
+- website favicon
 
-- wishes
-  - avatar for player
-  - games per player
-  - all games gametype
-  - add comments game
-  - player can see readonly profile other players
-  - stats
-    - clean sheets
-    - winning streak records
+- stats
+    - overall records
+      - clean sheets (streak)
+      - winning streak
+    - idem on player level  
+    - player of the month (monthly stats)
     - highest elo win
-    - ondrelinge duels
+    - mutual duels
+    - angst gegner
     - #days number one (counts as one when started as one and ended as one)
     - social%
     - goat score (highest elo)
@@ -38,5 +49,3 @@
     - with signalR: game results, breaking news
     - email: summary, game approval
     
-  
-  
