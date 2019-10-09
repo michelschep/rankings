@@ -1,4 +1,6 @@
 - unit tests for elo ranking calculation
+- refactor claculation
+- get rid of ugly loading of missing entities (use include)
 - player can approve its game
 - player can disapprove its game
 - admin can do both always for all games
