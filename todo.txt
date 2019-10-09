@@ -1,9 +1,40 @@
-- Do not show email address in list of players
-- In games list: code => registration date
-- ranking for each game type
-- Admin: crud for player list
+- unit tests for elo ranking calculation
+- player can approve its game
+- player can disapprove its game
+- admin can do both always for all games
+- take draws into account when calculating elo (conatins a bug now)
+- show +elo next to game
+- ranking per type
+
+- authorization
+  - player can only edit his/her game
+  
 - validation
   - do not enter same player name twice in game
+  - name player unique
   - for tabletennis 0-0 is not allowed
+  
+- Do not show email address in list of players
+
+
+- wishes
+  - avatar for player
+  - games per player
+  - all games gametype
+  - add comments game
+  - player can see readonly profile other players
+  - stats
+    - clean sheets
+    - winning streak records
+    - highest elo win
+    - ondrelinge duels
+    - #days number one (counts as one when started as one and ended as one)
+    - social%
+    - goat score (highest elo)
+    - stars (depend on how many weeks number 1: 4 weeks, 12 weeks, ...)
+   - notifications
+    - with signalR: game results, breaking news
+    - email: summary, game approval
+    
   
   
