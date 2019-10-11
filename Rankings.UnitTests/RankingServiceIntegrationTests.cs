@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
-using Moq;
 using Rankings.Core.Entities;
-using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
 using Xunit;
