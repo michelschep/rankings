@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Rankings.UnitTests
 {
-    public class RankingServiceTests
+    public class RankingServiceIntegrationTests
     {
         private readonly RankingService _rankingService;
 
-        public RankingServiceTests()
+        public RankingServiceIntegrationTests()
         {
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
