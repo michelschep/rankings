@@ -7,11 +7,5 @@ namespace Rankings.Core.Entities
         public string EmailAddress { get; set; }
 
         public string DisplayName { get; set;  }
-
-        public Profile(string emailAddress, string displayName)
-        {
-            EmailAddress = emailAddress;
-            DisplayName = displayName;
-        }
     }
 }

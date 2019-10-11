@@ -25,7 +25,11 @@ namespace Rankings.Core.Services
             if (_repository.List<Profile>().Any(profile => profile.EmailAddress.ToLower() == email.ToLower()))
                 return;
 
-            _repository.Add(new Profile(email, displayName));
+            _repository.Add(new Profile
+            {
+                EmailAddress = email,
+                DisplayName = displayName
+            });
         }
 
         public Profile ProfileFor(string email)
@@ -93,7 +97,7 @@ namespace Rankings.Core.Services
             return _repository.List<Venue>();
         }
 
-        public Dictionary<Profile, PlayerStats> Ranking()
+        public Ranking Ranking()
         {
             // TODO fix loading entities
             //var players = Profiles().ToList();
@@ -173,7 +177,7 @@ namespace Rankings.Core.Services
                 ratings[game.Player2].NumberOfSetWins += game.Score2;
             }
 
-            return ratings;
+            return new Ranking(ratings);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
@@ -257,6 +261,41 @@ namespace Rankings.Core.Services
                 return 1;
 
             return numberOfSets * Factorial(numberOfSets - 1);
+        }
+    }
+
+    public class Ranking
+    {
+        private readonly Dictionary<Profile, PlayerStats> _ratings;
+
+        public Ranking(Dictionary<Profile, PlayerStats> ratings)
+        {
+            _ratings = ratings ?? throw new ArgumentNullException(nameof(ratings));
+        }
+
+        public Dictionary<Profile, PlayerStats> OldRatings => _ratings;
+
+        public PlayerStats ForPlayer(string emailAddress)
+        {
+            return _ratings.Where(pair => string.Equals(pair.Key.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)).Select(pair => ConvertStats(pair.Value)).Single();
+        }
+
+        public IEnumerable<PlayerStats> PlayerStats()
+        {
+            return _ratings.Values.Select(ConvertStats);
+        }
+
+        private static PlayerStats ConvertStats(PlayerStats stats)
+        {
+            return new PlayerStats
+            {
+                Ranking = Math.Round(stats.Ranking, 0, MidpointRounding.AwayFromZero),
+                NumberOfSets = stats.NumberOfSets,
+                History = stats.History,
+                NumberOfSetWins = stats.NumberOfSetWins,
+                NumberOfWins = stats.NumberOfWins,
+                NumberOfGames = stats.NumberOfGames
+            };
         }
     }
 

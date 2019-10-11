@@ -23,7 +23,7 @@ namespace Rankings.Web.Controllers
             var ratings = _rankingService.Ranking();
             var ranking = 1;
 
-            var model = ratings.Where(pair => pair.Value.NumberOfGames >= 5)
+            var model = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames >= 5)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {
@@ -35,7 +35,7 @@ namespace Rankings.Web.Controllers
                     History = ToHistory(r)//r.Value.History.Substring(r.Value.History.Length - 3 < 0 ? 0 : r.Value.History.Length-3)//Reverse().Take(3).Reverse().
                 });
 
-            var unranked = ratings.Where(pair => pair.Value.NumberOfGames < 5)
+            var unranked = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames < 5)
                 .OrderByDescending(pair => pair.Value.NumberOfGames)
                 .Select(r => new RankingViewModel
                 {
