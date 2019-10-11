@@ -35,7 +35,6 @@ namespace Rankings.UnitTests
         [InlineData(3, 0, 1235, 1165)]
         [InlineData(10, 0, 1260, 1140)]
         [InlineData(100, 0, 1315, 1085)]
-        [InlineData(1000, 0, 1373, 1027)]
         [InlineData(0, 1, 1183, 1217)]
         [InlineData(0, 2, 1173, 1227)]
         [InlineData(0, 3, 1165, 1235)]
