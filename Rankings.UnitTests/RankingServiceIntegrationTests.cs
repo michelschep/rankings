@@ -43,6 +43,15 @@ namespace Rankings.UnitTests
             actualPlayer.Should().Be(expectedPlayer);
         }
 
+        [Fact]
+        public void WhenPlayerCannotBeFound()
+        {
+            var actualPlayer = _rankingService.ProfileFor("does-not-exist@domain.nl");
+
+            // Assert
+            actualPlayer.Should().Be(null);
+        }
+
         [Theory]
         [InlineData(1, 1, 1200, 1200)]
         [InlineData(1, 0, 1217, 1183)]

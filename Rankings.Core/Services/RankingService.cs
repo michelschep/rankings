@@ -34,7 +34,7 @@ namespace Rankings.Core.Services
 
         public Profile ProfileFor(string email)
         {
-            return _repository.List<Profile>().Single(profile =>
+            return _repository.List<Profile>().SingleOrDefault(profile =>
                 string.Equals(profile.EmailAddress, email, StringComparison.CurrentCultureIgnoreCase));
         }
 
