@@ -28,6 +28,21 @@ namespace Rankings.UnitTests
             Assert.True(!ranking.PlayerStats().Any());
         }
 
+        [Fact]
+        public void CanCreatePlayer()
+        {
+            var expectedPlayer = new Profile
+            {
+                EmailAddress = "email@address.nl",
+                DisplayName = "Display Name"
+            };
+            _rankingService.CreateProfile(expectedPlayer);
+            var actualPlayer = _rankingService.ProfileFor("EMAIL@ADDRESS.NL");
+
+            // Assert
+            actualPlayer.Should().Be(expectedPlayer);
+        }
+
         [Theory]
         [InlineData(1, 1, 1200, 1200)]
         [InlineData(1, 0, 1217, 1183)]
