@@ -52,6 +52,45 @@ namespace Rankings.UnitTests
             actualPlayer.Should().Be(null);
         }
 
+        [Fact]
+        public void CannotCreateGameWithoutPlayer1()
+        {
+            var emptyGame = new Game();
+            
+            // Assert
+            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+                .Should().Throw<Exception>()
+                .WithMessage("Cannot register game because player1 is not specified");
+        }
+
+        [Fact]
+        public void CannotCreateGameWithoutPlayer2()
+        {
+            var emptyGame = new Game
+            {
+                Player1 = new Profile()
+            };
+
+            // Assert
+            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+                .Should().Throw<Exception>()
+                .WithMessage("Cannot register game because player2 is not specified");
+        }
+
+        [Fact]
+        public void CannotCreateGameWithUnknownPlayer1()
+        {
+            var emptyGame = new Game
+            {
+                Player1 = new Profile()
+            };
+
+            // Assert
+            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+                .Should().Throw<Exception>()
+                .WithMessage("Cannot register game because player1 is unknown");
+        }
+
         [Theory]
         [InlineData(1, 1, 1200, 1200)]
         [InlineData(1, 0, 1217, 1183)]

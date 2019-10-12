@@ -62,6 +62,12 @@ namespace Rankings.Core.Services
 
         public void RegisterGame(Game game)
         {
+            if (game.Player1 == null)
+                throw new Exception("Cannot register game because player1 is not specified");
+
+            if (game.Player2 == null)
+                throw new Exception("Cannot register game because player2 is not specified");
+
             game.RegistrationDate = DateTime.Now;
 
             _repository.Add(game);
