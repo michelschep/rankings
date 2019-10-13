@@ -27,7 +27,7 @@ namespace Rankings.Web.Controllers
         public IActionResult WhatIf(WhatIfModel model)
         {
             var deltaFirstPlayer = _rankingService.CalculateDeltaFirstPlayer(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
-            var expected = _rankingService.CalculateExpectation(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1 + model.GameScore2);
+            var expected = 0m;//_rankingService.CalculateExpectation(model.RatingPlayer1, model.RatingPlayer2);//, model.GameScore1 + model.GameScore2);
 
             model.Delta = Math.Round(deltaFirstPlayer, 2, MidpointRounding.AwayFromZero);
             // TODO is expected to win game

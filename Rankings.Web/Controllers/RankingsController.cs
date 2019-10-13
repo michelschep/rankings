@@ -23,7 +23,7 @@ namespace Rankings.Web.Controllers
             var ratings = _rankingService.Ranking();
             var ranking = 1;
 
-            var model = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames >= 5)
+            var model = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames >= 1)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {

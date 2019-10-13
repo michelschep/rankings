@@ -23,6 +23,6 @@ namespace Rankings.Core.Interfaces
 
         Ranking Ranking();
         decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2);
-        decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfSets);
+        //decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfSets);
     }
 }
