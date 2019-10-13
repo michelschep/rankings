@@ -66,9 +66,15 @@ namespace Rankings.UnitTests
         [Fact]
         public void CannotCreateGameWithoutPlayer2()
         {
+            var player1 = new Profile
+            {
+                EmailAddress = "player1@domail.nl"
+            };
+            _rankingService.CreateProfile(player1);
+
             var emptyGame = new Game
             {
-                Player1 = new Profile()
+                Player1 = player1
             };
 
             // Assert
@@ -88,7 +94,28 @@ namespace Rankings.UnitTests
             // Assert
             _rankingService.Invoking(r => r.RegisterGame(emptyGame))
                 .Should().Throw<Exception>()
-                .WithMessage("Cannot register game because player1 is unknown");
+                .WithMessage("Cannot register game because player1 is not registered");
+        }
+
+        [Fact]
+        public void CannotCreateGameWithUnknownPlayer2()
+        {
+            var player1 = new Profile
+            {
+                EmailAddress = "player1@domail.nl"
+            };
+            _rankingService.CreateProfile(player1);
+
+            var emptyGame = new Game
+            {
+                Player1 = player1,
+                Player2 = new Profile()
+            };
+
+            // Assert
+            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+                .Should().Throw<Exception>()
+                .WithMessage("Cannot register game because player2 is not registered");
         }
 
         [Theory]
