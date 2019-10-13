@@ -113,9 +113,9 @@ namespace Rankings.Core.Services
         public Ranking Ranking()
         {
             // TODO fix loading entities
-            //var players = Profiles().ToList();
-            //var gameTypes = GameTypes();
-            //var venues = GetVenues();
+            var players = Profiles().ToList();
+            var gameTypes = GameTypes();
+            var venues = GetVenues();
 
             var games = Games().ToList()
                 .Where(game => game.GameType.Code == "tafeltennis")
