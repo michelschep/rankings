@@ -9,6 +9,7 @@ namespace Rankings.Core.Services
             var K = 50;
             decimal actualResult = ActualResult(gameScore1, gameScore2);
             var expectation = CalculateExpectation(ratingPlayer1, ratingPlayer2, gameScore1+gameScore2);
+            //var expectation = CalculateExpectation2(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
             var marginOfVictoryMultiplier = 1;//MarginOfVictoryMultiplier(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
 
             var high = Math.Max(gameScore1, gameScore2);
@@ -48,7 +49,6 @@ namespace Rankings.Core.Services
             return expected;
         }
 
-
         public static decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfGames)
         {
             var expectationOneSet = EloCalculator.ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
@@ -59,17 +59,24 @@ namespace Rankings.Core.Services
             {
                 var scoreOtherPlayer = numberOfGames - scorePlayer1;
                 if (scorePlayer1 < scoreOtherPlayer)
-                   break;
+                    break;
                 var factor = scorePlayer1 == scoreOtherPlayer ? 0.5m : 1;
 
-                total += factor* ChangeOfHavingThisResult(scorePlayer1, scoreOtherPlayer, expectationOneSet);
+                total += factor * ChanceOfHavingThisResult(scorePlayer1, scoreOtherPlayer, expectationOneSet);
                 ++index;
             }
 
             return total;
         }
 
-        private static decimal ChangeOfHavingThisResult(int gameScore1, int gameScore2, decimal expectedToWinSet)
+        public static decimal CalculateExpectation2(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int score1, int score2)
+        {
+            var expectationOneSet = EloCalculator.ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
+
+            return ChanceOfHavingThisResult(score1, score2, expectationOneSet);
+        }
+
+        public static decimal ChanceOfHavingThisResult(int gameScore1, int gameScore2, decimal expectedToWinSet)
         {
             var numberOfSets = gameScore1 + gameScore2;
 
