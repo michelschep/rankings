@@ -51,7 +51,8 @@ namespace Rankings.UnitTests
         [InlineData(1200, 1000, 0, 1, -28.963)]
         [InlineData(1400, 1000, 0, 1, -38.508)]
         [InlineData(2000, 1000, 0, 1, -63.338)]
-        //[InlineData(4000, 1000, 0, 1, -80)]
+
+        [InlineData(1300, 1200, 3, 0, -63.338)]
         public void CalculateDeltaPlayerTests(decimal elo1, decimal elo2, int score1, int score2, decimal expectedDelta)
         {
             var actualDelta = EloCalculator.CalculateDeltaPlayer(elo1, elo2, score1, score2);
