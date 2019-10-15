@@ -16,6 +16,6 @@ namespace Rankings.Web.Models
         [DisplayName("Change of winning one set")]
         public decimal ExpectedToWinSet { get; set; }
         [DisplayName("Change of winning game with entered score")]
-        public double ExpectedToWinGame { get; set; }
+        public decimal ExpectedToWinGame { get; set; }
     }
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace Rankings.Core.Services
 {
-    public static class EloCalculator
+    public static class NewEloCalculator
     {
         public static decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
         {
@@ -51,7 +51,7 @@ namespace Rankings.Core.Services
 
         public static decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfGames)
         {
-            var expectationOneSet = EloCalculator.ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
+            var expectationOneSet = ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
 
             decimal total = 0;
             decimal index = 0;
@@ -69,9 +69,9 @@ namespace Rankings.Core.Services
             return total;
         }
 
-        public static decimal CalculateExpectation2(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int score1, int score2)
+        public static decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int score1, int score2)
         {
-            var expectationOneSet = EloCalculator.ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
+            var expectationOneSet = ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
 
             return ChanceOfHavingThisResult(score1, score2, expectationOneSet);
         }
@@ -97,6 +97,49 @@ namespace Rankings.Core.Services
                 return 1;
 
             return numberOfSets * Factorial(numberOfSets - 1);
+        }
+    }
+
+    public static class EloCalculator
+    {
+        public static decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
+        {
+            var K = 50;
+
+            var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
+            decimal actualResult = gameScore1 > gameScore2 ? 1 : 0;
+
+            var winnerEloDiff = gameScore1 > gameScore2
+                ? ratingPlayer1 - ratingPlayer2
+                : ratingPlayer2 - ratingPlayer1;
+
+            var marginOfVicoryMultiplier = MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff);
+
+            var outcome1 = (actualResult - expectedOutcome1);
+            var player1Delta = K * outcome1 * marginOfVicoryMultiplier;
+
+            return player1Delta;
+        }
+
+        public static decimal MarginOfVictoryMultiplier(int gameScore1, int gameScore2, decimal winnerEloDiff)
+        {
+            return (decimal)Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) *
+                   (2.2m / (winnerEloDiff * 0.001m + 2.2m));
+        }
+
+        public static decimal CalculateExpectation(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
+        {
+            return ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
+        }
+
+        private static decimal ExpectationOneSet(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
+        {
+            decimal n = 400;
+            decimal x = oldRatingPlayer1 - oldRatingPlayer2;
+            decimal exponent = -1 * (x / n);
+            decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
+
+            return expected;
         }
     }
 }
