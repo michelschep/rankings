@@ -10,6 +10,9 @@
 - show +elo next to game
 - ranking per type
 
+- bugs
+  - "the reply url specified in the request does not match the reply urls configured for the application 87b..."
+  
 - authorization
   - player can only edit his/her game
   - admin can edit venues and game types
