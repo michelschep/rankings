@@ -22,12 +22,6 @@ namespace Rankings.UnitTests
         [InlineData(3000, 1000, 0, 1, 7.624)]
         [InlineData(3100, 1000, 0, 1, 15.249)]
         [InlineData(3199, 1000, 0, 1, 1524.923)]
-        //[InlineData(3200, 1000, 0, 1, 15.249)]
-        //[InlineData(3201, 1000, 0, 1, -1524.923)]
-
-        //[InlineData(1200, 1200, 2, 0, 1.098)]
-        //[InlineData(1300, 1200, 2, 0, 1.050)]
-        //[InlineData(1300, 1200, 3, 0, 1.326)]
         public void TestMargin(decimal elo1, decimal elo2, int score1, int score2, decimal expectedMultiplier)
         {
             var diff = score1 > score2 ? elo1 - elo2 : elo2 - elo1;
@@ -54,49 +48,60 @@ namespace Rankings.UnitTests
         [InlineData(1300, 1200, 3, 0, 23.864)]
         [InlineData(1300, 1200, 3, 1, 18.911)]
         [InlineData(1300, 1200, 3, 2, 11.932)]
-        public void CalculateDeltaPlayerTests(decimal elo1, decimal elo2, int score1, int score2, decimal expectedDelta)
+        public void CalculateDeltaPlayerTests(decimal eloPlayerOne, decimal eloPlayerTwo, int scorePlayerOne, int scorePlayerTwo, decimal expectedDelta)
         {
-            var actualDelta = EloCalculator.CalculateDeltaPlayer(elo1, elo2, score1, score2);
+            var actualDelta = EloCalculator.CalculateDeltaPlayer(eloPlayerOne, eloPlayerTwo, scorePlayerOne, scorePlayerTwo);
 
             actualDelta.Should().BeApproximately(expectedDelta, 0.001m);
         }
 
         [Theory]
         [InlineData(1200, 1200, 1, 0.500)]
-        //[InlineData(1200, 1200, 2, 0.500)]
-        //[InlineData(1200, 1200, 3, 0.500)]
-        //[InlineData(1200, 1200, 5, 0.500)]
         [InlineData(1600, 1200, 1, 0.909)]
         [InlineData(1600, 1200, 3, 0.976)]
         [InlineData(1600, 1200, 5, 0.993)]
-        public void CalculateExpectationTests(decimal elo1, decimal elo2, int numberOfGames, decimal expected)
+        public void CalculateExpectationTests(decimal eloPlayerOne, decimal eloPlayerTwo, int numberOfGames, decimal expected)
         {
-            var actual = NewEloCalculator.CalculateExpectationForBestOf(elo1, elo2, numberOfGames);
+            var actual = NewEloCalculator.CalculateExpectationForBestOf(eloPlayerOne, eloPlayerTwo, numberOfGames);
 
             actual.Should().BeApproximately(expected, 0.001m);
         }
 
-        [Fact]
-        public void WhenPlayingABestOf1TheTotalChanceShouldAlwaysBe1()
+        [Theory]
+        [InlineData(1, 0, 0.8, 0.8)]
+        [InlineData(2, 0, 0.8, 0.64)]
+        [InlineData(2, 1, 0.8, 0.384)]
+        [InlineData(1, 2, 0.8, 0.096)]
+        [InlineData(0, 2, 0.8, 0.04)]
+        [InlineData(0, 1, 0.8, 0.2)]
+        [InlineData(1, 1, 0.8, 0.32)]
+        public void WhenPlayingBestOfThree(int score1, int score2, decimal chanceWinningSet, decimal expectedChanceWinningGame)
         {
-            decimal elo1 = 1600;
-            decimal elo2 = 1200;
-            var r1= NewEloCalculator.CalculateExpectationForResult(elo1, elo2, 1, 0);
-            var r2= NewEloCalculator.CalculateExpectationForResult(elo1, elo2, 0, 1);
+            var actualChanceWinningGame = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(score1, score2, chanceWinningSet);
 
-
-            (r1+r2).Should().BeApproximately(1, 0.001m);
+            actualChanceWinningGame.Should().BeApproximately(expectedChanceWinningGame, 0.001m);
         }
 
         [Fact]
-        public void WhenPlayingABestOf3TheTotalChanceShouldAlwaysBe1()
+        public void WhenPlayingBestOfOneTheTotalChanceShouldAlwaysBeOne()
         {
-            var r1= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(2, 0, 0.8m);
-            var r2= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(2, 1, 0.8m);
-            var r3= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(1, 2, 0.8m);
-            var r4= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(0, 2, 0.8m);
+            decimal eloPlayerOne = 1600;
+            decimal eloPlayerTwo = 1200;
+            var r1 = NewEloCalculator.CalculateExpectationForResult(eloPlayerOne, eloPlayerTwo, 1, 0);
+            var r2 = NewEloCalculator.CalculateExpectationForResult(eloPlayerOne, eloPlayerTwo, 0, 1);
 
-            (r1+r2+r3+r4).Should().BeApproximately(1, 0.001m);
+            (r1 + r2).Should().BeApproximately(1, 0.001m);
+        }
+
+        [Fact]
+        public void WhenPlayingABestOfThreeAndAllSetsArePlayedTheTotalChanceShouldAlwaysBeOne()
+        {
+            var r1 = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(3, 0, 0.8m);
+            var r2 = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(2, 1, 0.8m);
+            var r3 = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(1, 2, 0.8m);
+            var r4 = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(0, 3, 0.8m);
+
+            (r1 + r2 + r3 + r4).Should().BeApproximately(1, 0.001m);
         }
     }
 }

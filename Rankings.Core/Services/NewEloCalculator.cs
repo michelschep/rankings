@@ -78,7 +78,10 @@ namespace Rankings.Core.Services
 
         public static decimal ChanceOfHavingThisResultAllSetsPlayed(int gameScore1, int gameScore2, decimal expectedToWinSet)
         {
-            return (decimal)(Math.Pow((double) (1 - expectedToWinSet), gameScore2)
+            var numberOfSets = gameScore1 + gameScore2;
+            var factorial = (decimal)Factorial(numberOfSets) / (decimal)(Factorial(gameScore1) * Factorial(gameScore2));
+
+            return factorial * (decimal)(Math.Pow((double) (1 - expectedToWinSet), gameScore2)
                              * Math.Pow((double) expectedToWinSet, gameScore1));
         }
 
