@@ -6,7 +6,7 @@ X unit tests for elo ranking calculation
 - player can approve its game
 - player can disapprove its game
 - admin can do both always for all games
-- take draws into account when calculating elo (conatins a bug now)
+X take draws into account when calculating elo (conatins a bug now)
 - show +elo next to game
 - ranking per type
 
