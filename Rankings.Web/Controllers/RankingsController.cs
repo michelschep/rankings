@@ -31,8 +31,8 @@ namespace Rankings.Web.Controllers
                     SetWinPercentage = Math.Round((100m*r.Value.NumberOfSetWins/r.Value.NumberOfSets), 0, MidpointRounding.AwayFromZero).ToString(),
                     Points = Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero).ToString(), 
                     NamePlayer = r.Key.DisplayName, 
-                    Ranking = (ranking++).ToString() + ".",
-                    History = ToHistory(r)//r.Value.History.Substring(r.Value.History.Length - 3 < 0 ? 0 : r.Value.History.Length-3)//Reverse().Take(3).Reverse().
+                    Ranking = (ranking++) + ".",
+                    History = ToHistory(r)
                 });
 
             var unranked = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames < 5)
@@ -55,5 +55,4 @@ namespace Rankings.Web.Controllers
             return r.Value.History.ToCharArray().Reverse().ToList().Take(5).Reverse().ToList();
         }
     }
-
 }
