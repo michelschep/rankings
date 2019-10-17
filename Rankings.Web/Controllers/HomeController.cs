@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Interfaces;
@@ -30,7 +29,7 @@ namespace Rankings.Web.Controllers
             var deltaFirstPlayer = _rankingService.CalculateDeltaFirstPlayer(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
             model.Delta = Math.Round(deltaFirstPlayer, 2, MidpointRounding.AwayFromZero);
             model.ExpectedToWinSet = NewEloCalculator.ExpectationOneSet(model.RatingPlayer1, model.RatingPlayer2);
-            model.ExpectedToWinGame = NewEloCalculator.CalculateExpectation(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
+            model.ExpectedToWinGame = NewEloCalculator.CalculateExpectationForResult(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
 
             ModelState.Clear();
             return View("Index", model);

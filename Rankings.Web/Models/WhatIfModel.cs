@@ -13,9 +13,9 @@ namespace Rankings.Web.Models
         public int GameScore2 { get; set; }
         [DisplayName("Elo points to win or lose")]
         public decimal  Delta { get; set; }
-        [DisplayName("Change of winning one set")]
+        [DisplayName("Chance of winning one set")]
         public decimal ExpectedToWinSet { get; set; }
-        [DisplayName("Change of winning game with entered score")]
+        [DisplayName("Chance of having specified result")]
         public decimal ExpectedToWinGame { get; set; }
     }
 }

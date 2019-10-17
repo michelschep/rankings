@@ -198,49 +198,4 @@ namespace Rankings.Core.Services
             return EloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
         }
     }
-
-    public class Ranking
-    {
-        private readonly Dictionary<Profile, PlayerStats> _ratings;
-
-        public Ranking(Dictionary<Profile, PlayerStats> ratings)
-        {
-            _ratings = ratings ?? throw new ArgumentNullException(nameof(ratings));
-        }
-
-        public Dictionary<Profile, PlayerStats> OldRatings => _ratings;
-
-        public PlayerStats ForPlayer(string emailAddress)
-        {
-            return _ratings.Where(pair => string.Equals(pair.Key.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)).Select(pair => ConvertStats(pair.Value)).Single();
-        }
-
-        public IEnumerable<PlayerStats> PlayerStats()
-        {
-            return _ratings.Values.Select(ConvertStats);
-        }
-
-        private static PlayerStats ConvertStats(PlayerStats stats)
-        {
-            return new PlayerStats
-            {
-                Ranking = Math.Round(stats.Ranking, 0, MidpointRounding.AwayFromZero),
-                NumberOfSets = stats.NumberOfSets,
-                History = stats.History,
-                NumberOfSetWins = stats.NumberOfSetWins,
-                NumberOfWins = stats.NumberOfWins,
-                NumberOfGames = stats.NumberOfGames
-            };
-        }
-    }
-
-    public class PlayerStats
-    {
-        public decimal Ranking { get; set; }
-        public int NumberOfGames { get; set; }
-        public int NumberOfWins { get; set; }
-        public int NumberOfSets { get; set; }
-        public int NumberOfSetWins { get; set; }
-        public string History { get; set; }
-    }
 }

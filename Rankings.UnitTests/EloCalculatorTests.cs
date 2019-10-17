@@ -71,9 +71,32 @@ namespace Rankings.UnitTests
         [InlineData(1600, 1200, 5, 0.993)]
         public void CalculateExpectationTests(decimal elo1, decimal elo2, int numberOfGames, decimal expected)
         {
-            var actual = NewEloCalculator.CalculateExpectation(elo1, elo2, numberOfGames);
+            var actual = NewEloCalculator.CalculateExpectationForBestOf(elo1, elo2, numberOfGames);
 
             actual.Should().BeApproximately(expected, 0.001m);
+        }
+
+        [Fact]
+        public void WhenPlayingABestOf1TheTotalChanceShouldAlwaysBe1()
+        {
+            decimal elo1 = 1600;
+            decimal elo2 = 1200;
+            var r1= NewEloCalculator.CalculateExpectationForResult(elo1, elo2, 1, 0);
+            var r2= NewEloCalculator.CalculateExpectationForResult(elo1, elo2, 0, 1);
+
+
+            (r1+r2).Should().BeApproximately(1, 0.001m);
+        }
+
+        [Fact]
+        public void WhenPlayingABestOf3TheTotalChanceShouldAlwaysBe1()
+        {
+            var r1= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(2, 0, 0.8m);
+            var r2= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(2, 1, 0.8m);
+            var r3= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(1, 2, 0.8m);
+            var r4= NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(0, 2, 0.8m);
+
+            (r1+r2+r3+r4).Should().BeApproximately(1, 0.001m);
         }
     }
 }
