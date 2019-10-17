@@ -2,12 +2,21 @@ using System;
 
 namespace Rankings.Core.Services
 {
-    public static class EloCalculator
+    public class EloCalculator
     {
-        public static decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
-        {
-            var K = 50;
+        private static decimal _n = 50; // 400
+        private static decimal _K = 5; // 50
+        private readonly bool _withMarginOfVictory;
 
+        public EloCalculator(decimal n, decimal kfactor, bool withMarginOfVictory = true)
+        {
+            _n = n;
+            _K = kfactor;
+            _withMarginOfVictory = withMarginOfVictory;
+        }
+
+        public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
+        {
             var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
             decimal actualResult = ActualResult(gameScore1, gameScore2);
 
@@ -15,16 +24,15 @@ namespace Rankings.Core.Services
                 ? ratingPlayer1 - ratingPlayer2
                 : ratingPlayer2 - ratingPlayer1;
 
-            var marginOfVicoryMultiplier = MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff);
-            //var marginOfVicoryMultiplier = 1;
+            var marginOfVicoryMultiplier = _withMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
 
             var outcome1 = (actualResult - expectedOutcome1);
-            var player1Delta = K * outcome1 * marginOfVicoryMultiplier;
+            var player1Delta = _K * outcome1 * marginOfVicoryMultiplier;
 
             return player1Delta;
         }
 
-        private static decimal ActualResult(int gameScore1, int gameScore2)
+        private decimal ActualResult(int gameScore1, int gameScore2)
         {
             if (gameScore1 == gameScore2)
                 return 0.5m;
@@ -32,7 +40,7 @@ namespace Rankings.Core.Services
             return gameScore1 > gameScore2 ? 1 : 0;
         }
 
-        public static decimal MarginOfVictoryMultiplier(int gameScore1, int gameScore2, decimal winnerEloDiff)
+        public decimal MarginOfVictoryMultiplier(int gameScore1, int gameScore2, decimal winnerEloDiff)
         {
             if (gameScore1 == gameScore2)
                 return 1;
@@ -41,15 +49,14 @@ namespace Rankings.Core.Services
                    (2.2m / (winnerEloDiff * 0.001m + 2.2m));
         }
 
-        public static decimal CalculateExpectation(decimal ratingPlayer1, decimal ratingPlayer2)
+        public decimal CalculateExpectation(decimal ratingPlayer1, decimal ratingPlayer2)
         {
             return ExpectationForWinningOneSet(ratingPlayer1, ratingPlayer2);
         }
 
-        private static decimal ExpectationForWinningOneSet(decimal ratingPlayer1, decimal ratingPlayer2)
+        private decimal ExpectationForWinningOneSet(decimal ratingPlayer1, decimal ratingPlayer2)
         {
-            decimal n = 400;
-            decimal exponent = (ratingPlayer2 - ratingPlayer1) / n;
+            decimal exponent = (ratingPlayer2 - ratingPlayer1) / _n;
             decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
 
             return expected;

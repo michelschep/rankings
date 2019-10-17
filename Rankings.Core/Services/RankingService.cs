@@ -9,10 +9,16 @@ namespace Rankings.Core.Services
     public class RankingService : IRankingService
     {
         private readonly IRepository _repository;
+        private readonly decimal _initalElo;
+        private readonly int _precision;
+        private readonly EloCalculator _eloCalculator;
 
-        public RankingService(IRepository repository)
+        public RankingService(IRepository repository, decimal initalElo = 1200, int kfactor = 50, int n = 400, bool withMarginOfVictory = true, int precision = 0)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _initalElo = initalElo;
+            _precision = precision;
+            _eloCalculator = new EloCalculator(n, kfactor, withMarginOfVictory);
         }
 
         public IEnumerable<Profile> Profiles()
@@ -131,14 +137,14 @@ namespace Rankings.Core.Services
                     NumberOfSetWins = 0,
                     NumberOfSets = 0,
                     NumberOfWins = 0,
-                    Ranking = 1200,
+                    Ranking = _initalElo,
                     History = ""
                 });
             }
 
             foreach (var game in games)
             {
-                // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
+                // TODO for tafel tennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0
                 if (game.Score1 == 0 && game.Score2 == 0)
                     continue;
@@ -190,12 +196,12 @@ namespace Rankings.Core.Services
                 ratings[game.Player2].NumberOfSetWins += game.Score2;
             }
 
-            return new Ranking(ratings);
+            return new Ranking(ratings, _precision);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
         {
-            return EloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
+            return _eloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
         }
     }
 }
