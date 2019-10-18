@@ -43,7 +43,7 @@ namespace Rankings.UnitTests
             _rankingService.RegisterGame(CreateGame(amy, cindy, 1, 0));
             _rankingService.RegisterGame(CreateGame(dirk, cindy, 1, 0));
 
-            var ranking = _rankingService.Ranking();
+            var ranking = _rankingService.Ranking("tafeltennis");
 
             ranking.ForPlayer(amy.EmailAddress).Ranking.Should().Be(104.71m);
             ranking.ForPlayer(dirk.EmailAddress).Ranking.Should().Be(104.59m);

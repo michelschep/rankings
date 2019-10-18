@@ -23,7 +23,7 @@ namespace Rankings.UnitTests
         [Fact]
         public void WhenNoGamesTheRankingIsEmpty()
         {
-            var ranking = _rankingService.Ranking();
+            var ranking = _rankingService.Ranking("tafeltennis");
 
             Assert.True(!ranking.PlayerStats().Any());
         }
@@ -137,7 +137,7 @@ namespace Rankings.UnitTests
 
             // Act
             _rankingService.RegisterGame(CreateTafeltennisGame("One", "Two", score1, score2));
-            var ranking = _rankingService.Ranking();
+            var ranking = _rankingService.Ranking("tafeltennis");
 
             // Assert
             ranking.ForPlayer("one@domain.nl").Ranking.Should().Be(expectedElo1);

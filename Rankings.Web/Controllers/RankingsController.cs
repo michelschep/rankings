@@ -18,9 +18,11 @@ namespace Rankings.Web.Controllers
             _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
         }
 
-        public IActionResult Index()
+        [HttpGet("/rankings")]
+        [HttpGet("/rankings/{gametype}")]
+        public IActionResult Index(string gameType = "tafeltennis")
         {
-            var ratings = _rankingService.Ranking();
+            var ratings = _rankingService.Ranking(gameType);
             var ranking = 1;
 
             var model = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames >= 5)

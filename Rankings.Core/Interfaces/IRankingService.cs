@@ -21,8 +21,7 @@ namespace Rankings.Core.Interfaces
         void CreateProfile(Profile profile);
         void Save(Game entity);
 
-        Ranking Ranking();
+        Ranking Ranking(string gameType);
         decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2);
-        //decimal CalculateExpectationForBestOf(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfSets);
     }
 }

@@ -116,7 +116,7 @@ namespace Rankings.Core.Services
             return _repository.List<Venue>();
         }
 
-        public Ranking Ranking()
+        public Ranking Ranking(string gameType)
         {
             // TODO fix loading entities
             var players = Profiles().ToList();
@@ -124,7 +124,7 @@ namespace Rankings.Core.Services
             var venues = GetVenues();
 
             var games = Games().ToList()
-                .Where(game => game.GameType.Code == "tafeltennis")
+                .Where(game => game.GameType.Code == gameType)
                 .OrderBy(game => game.RegistrationDate)
                 .ToList();
 
