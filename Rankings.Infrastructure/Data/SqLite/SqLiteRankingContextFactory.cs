@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace Rankings.Infrastructure.Data
+namespace Rankings.Infrastructure.Data.SqLite
 {
     public class SqLiteRankingContextFactory : IRankingContextFactory
     {
@@ -20,20 +20,6 @@ namespace Rankings.Infrastructure.Data
             
             var rankingContext = new RankingContext(optionsBuilder.Options);
             rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
-
-            return rankingContext;
-        }
-    }
-
-    public class InMemoryRankingContextFactory : IRankingContextFactory
-    {
-        public RankingContext Create(string connectionString)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
-            optionsBuilder.UseInMemoryDatabase(connectionString);
-
-            var rankingContext = new RankingContext(optionsBuilder.Options);
-            rankingContext.Database.EnsureCreated();
 
             return rankingContext;
         }

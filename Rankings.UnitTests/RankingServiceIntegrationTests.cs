@@ -4,6 +4,7 @@ using FluentAssertions;
 using Rankings.Core.Entities;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
+using Rankings.Infrastructure.Data.InMemory;
 using Xunit;
 
 namespace Rankings.UnitTests

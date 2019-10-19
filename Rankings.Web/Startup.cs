@@ -12,6 +12,7 @@ using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
+using Rankings.Infrastructure.Data.SqLite;
 using Rankings.Web.Controllers;
 
 namespace Rankings.Web
