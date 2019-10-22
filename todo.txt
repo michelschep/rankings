@@ -31,13 +31,19 @@ X ranking per type
 - add elo explanation page + calculator home page + matrix with possible elo points (opponents x results)
 - add comments game
 - games per player
-- all games gametype
 - avatar for player
 - doubles 
 - player can see readonly profile other players
 - player progress graph with elo score (time x elo, d3)
 - website favicon
+- player can be disabled
+- social media stream (results, records, comments)
+- elo mean per winning games/losing games
+- 
 
+-ranking
+  - points that can be gained per player in ranking or other page
+  
 - stats
     - overall records
       - clean sheets (streak)
@@ -48,10 +54,19 @@ X ranking per type
     - mutual duels
     - angst gegner
     - #days number one (counts as one when started as one and ended as one)
+        - or number of minutes number one
     - social%
     - goat score (highest elo)
-    - stars (depend on how many weeks number 1: 4 weeks, 12 weeks, ...)
-   - notifications
+    - stars (depend on how many weeks/time number 1: 4 weeks, 12 weeks, ...)
+    - moving average
+    - points/game
+    - max/min elo
+    - badgets
+      - 1 minute number one
+      - 7*24 hours number 1
+          
+    
+- notifications
     - with signalR: game results, breaking news
     - email: summary, game approval
     
