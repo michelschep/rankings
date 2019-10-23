@@ -60,6 +60,9 @@ X ranking per type
     - stars (depend on how many weeks/time number 1: 4 weeks, 12 weeks, ...)
     - moving average
     - points/game
+    - most elo points win streak
+    - most elo points lose streak
+    - 
     - max/min elo
     - badgets
       - 1 minute number one
