@@ -30,6 +30,7 @@ X ranking per type
 - Do not show email address in list of players
 
 ====================== wishes ======================================================
+- expose API for other apps (iphone app, android, windows notifier)
 - add elo explanation page + calculator home page + matrix with possible elo points (opponents x results)
 - add comments game
 - avatar for player
