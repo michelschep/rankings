@@ -43,7 +43,8 @@ namespace Rankings.Web.Controllers
                 RegistrationDate = type.RegistrationDate.AddHours(2).Date.ToString("yyyy/MM/dd"),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2,
-                IsEditable = type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name
+                IsEditable = (type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name)
+                             && type.RegistrationDate > DateTime.Now.AddHours(-24)
             }).ToList();
 
             return View(model);
@@ -94,7 +95,7 @@ namespace Rankings.Web.Controllers
         {
             var game = _rankingService.Games().Single(g => g.Id == id);
 
-            if (game.RegistrationDate < DateTime.Now.AddHours(-72))
+            if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return RedirectToAction("Index", "Rankings");
 
             if (game.Player1.EmailAddress != User.Identity.Name &&
