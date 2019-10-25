@@ -31,7 +31,8 @@ namespace Rankings.Web.Controllers
                 // TODO quick fix. Do not show same player games. 
                 // TODO edit game is missing and needed.
                 .Where(game => game.Player1.EmailAddress != game.Player2.EmailAddress)
-                .OrderByDescending(game => game.RegistrationDate).Take(10);
+                .Where(game => game.RegistrationDate > DateTime.Now.AddDays(-7))
+                .OrderByDescending(game => game.RegistrationDate);
             var model = games.Select(type => new GameSummaryViewModel
             {
                 Id = type.Id,
