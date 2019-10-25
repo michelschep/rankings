@@ -37,19 +37,19 @@ namespace Rankings.Web.Controllers
                     History = ToHistory(r)
                 });
 
-            var unranked = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames < 5)
-                .OrderByDescending(pair => pair.Value.NumberOfGames)
-                .Select(r => new RankingViewModel
-                {
-                    WinPercentage = "-",
-                    SetWinPercentage = "-",
-                    Points = "-",
-                    NamePlayer = r.Key.DisplayName + " (" + r.Value.NumberOfGames + ")",
-                    Ranking = "",
-                    History = new List<char>()
-                });
+//            var unranked = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames < 5)
+//                .OrderByDescending(pair => pair.Value.NumberOfGames)
+//                .Select(r => new RankingViewModel
+//                {
+//                    WinPercentage = "-",
+//                    SetWinPercentage = "-",
+//                    Points = "-",
+//                    NamePlayer = r.Key.DisplayName + " (" + r.Value.NumberOfGames + ")",
+//                    Ranking = "",
+//                    History = new List<char>()
+//                });
 
-            return View(model.Union(unranked));
+            return View(model);
         }
 
         private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
