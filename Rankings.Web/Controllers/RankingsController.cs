@@ -54,7 +54,7 @@ namespace Rankings.Web.Controllers
 
         private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
         {
-            return r.Value.History.ToCharArray().Reverse().ToList().Take(5).Reverse().ToList();
+            return r.Value.History.ToCharArray().Reverse().ToList().Take(7).Reverse().ToList();
         }
     }
 }
