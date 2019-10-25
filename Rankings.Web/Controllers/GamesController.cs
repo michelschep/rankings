@@ -92,6 +92,9 @@ namespace Rankings.Web.Controllers
         {
             var game = _rankingService.Games().Single(g => g.Id == id);
 
+            if (game.RegistrationDate < DateTime.Now.AddHours(-72))
+                return RedirectToAction("Index", "Rankings");
+
             var viewModel = new CreateGameViewModel
             {
                 Players = _rankingService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
