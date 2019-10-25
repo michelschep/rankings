@@ -26,5 +26,7 @@ namespace Rankings.Web.Models
         [Display(Name = "Score")]
 
         public int ScoreSecondPlayer { get; set; }
+
+        public bool IsEditable { get; set; }
     }
 }

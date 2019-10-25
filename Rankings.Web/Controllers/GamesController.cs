@@ -42,7 +42,8 @@ namespace Rankings.Web.Controllers
                 NameSecondPlayer = type.Player2.DisplayName,
                 RegistrationDate = type.RegistrationDate.AddHours(2).Date.ToString("yyyy/MM/dd"),
                 ScoreFirstPlayer = type.Score1,
-                ScoreSecondPlayer = type.Score2
+                ScoreSecondPlayer = type.Score2,
+                IsEditable = type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name
             }).ToList();
 
             return View(model);

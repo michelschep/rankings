@@ -58,12 +58,15 @@
                     @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new {id=item.Id }) |
-                    @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) |
+                    @if (item.IsEditable)
+                    {
+                        @Html.ActionLink("Edit", "Edit", new {id = item.Id})
+                    }
+                    @* @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) | *@
                     @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
                     {
                         @Html.Raw(" | ")
-                        @Html.ActionLink("Delete", "Delete", new { Id = item.Id })
+                        @Html.ActionLink("Delete", "Delete", new {Id = item.Id})
                     }
                 </td>
             </tr>
