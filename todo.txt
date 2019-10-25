@@ -55,6 +55,7 @@ X ranking per type
     - highest elo win
     - mutual duels
     - angst gegner
+    - classic games (#>=45 and win%>=40 both players)
     - #days number one (counts as one when started as one and ended as one)
         - or number of minutes number one
     - social%
