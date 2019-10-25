@@ -96,6 +96,10 @@ namespace Rankings.Web.Controllers
             if (game.RegistrationDate < DateTime.Now.AddHours(-72))
                 return RedirectToAction("Index", "Rankings");
 
+            if (game.Player1.EmailAddress != User.Identity.Name &&
+                game.Player2.EmailAddress != User.Identity.Name)
+                return RedirectToAction("Index", "Rankings");
+
             var viewModel = new CreateGameViewModel
             {
                 Players = _rankingService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
