@@ -39,7 +39,9 @@ namespace Rankings.Core.Services
                 History = stats.History,
                 NumberOfSetWins = stats.NumberOfSetWins,
                 NumberOfWins = stats.NumberOfWins,
-                NumberOfGames = stats.NumberOfGames
+                NumberOfGames = stats.NumberOfGames,
+                WinPercentage = Math.Round((100m*stats.NumberOfWins/stats.NumberOfGames), 2, MidpointRounding.AwayFromZero),
+                SetWinPercentage = Math.Round((100m*stats.NumberOfSetWins/stats.NumberOfSets), 2, MidpointRounding.AwayFromZero),
             };
         }
     }

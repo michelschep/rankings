@@ -8,5 +8,7 @@
         public int NumberOfSets { get; set; }
         public int NumberOfSetWins { get; set; }
         public string History { get; set; }
+        public decimal WinPercentage { get; set; }
+        public decimal SetWinPercentage { get; set; }
     }
 }
