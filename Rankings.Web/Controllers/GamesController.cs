@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,21 @@ namespace Rankings.Web.Controllers
         }
 
         public IActionResult Index()
+        {
+            var model = CreateGameSummaryViewModels();
+
+            return View(model);
+        }
+
+        [Authorize(Policy = "AdminPolicy")]
+        public IActionResult AdminIndex()
+        {
+            var model = CreateGameSummaryViewModels();
+
+            return View(model);
+        }
+
+        private List<GameSummaryViewModel> CreateGameSummaryViewModels()
         {
             // TODO fix loading entities
             var players = _rankingService.Profiles();
@@ -42,11 +58,11 @@ namespace Rankings.Web.Controllers
                 RegistrationDate = type.RegistrationDate.AddHours(2).Date.ToString("yyyy/MM/dd"),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2,
-                IsEditable = (type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name)
-                             && type.RegistrationDate > DateTime.Now.AddHours(-24)
+                IsEditable =
+                    (type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name)
+                    && type.RegistrationDate > DateTime.Now.AddHours(-24)
             }).ToList();
-
-            return View(model);
+            return model;
         }
 
         public IActionResult Create()
@@ -143,7 +159,7 @@ namespace Rankings.Web.Controllers
         public IActionResult Delete(int id)
         {
             _rankingService.DeleteGame(id);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Rankings");
         }
     }
 }
