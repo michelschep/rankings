@@ -55,7 +55,7 @@ namespace Rankings.Web.Controllers
                 Venue = type.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = type.Player1.DisplayName,
                 NameSecondPlayer = type.Player2.DisplayName,
-                RegistrationDate = type.RegistrationDate.AddHours(2).Date.ToString("yyyy/MM/dd"),
+                RegistrationDate = type.RegistrationDate.AddHours(2).ToString("yyyy/MM/dd H:mm"),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2,
                 IsEditable =
