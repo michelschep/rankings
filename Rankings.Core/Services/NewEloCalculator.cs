@@ -54,7 +54,6 @@ namespace Rankings.Core.Services
             var expectationOneSet = ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
 
             decimal total = 0;
-            decimal index = 0;
             for (var scorePlayer1 = numberOfGames; scorePlayer1 >= 0; --scorePlayer1)
             {
                 var scoreOtherPlayer = numberOfGames - scorePlayer1;
@@ -63,7 +62,6 @@ namespace Rankings.Core.Services
                 var factor = scorePlayer1 == scoreOtherPlayer ? 0.5m : 1;
 
                 total += factor * ChanceOfHavingThisResultAllSetsPlayed(scorePlayer1, scoreOtherPlayer, expectationOneSet);
-                ++index;
             }
 
             return total;
@@ -79,7 +77,7 @@ namespace Rankings.Core.Services
         public static decimal ChanceOfHavingThisResultAllSetsPlayed(int gameScore1, int gameScore2, decimal expectedToWinSet)
         {
             var numberOfSets = gameScore1 + gameScore2;
-            var factorial = (decimal)Factorial(numberOfSets) / (decimal)(Factorial(gameScore1) * Factorial(gameScore2));
+            var factorial = Factorial(numberOfSets) / (decimal)(Factorial(gameScore1) * Factorial(gameScore2));
 
             return factorial * (decimal)(Math.Pow((double) (1 - expectedToWinSet), gameScore2)
                              * Math.Pow((double) expectedToWinSet, gameScore1));
@@ -88,7 +86,7 @@ namespace Rankings.Core.Services
         public static decimal ChanceOfHavingThisResultInBestOf(int gameScore1, int gameScore2, decimal expectedToWinSet)
         {
             var numberOfSets = gameScore1 + gameScore2;
-            var factorial = (double)Factorial(numberOfSets) / (double)(Factorial(gameScore1) * Factorial(gameScore2));
+            var factorial = Factorial(numberOfSets) / (double)(Factorial(gameScore1) * Factorial(gameScore2));
             var chance = Math.Pow((double) expectedToWinSet, gameScore1)
                          * Math.Pow((double) (1 - expectedToWinSet), gameScore2);
 

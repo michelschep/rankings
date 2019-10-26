@@ -4,14 +4,14 @@ namespace Rankings.Core.Services
 {
     public class EloCalculator
     {
-        private static decimal _n = 50; // 400
-        private static decimal _K = 5; // 50
+        private static decimal _n = 400;
+        private static decimal _k = 50; 
         private readonly bool _withMarginOfVictory;
 
         public EloCalculator(decimal n, decimal kfactor, bool withMarginOfVictory = true)
         {
             _n = n;
-            _K = kfactor;
+            _k = kfactor;
             _withMarginOfVictory = withMarginOfVictory;
         }
 
@@ -27,7 +27,7 @@ namespace Rankings.Core.Services
             var marginOfVicoryMultiplier = _withMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
 
             var outcome1 = (actualResult - expectedOutcome1);
-            var player1Delta = _K * outcome1 * marginOfVicoryMultiplier;
+            var player1Delta = _k * outcome1 * marginOfVicoryMultiplier;
 
             return player1Delta;
         }
