@@ -44,7 +44,10 @@ X ranking per type
 
 -ranking
   - points that can be gained per player in ranking or other page
-  
+
+- player of the month (talent of the month: gained most elo point)
+- tournament options
+
 - stats
     - games per player
     - overall records
