@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -39,8 +34,8 @@ namespace Rankings.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             
-            //services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-            //    .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
+                .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
             services.AddAuthorization(options =>
             {
@@ -107,32 +102,6 @@ namespace Rankings.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-        }
-    }
-
-    public class DevelopmentAuthenticationMiddleware
-    {
-        private readonly RequestDelegate _next;
-
-        public DevelopmentAuthenticationMiddleware(RequestDelegate next)
-        {
-            this._next = next ?? throw new ArgumentNullException(nameof (next));
-        }
-
-        public async Task Invoke(HttpContext context)
-        {
-            var identity = new GenericIdentity("admin@domain.nl");
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Role, "Admin"),
-                new Claim(ClaimTypes.Name, "Name"),
-                new Claim(ClaimTypes.Surname, "Surname")
-            };
-            identity.AddClaims(claims);
-            
-            context.User = new ClaimsPrincipal(identity);
-            
-            await this._next(context);
         }
     }
 }
