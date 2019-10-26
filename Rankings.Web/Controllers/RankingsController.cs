@@ -30,8 +30,8 @@ namespace Rankings.Web.Controllers
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {
-                    WinPercentage = r.Value.WinPercentage.ToString(CultureInfo.InvariantCulture),
-                    SetWinPercentage = r.Value.SetWinPercentage.ToString(CultureInfo.InvariantCulture),
+                    WinPercentage = Math.Round(r.Value.WinPercentage,0,MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture),
+                    SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture),
                     Points = Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture), 
                     NamePlayer = r.Key.DisplayName, 
                     Ranking = (ranking++) + ".",

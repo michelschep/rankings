@@ -16,7 +16,22 @@ namespace Rankings.Core.Services
             _precision = precision;
         }
 
-        public Dictionary<Profile, PlayerStats> OldRatings => _ratings;
+        public Dictionary<Profile, PlayerStats> OldRatings
+        {
+            get { return ConvertRatings(_ratings); }
+        }
+
+        private Dictionary<Profile, PlayerStats> ConvertRatings(Dictionary<Profile, PlayerStats> ratings)
+        {
+            var convertedRatings = new Dictionary<Profile, PlayerStats>();
+            foreach (var stats in ratings)
+            {
+                convertedRatings.Add(stats.Key, ConvertStats(stats.Value, _precision));
+                ;
+            }
+
+            return convertedRatings;
+        }
 
         public PlayerStats ForPlayer(string emailAddress)
         {
