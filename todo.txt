@@ -1,50 +1,50 @@
+====================== bugs =======================================================
+X "the reply url specified in the request does not match the reply urls configured for the application 87b..."
+
 ====================== technical debt ==============================================
 X unit tests for elo ranking calculation
+X take draws into account when calculating elo (conatins a bug now)
+X ranking per type
+
 / refactor calculation
 - add logging
 - get rid of ugly loading of missing entities (use include)
-- player can approve its game
-- player can disapprove its game
-- admin can do both always for all games
-X take draws into account when calculating elo (conatins a bug now)
-- show +elo next to game
-- alignment elo score in ranking. Not always 4 digits.
-X ranking per type
-- links to rankings on home page
-- alignment elo score in ranking. Not always 4 digits.
-
-- bugs
-  - "the reply url specified in the request does not match the reply urls configured for the application 87b..."
-  
-- authorization
-  - player can only edit his/her game
-  - admin can edit venues and game types
-  
+ 
+====================== must haves ================================================
 - validation
   - do not enter same player name twice in game
   - name player unique
   - names player contains at least visisble character
   - for table tennis 0-0 is not allowed
-  - edit older games not possible (after let's say 72 hours). Only admin can change older games
-  
-- Do not show email address in list of players
+  X edit older games not possible (after let's say 72 hours). Only admin can change older games
 
-====================== wishes ======================================================
+X player can only edit his/her game
+- player can approve its game
+- player can disapprove its game
+- admin can do both always for all games
+X admin can edit venues and game types
+
+====================== should have =================================================
+- Do not show email address in list of players
+- links to rankings on home page
+- show +elo next to game
+- player can see readonly profile other players
+
+====================== could have ================================================
+- alignment elo score in ranking. Not always 4 digits.
+- alignment elo score in ranking. Not always 4 digits.
+- website favicon
+
+====================== back log ======================================================
 - expose API for other apps (iphone app, android, windows notifier)
 - add elo explanation page + calculator home page + matrix with possible elo points (opponents x results)
 - add comments game
 - avatar for player
 - doubles 
-- player can see readonly profile other players
 - player progress graph with elo score (time x elo, d3)
-- website favicon
 - player can be disabled
 - social media stream (results, records, comments)
 - elo mean per winning games/losing games
-
--ranking
-  - points that can be gained per player in ranking or other page
-
 - player of the month (talent of the month: gained most elo point)
 - tournament options
 
@@ -75,8 +75,9 @@ X ranking per type
       - 25 victories, etc
       - 1300+, 1400+, 1500+ (when crossing from one to next level)
           
-    
 - notifications
     - with signalR: game results, breaking news
     - email: summary, game approval
     
+======================= done =====================================================
+X points that can be gained per player in ranking or other page
