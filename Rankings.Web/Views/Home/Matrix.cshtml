@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Rankings.Web.Controllers.EloMatrixViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Elo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EloDiff)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Draw)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OneZeroWin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OneZeroLost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TwoZeroWin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TwoZeroLost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreeZeroWin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreeZeroLost)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Elo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EloDiff)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Draw)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OneZeroWin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OneZeroLost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TwoZeroWin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TwoZeroLost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThreeZeroWin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThreeZeroLost)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
