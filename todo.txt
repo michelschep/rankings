@@ -1,5 +1,5 @@
 ====================== bugs =======================================================
-
+- Game registration time should be stored with timeoffset to keep the proper time(zone)
 
 ====================== technical debt ==============================================
 / refactor calculation
