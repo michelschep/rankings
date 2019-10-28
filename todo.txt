@@ -1,34 +1,28 @@
 ====================== bugs =======================================================
-X "the reply url specified in the request does not match the reply urls configured for the application 87b..."
+
 
 ====================== technical debt ==============================================
-X unit tests for elo ranking calculation
-X take draws into account when calculating elo (conatins a bug now)
-X ranking per type
-
 / refactor calculation
 - add logging
 - get rid of ugly loading of missing entities (use include)
- 
+- use migrations for database updates
+
 ====================== must haves ================================================
 - validation
   - do not enter same player name twice in game
   - name player unique
   - names player contains at least visisble character
   - for table tennis 0-0 is not allowed
-  X edit older games not possible (after let's say 72 hours). Only admin can change older games
-
-X player can only edit his/her game
+  
 - player can approve its game
 - player can disapprove its game
 - admin can do both always for all games
-X admin can edit venues and game types
 
 ====================== should have =================================================
+- player can see readonly profile other players
 - Do not show email address in list of players
 - links to rankings on home page
-- show +elo next to game
-- player can see readonly profile other players
+- show + elo next to game
 
 ====================== could have ================================================
 - alignment elo score in ranking. Not always 4 digits.
@@ -36,19 +30,23 @@ X admin can edit venues and game types
 - website favicon
 
 ====================== back log ======================================================
+- add elo explanation page 
+X matrix with possible elo points (opponents x results)
 - expose API for other apps (iphone app, android, windows notifier)
-- add elo explanation page + calculator home page + matrix with possible elo points (opponents x results)
-- add comments game
 - avatar for player
-- doubles 
-- player progress graph with elo score (time x elo, d3)
 - player can be disabled
+- doubles 
 - social media stream (results, records, comments)
-- elo mean per winning games/losing games
-- player of the month (talent of the month: gained most elo point)
 - tournament options
 
+- notifications
+    - with signalR: game results, breaking news
+    - email: summary, game approval
+    
 - stats
+    - player progress graph with elo score (time x elo, d3)
+    - player of the month (talent of the month: gained most elo point)
+    - elo mean per winning games/losing games
     - games per player
     - overall records
       - clean sheets (streak)
@@ -75,9 +73,14 @@ X admin can edit venues and game types
       - 25 victories, etc
       - 1300+, 1400+, 1500+ (when crossing from one to next level)
           
-- notifications
-    - with signalR: game results, breaking news
-    - email: summary, game approval
+
     
 ======================= done =====================================================
 X points that can be gained per player in ranking or other page
+X unit tests for elo ranking calculation
+X take draws into account when calculating elo (conatins a bug now)
+X ranking per type
+X "the reply url specified in the request does not match the reply urls configured for the application 87b..."
+X edit older games not possible (after let's say 72 hours). Only admin can change older games
+X player can only edit his/her game
+X admin can edit venues and game types
