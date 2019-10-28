@@ -1,5 +1,6 @@
 ====================== bugs =======================================================
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
+- Remove own account name from matrix (that is confusing)
 
 ====================== technical debt ==============================================
 / refactor calculation
