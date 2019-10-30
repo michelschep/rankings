@@ -2,6 +2,7 @@
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
 - Remove own account name from matrix (that is confusing)
+- Admin cannot edit game (is redirected to ranking). Admin should always be able to edit a game
 
 ====================== technical debt ==============================================
 / refactor calculation
