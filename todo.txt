@@ -1,5 +1,6 @@
 ====================== bugs =======================================================
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
+- fix registration dates before and after wintertijd (prod database)
 - Remove own account name from matrix (that is confusing)
 
 ====================== technical debt ==============================================
@@ -45,6 +46,17 @@ X matrix with possible elo points (opponents x results)
     - email: summary, game approval
     
 - stats
+    - overall
+        - number of days/weeks finishing as number one
+        - number of minutes/hours number one
+        - number of *own* games number one (more own games bacause that means player is challanging his/her own ranking)
+    
+    - stat per game X-Y
+      - total stes-X-total sets-Y
+      - total elo-X - total elo-Y
+    - stats per player
+    
+    
     - player progress graph with elo score (time x elo, d3)
     - player of the month (talent of the month: gained most elo point)
     - elo mean per winning games/losing games
