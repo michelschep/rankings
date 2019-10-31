@@ -11,6 +11,7 @@
 - use migrations for database updates
 
 ====================== must haves ================================================
+- edit venues
 - validation
   - do not enter same player name twice in game
   - name player unique
@@ -51,36 +52,37 @@ X matrix with possible elo points (opponents x results)
         - number of days/weeks finishing as number one
         - number of minutes/hours number one
         - number of *own* games number one (more own games bacause that means player is challanging his/her own ranking)
-    
+        - list of number ones (total time, total games)
+        - player of the month (talent of the month: gained most elo point)
+        - clean sheets (streak)
+        - winning streak
+        - highest elo win
+        - classic games (#>=45 and win%>=40 both players)
+        - most elo points win streak (can also include drwas against higher ranked player)
+        - most elo points lose streak
+        
+    - list of all games
+        - points/game, points/winning games, points/losing games
+        
     - stat per game X-Y
-      - total stes-X-total sets-Y
-      - total elo-X - total elo-Y
+        - total sets-X-total sets-Y
+        - total elo-X - total elo-Y
+        - clean sheets (streak)
+        - winning streak
+        
     - stats per player
-    
-    
-    - player progress graph with elo score (time x elo, d3)
-    - player of the month (talent of the month: gained most elo point)
-    - elo mean per winning games/losing games
-    - games per player
-    - overall records
-      - clean sheets (streak)
-      - winning streak
-    - idem on player level  
-    - player of the month (monthly stats)
-    - highest elo win
-    - mutual duels
-    - angst gegner
-    - classic games (#>=45 and win%>=40 both players)
-    - #days number one (counts as one when started as one and ended as one)
-        - or number of minutes number one
-    - social%
-    - moving average (4/8 weeks) versus current elo
-    - points/game, points/winning games, points/losing games
-    - most elo points win streak (can also include drwas against higher ranked player)
-    - most elo points lose streak
+        - social%
         - max (goat score)/min elo ever
-    - stars (depend on how many weeks/time number 1: 4 weeks, 12 weeks, ...)
+        - player progress graph with elo score (time x elo, d3)
+        - elo avergae per winning games/losing games
+        - games per player
+        - clean sheets (streak)
+        - winning streak
+        - angst gegner
+        - moving average (4/8 weeks) versus current elo
+        
     - badgets
+      - stars (depend on how many weeks/time number 1: 4 weeks, 12 weeks, ...)
       - 1 minute number one
       - 7*24 hours number 1
       - 25 games, 100 games, 250 games, 500 games, 1000 games
