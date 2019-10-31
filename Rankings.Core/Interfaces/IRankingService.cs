@@ -20,7 +20,9 @@ namespace Rankings.Core.Interfaces
         void CreateVenue(Venue venue);
         void DeleteGame(int registrationDate);
         void CreateProfile(Profile profile);
+
         void Save(Game entity);
+        void Save(Venue entity);
 
         Ranking Ranking(string gameType, DateTime rankingDate);
         Ranking Ranking(string gameType);

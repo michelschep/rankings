@@ -111,6 +111,11 @@ namespace Rankings.Core.Services
             _repository.Update(entity);
         }
 
+        public void Save(Venue entity)
+        {
+            _repository.Update(entity);
+        }
+
         public IEnumerable<Venue> GetVenues()
         {
             return _repository.List<Venue>();

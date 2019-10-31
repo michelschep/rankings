@@ -2,11 +2,11 @@
 
 namespace Rankings.Web.Models
 {
-    public class VenueViewModel
+    public class EditVenueViewModel
     {
         [Display(Name = "Id")]
         public int Id { get; set; }
-
+        
         [Display(Name = "Code")]
         [StringLength(30)]
         [Required]
