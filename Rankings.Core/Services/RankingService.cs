@@ -118,6 +118,11 @@ namespace Rankings.Core.Services
 
         public Ranking Ranking(string gameType)
         {
+            return Ranking(gameType, DateTime.MaxValue);
+        }
+
+        public Ranking Ranking(string gameType, DateTime rankingDate)
+        {
             // TODO fix loading entities
             var players = Profiles().ToList();
             var gameTypes = GameTypes();
@@ -129,7 +134,7 @@ namespace Rankings.Core.Services
                 .ToList();
 
             var ratings = new Dictionary<Profile, PlayerStats>();
-            foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
+            foreach (var profile in games.SelectMany(game => new List<Profile> {game.Player1, game.Player2}).Distinct())
             {
                 ratings.Add(profile, new PlayerStats()
                 {
@@ -142,7 +147,7 @@ namespace Rankings.Core.Services
                 });
             }
 
-            foreach (var game in games)
+            foreach (var game in games.Where(game => game.RegistrationDate <= rankingDate))
             {
                 // TODO for tafel tennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0
@@ -157,7 +162,8 @@ namespace Rankings.Core.Services
                 var oldRatingPlayer1 = ratings[game.Player1];
                 var oldRatingPlayer2 = ratings[game.Player2];
 
-                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.Ranking, oldRatingPlayer2.Ranking, game.Score1, game.Score2);
+                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.Ranking, oldRatingPlayer2.Ranking, game.Score1,
+                    game.Score2);
 
                 var newRatingPlayer1 = oldRatingPlayer1.Ranking + player1Delta;
                 var newRatingPlayer2 = oldRatingPlayer2.Ranking - player1Delta;

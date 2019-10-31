@@ -22,7 +22,7 @@ namespace Rankings.Web.Controllers
         public IActionResult Index()
         {
             var model = CreateGameSummaryViewModels();
-
+            Response.Headers.Add("Refresh", "30");
             return View(model);
         }
 
