@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Rankings.Core.Services;
+using Rankings.Infrastructure.Data;
+using Rankings.Infrastructure.Data.SqLite;
 
 namespace Rankings.ConsoleApp
 {
@@ -7,48 +12,80 @@ namespace Rankings.ConsoleApp
     {
         static void Main(string[] args)
         {
-//            Console.WriteLine("Hello World!");
-//
-//            for (int elo = 0; elo < 400; elo += 100)
-//            {
-//                var oneSetChance = EloCalculator.ExpectationOneSet(1200, 1200 + elo);
-//                var resultChance = EloCalculator.ChanceOfHavingThisResultAllSetsPlayed(1, 0, oneSetChance);
-//                Console.WriteLine($"1200 - {1200 + elo} => {oneSetChance}/{resultChance}");
-//            }
-//            Console.WriteLine("================================");
-            
-            for (int elo = 0; elo < 400; elo += 100)
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                .Build();
+
+            var database = config["Database"];
+
+            var connectionFactory = new SqLiteDatabaseConnectionFactory();
+            var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory);
+            var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
+
+            var repository = repositoryFactory.Create(database);
+            var rankingService = new RankingService(repository);
+
+            DateTime currentDate = DateTime.MinValue;
+
+            var days = new Dictionary<string, int>();
+            var games = new Dictionary<string, int>();
+            var minutes = new Dictionary<string, double>();
+
+            var previousNumberOne = "";
+            var allGames = rankingService.Games().ToList();
+            DateTime previousGame = allGames.First().RegistrationDate;
+            foreach (var game in allGames)
             {
-                Console.WriteLine($"========== 1200 - { 1200 + elo}  ======================");
-                var oneSetChance = NewEloCalculator.ExpectationOneSet(1200, 1200 + elo);
-                var resultChance = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(2, 1, oneSetChance);
-                Console.WriteLine($"2-1 => {oneSetChance}/{resultChance}");
-                resultChance = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(1, 2, oneSetChance);
-                Console.WriteLine($"1-2 => {oneSetChance}/{resultChance}");
-                resultChance = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(3, 0, oneSetChance);
-                Console.WriteLine($"3-0 => {oneSetChance}/{resultChance}");
-                resultChance = NewEloCalculator.ChanceOfHavingThisResultAllSetsPlayed(0, 3, oneSetChance);
-                Console.WriteLine($"0-3 => {oneSetChance}/{resultChance}");
+                var ranking = rankingService.Ranking("tafeltennis", game.RegistrationDate);
+                var keyValuePair = ranking.OldRatings.OrderByDescending(pair => pair.Value.Ranking).First();
+
+                if (!games.ContainsKey(keyValuePair.Key.DisplayName))
+                    games[keyValuePair.Key.DisplayName] = 0;
+
+                games[keyValuePair.Key.DisplayName] += 1;
+
+                if (!minutes.ContainsKey(keyValuePair.Key.DisplayName))
+                    minutes[keyValuePair.Key.DisplayName] = 0;
+
+                var gameRegistrationDate = (game.RegistrationDate - previousGame);
+                var delta = gameRegistrationDate.TotalMinutes;
+                if (previousNumberOne != "")
+                    minutes[previousNumberOne] += delta;
+
+                if (game.RegistrationDate.Date > currentDate)
+                {
+                    currentDate = game.RegistrationDate;
+                    Console.WriteLine($"\t{keyValuePair.Key.DisplayName}: {keyValuePair.Value.Ranking}");
+                    if (!days.ContainsKey(keyValuePair.Key.DisplayName))
+                        days[keyValuePair.Key.DisplayName] = 0;
+
+                    days[keyValuePair.Key.DisplayName] += 1;
+                    Console.WriteLine($"Date: {currentDate}");
+                }
+
+                Console.WriteLine($"==>{keyValuePair.Key.DisplayName}: {keyValuePair.Value.Ranking}");
+
+                previousNumberOne = keyValuePair.Key.DisplayName;
+                previousGame = game.RegistrationDate;
             }
-//            Console.WriteLine("================================");
-//
-//            for (int elo = 0; elo < 400; elo += 100)
-//            {
-//                var expectation = EloCalculator.CalculateExpectationForBestOf(1200, 1200 + elo, 1);
-//                Console.WriteLine($"1200 - {1200+elo} => {expectation}");
-//            }
-//            Console.WriteLine("================================");
-//            for (int elo = 0; elo < 400; elo += 100)
-//            {
-//                var expectation = EloCalculator.CalculateExpectationForBestOf(1200, 1200 + elo, 2);
-//                Console.WriteLine($"1200 - {1200 + elo} => {expectation}");
-//            }
-//            Console.WriteLine("================================");
-//            for (int elo = 0; elo < 400; elo += 100)
-//            {
-//                var expectation = EloCalculator.CalculateExpectationForBestOf(1200, 1200 + elo, 3);
-//                Console.WriteLine($"1200 - {1200 + elo} => {expectation}");
-//            }
+
+            foreach (var day in days)
+            {
+                Console.WriteLine($"DAY {day.Key}: {day.Value}");
+            }
+
+            foreach (var game in games)
+            {
+                Console.WriteLine($"GAME {game.Key}: {game.Value}");
+            }
+
+            foreach (var game in minutes)
+            {
+                Console.WriteLine($"MINUTES {game.Key}: {game.Value}");
+            }
             Console.ReadLine();
         }
     }
