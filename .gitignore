@@ -334,3 +334,7 @@ Rankings.Web/appsettings.local.json
 Rankings.Web/appsettings.development.json
 
 Rankings.Web/appsettings.production.json
+
+Rankings.ConsoleApp/appsettings.development.json
+
+Rankings.Web/appsettings.test.json
