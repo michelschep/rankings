@@ -26,7 +26,7 @@ namespace Rankings.Web.Controllers
             var ratings = _rankingService.Ranking(gameType);
             var ranking = 1;
             
-            var model = ratings.OldRatings.Where(pair => pair.Value.NumberOfGames >= 5)
+            var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= 5)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {
@@ -43,7 +43,7 @@ namespace Rankings.Web.Controllers
 
         private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
         {
-            return r.Value.History.ToCharArray().Reverse().ToList().Take(7).Reverse().ToList();
+            return r.Value.History.ToCharArray().Reverse().ToList().Take(11).Reverse().ToList();
         }
     }
 }

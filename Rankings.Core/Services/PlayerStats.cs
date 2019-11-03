@@ -10,5 +10,6 @@
         public string History { get; set; }
         public decimal WinPercentage { get; set; }
         public decimal SetWinPercentage { get; set; }
+        public int TimeNumberOne { get; set; }
     }
 }

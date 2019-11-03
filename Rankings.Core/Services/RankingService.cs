@@ -135,6 +135,7 @@ namespace Rankings.Core.Services
 
             var games = Games().ToList()
                 .Where(game => game.GameType.Code == gameType)
+                .Where(game => game.RegistrationDate <= rankingDate)
                 .OrderBy(game => game.RegistrationDate)
                 .ToList();
 
@@ -152,7 +153,7 @@ namespace Rankings.Core.Services
                 });
             }
 
-            foreach (var game in games.Where(game => game.RegistrationDate <= rankingDate))
+            foreach (var game in games)
             {
                 // TODO for tafel tennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0

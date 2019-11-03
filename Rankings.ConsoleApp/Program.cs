@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Rankings.Core.Services;
@@ -11,6 +10,28 @@ namespace Rankings.ConsoleApp
     class Program
     {
         static void Main(string[] args)
+        {
+            var statsService = CreateStatisticsService();
+            var lastPointInTime = statsService.CalculateStats();
+
+            Console.WriteLine("");
+            foreach (var item in lastPointInTime.Value.NewPlayerStats.OrderByDescending(pair => pair.Value.Rating))
+            {
+                var playerStats = item.Value;
+                var timespan = new TimeSpan(0, playerStats.TimeNumberOne, 0);
+                var meanEloWon = (int)(playerStats.EloWonOpponent / (playerStats.Won + 0.00001m));
+                var meanEloLost = (int)(playerStats.EloLostOpponent / (playerStats.Lost + 0.00001m));
+                var meanEloTotal = (int)((playerStats.EloLostOpponent + playerStats.EloWonOpponent) /
+                                         (playerStats.NumberOfGames + 0.00001m));
+                // {100*playerStats.NumberOfCleanSheets/playerStats.NumberOfGames, 5}
+                Console.WriteLine($"\t{item.Key.DisplayName,-20} {playerStats.Rating,5} {playerStats.WonStreakRecord,3} {playerStats.WonStreak,3} {playerStats.GoatRating,5}  {timespan,15} ");
+                //Console.WriteLine($"\t{item.Key.DisplayName, -20} {playerStats.Rating, 5} {playerStats.WonStreakRecord, 3} {playerStats.WonStreak, 3} {playerStats.GoatRating, 5} {meanEloTotal, 5} {meanEloWon, 5} {meanEloLost, 5} {timespan, 15} ");
+            }
+
+            Console.ReadLine();
+        }
+
+        private static StatisticsService CreateStatisticsService()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -27,66 +48,8 @@ namespace Rankings.ConsoleApp
 
             var repository = repositoryFactory.Create(database);
             var rankingService = new RankingService(repository);
-
-            DateTime currentDate = DateTime.MinValue;
-
-            var days = new Dictionary<string, int>();
-            var games = new Dictionary<string, int>();
-            var minutes = new Dictionary<string, double>();
-
-            var previousNumberOne = "";
-            var allGames = rankingService.Games().ToList();
-            DateTime previousGame = allGames.First().RegistrationDate;
-            foreach (var game in allGames)
-            {
-                var ranking = rankingService.Ranking("tafeltennis", game.RegistrationDate);
-                var keyValuePair = ranking.OldRatings.OrderByDescending(pair => pair.Value.Ranking).First();
-
-                if (!games.ContainsKey(keyValuePair.Key.DisplayName))
-                    games[keyValuePair.Key.DisplayName] = 0;
-
-                games[keyValuePair.Key.DisplayName] += 1;
-
-                if (!minutes.ContainsKey(keyValuePair.Key.DisplayName))
-                    minutes[keyValuePair.Key.DisplayName] = 0;
-
-                var gameRegistrationDate = (game.RegistrationDate - previousGame);
-                var delta = gameRegistrationDate.TotalMinutes;
-                if (previousNumberOne != "")
-                    minutes[previousNumberOne] += delta;
-
-                if (game.RegistrationDate.Date > currentDate)
-                {
-                    currentDate = game.RegistrationDate;
-                    Console.WriteLine($"\t{keyValuePair.Key.DisplayName}: {keyValuePair.Value.Ranking}");
-                    if (!days.ContainsKey(keyValuePair.Key.DisplayName))
-                        days[keyValuePair.Key.DisplayName] = 0;
-
-                    days[keyValuePair.Key.DisplayName] += 1;
-                    Console.WriteLine($"Date: {currentDate}");
-                }
-
-                Console.WriteLine($"==>{keyValuePair.Key.DisplayName}: {keyValuePair.Value.Ranking}");
-
-                previousNumberOne = keyValuePair.Key.DisplayName;
-                previousGame = game.RegistrationDate;
-            }
-
-            foreach (var day in days)
-            {
-                Console.WriteLine($"DAY {day.Key}: {day.Value}");
-            }
-
-            foreach (var game in games)
-            {
-                Console.WriteLine($"GAME {game.Key}: {game.Value}");
-            }
-
-            foreach (var game in minutes)
-            {
-                Console.WriteLine($"MINUTES {game.Key}: {game.Value}");
-            }
-            Console.ReadLine();
+            var statsService = new StatisticsService(rankingService);
+            return statsService;
         }
     }
 }
