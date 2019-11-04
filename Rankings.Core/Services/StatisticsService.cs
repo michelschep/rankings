@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rankings.Core.Entities;
-using Rankings.Core.Services;
+using Rankings.Core.Interfaces;
 
-namespace Rankings.ConsoleApp
+namespace Rankings.Core.Services
 {
-    public class StatisticsService
+    public class StatisticsService : IStatisticsService
     {
-        private readonly RankingService _rankingService;
+        private readonly IGamesService _gamesService;
+        private readonly EloCalculator _eloCalculator;
+        private readonly decimal _initalElo;
+        private readonly int _precision;
 
-        public StatisticsService(RankingService rankingService)
+        public StatisticsService(IGamesService gamesService, decimal initalElo = 1200, int kfactor = 50, int n = 400, bool withMarginOfVictory = true, int precision = 0)
         {
-            _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _initalElo = initalElo;
+            _precision = precision;
+            _eloCalculator = new EloCalculator(n, kfactor, withMarginOfVictory);
         }
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats()
@@ -23,8 +29,8 @@ namespace Rankings.ConsoleApp
             var games = new Dictionary<string, int>();
             var minutes = new Dictionary<string, double>();
 
-            _rankingService.GameTypes();
-            var allGames = _rankingService.Games().Where(g => g.GameType.Code == "tafeltennis").ToList();
+            _gamesService.GameTypes();
+            var allGames = _gamesService.Games().Where(g => g.GameType.Code == "tafeltennis").ToList();
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
             var Now = DateTime.Now;
             dateTimes.Add(Now);
@@ -49,7 +55,7 @@ namespace Rankings.ConsoleApp
 
             foreach (var pointInTime in history)
             {
-                var ranking = _rankingService.Ranking("tafeltennis", pointInTime.Key);
+                var ranking = Ranking("tafeltennis", pointInTime.Key);
                 pointInTime.Value.Ranking = ranking;
 
                 // Create stats for all players
@@ -64,7 +70,7 @@ namespace Rankings.ConsoleApp
             foreach (var pointInTime in history)
             {
                 // Init data player stats
-                InitStats(_rankingService, previousPointInTimeDate, pointInTime, previousPointInTimeRankingStats);
+                InitStats(previousPointInTimeDate, pointInTime, previousPointInTimeRankingStats);
 
                 // game stats
                 CalculateGameStats(pointInTime.Value, previousPointInTimeRankingStats);
@@ -102,11 +108,106 @@ namespace Rankings.ConsoleApp
             
         }
 
+        
+        public Ranking Ranking(string gameType)
+        {
+            return Ranking(gameType, DateTime.MaxValue);
+        }
 
-        private static void InitStats(RankingService rankingService, DateTime? previousPointInTimeDate,
+        public Ranking Ranking(string gameType, DateTime rankingDate)
+        {
+            // TODO fix loading entities
+            var players = _gamesService.Profiles().ToList();
+            var gameTypes = _gamesService.GameTypes();
+            var venues = _gamesService.GetVenues();
+
+            var games = _gamesService.Games()
+                .Where(game => game.GameType.Code == gameType)
+                .Where(game => game.RegistrationDate <= rankingDate)
+                .OrderBy(game => game.RegistrationDate)
+                .ToList();
+
+            var ratings = new Dictionary<Profile, PlayerStats>();
+            foreach (var profile in games.SelectMany(game => new List<Profile> {game.Player1, game.Player2}).Distinct())
+            {
+                ratings.Add(profile, new PlayerStats()
+                {
+                    NumberOfGames = 0,
+                    NumberOfSetWins = 0,
+                    NumberOfSets = 0,
+                    NumberOfWins = 0,
+                    Ranking = _initalElo,
+                    History = ""
+                });
+            }
+
+            foreach (var game in games)
+            {
+                // TODO for tafel tennis a 0-0 is not a valid result. For time related games it is possible
+                // For now ignore a 0-0
+                if (game.Score1 == 0 && game.Score2 == 0)
+                    continue;
+
+                // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
+                // It should not be possible to enter these games.
+                if (game.Player1.EmailAddress == game.Player2.EmailAddress)
+                    continue;
+
+                var oldRatingPlayer1 = ratings[game.Player1];
+                var oldRatingPlayer2 = ratings[game.Player2];
+
+                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.Ranking, oldRatingPlayer2.Ranking, game.Score1,
+                    game.Score2);
+
+                var newRatingPlayer1 = oldRatingPlayer1.Ranking + player1Delta;
+                var newRatingPlayer2 = oldRatingPlayer2.Ranking - player1Delta;
+
+                ratings[game.Player1].Ranking = newRatingPlayer1;
+                ratings[game.Player2].Ranking = newRatingPlayer2;
+
+                ratings[game.Player1].NumberOfGames += 1;
+                ratings[game.Player2].NumberOfGames += 1;
+
+                ratings[game.Player1].NumberOfWins += game.Score1 > game.Score2 ? 1 : 0;
+                ratings[game.Player2].NumberOfWins += game.Score2 > game.Score1 ? 1 : 0;
+
+                if (game.Score1 > game.Score2)
+                {
+                    ratings[game.Player1].History += "W";
+                    ratings[game.Player2].History += "L";
+                }
+
+                if (game.Score1 < game.Score2)
+                {
+                    ratings[game.Player1].History += "L";
+                    ratings[game.Player2].History += "W";
+                }
+
+                if (game.Score1 == game.Score2)
+                {
+                    ratings[game.Player1].History += "D";
+                    ratings[game.Player2].History += "D";
+                }
+
+                ratings[game.Player1].NumberOfSets += game.Score1 + game.Score2;
+                ratings[game.Player2].NumberOfSets += game.Score1 + game.Score2;
+
+                ratings[game.Player1].NumberOfSetWins += game.Score1;
+                ratings[game.Player2].NumberOfSetWins += game.Score2;
+            }
+
+            return new Ranking(ratings, _precision);
+        }
+
+        public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
+        {
+            return _eloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
+        }
+
+        private void InitStats(DateTime? previousPointInTimeDate,
             KeyValuePair<DateTime, RankingStats> pointInTime, RankingStats previousPointInTimeRankingStats)
         {
-            var deprecatedRatingsKeys = rankingService.Ranking("tafeltennis").DeprecatedRatings.Keys;
+            var deprecatedRatingsKeys = Ranking("tafeltennis").DeprecatedRatings.Keys;
             foreach (var profile in deprecatedRatingsKeys)
             {
                 if (previousPointInTimeDate == null)

@@ -12,9 +12,9 @@ namespace Rankings.Web.Controllers
 {
     public class RankingsController : Controller
     {
-        private readonly IRankingService _rankingService;
+        private readonly IStatisticsService _rankingService;
 
-        public RankingsController(IRankingService rankingService)
+        public RankingsController(IStatisticsService rankingService)
         {
             _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
         }
@@ -43,7 +43,7 @@ namespace Rankings.Web.Controllers
 
         private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
         {
-            return r.Value.History.ToCharArray().Reverse().ToList().Take(11).Reverse().ToList();
+            return r.Value.History.ToCharArray().Reverse().ToList().Take(7).Reverse().ToList();
         }
     }
 }

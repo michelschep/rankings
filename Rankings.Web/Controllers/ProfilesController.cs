@@ -14,19 +14,19 @@ namespace Rankings.Web.Controllers
     public class ProfilesController : Controller
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IRankingService _rankingService;
+        private readonly IGamesService _gamesService;
 
-        public ProfilesController(IHttpContextAccessor httpContextAccessor, IRankingService rankingService)
+        public ProfilesController(IHttpContextAccessor httpContextAccessor, IGamesService gamesService)
         {
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
         }
 
         public IActionResult Index()
         {
             ActivateCurrentUser();
 
-            var list = _rankingService.Profiles().Select(profile => new ProfileViewModel(profile.EmailAddress, profile.DisplayName));
+            var list = _gamesService.Profiles().Select(profile => new ProfileViewModel(profile.EmailAddress, profile.DisplayName));
 
             return View(list);
         }
@@ -39,7 +39,7 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(CreateProfileViewModel viewModel)
         {
-            _rankingService.CreateProfile(new Profile
+            _gamesService.CreateProfile(new Profile
             {
                 EmailAddress = viewModel.EmailAddress,
                 DisplayName = viewModel.DisplayName
@@ -58,7 +58,7 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Edit(ProfileViewModel profileViewModel)
         {
-            _rankingService.UpdateDisplayName(profileViewModel.EmailAddress, profileViewModel.DisplayName);
+            _gamesService.UpdateDisplayName(profileViewModel.EmailAddress, profileViewModel.DisplayName);
 
             return View("Details", profileViewModel);
         }
@@ -75,13 +75,13 @@ namespace Rankings.Web.Controllers
             var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             var name = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname).Value;
 
-            _rankingService.ActivateProfile(email, name);
+            _gamesService.ActivateProfile(email, name);
         }
 
         private ProfileViewModel ResolveProfileViewModel()
         {
             var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            var profile = _rankingService.ProfileFor(email);
+            var profile = _gamesService.ProfileFor(email);
             var profileViewModel = new ProfileViewModel(profile.EmailAddress, profile.DisplayName);
             return profileViewModel;
         }

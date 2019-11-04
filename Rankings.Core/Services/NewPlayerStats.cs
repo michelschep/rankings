@@ -1,6 +1,6 @@
 ﻿using Rankings.Core.Entities;
 
-namespace Rankings.ConsoleApp
+namespace Rankings.Core.Services
 {
     public class NewPlayerStats
     {

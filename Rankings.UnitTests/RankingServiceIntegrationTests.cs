@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Rankings.Core.Entities;
+using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
@@ -11,20 +12,22 @@ namespace Rankings.UnitTests
 {
     public class RankingServiceIntegrationTests
     {
-        private readonly RankingService _rankingService;
+        private readonly IGamesService _gamesService;
+        private readonly IStatisticsService _statisticsService;
 
         public RankingServiceIntegrationTests()
         {
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
-            _rankingService = new RankingService(repository);
+            _gamesService = new GamesService(repository);
+            _statisticsService = new StatisticsService(_gamesService);
         }
 
         [Fact]
         public void WhenNoGamesTheRankingIsEmpty()
         {
-            var ranking = _rankingService.Ranking("tafeltennis");
+            var ranking = _statisticsService.Ranking("tafeltennis");
 
             Assert.True(!ranking.PlayerStats().Any());
         }
@@ -37,8 +40,8 @@ namespace Rankings.UnitTests
                 EmailAddress = "email@address.nl",
                 DisplayName = "Display Name"
             };
-            _rankingService.CreateProfile(expectedPlayer);
-            var actualPlayer = _rankingService.ProfileFor("EMAIL@ADDRESS.NL");
+            _gamesService.CreateProfile(expectedPlayer);
+            var actualPlayer = _gamesService.ProfileFor("EMAIL@ADDRESS.NL");
 
             // Assert
             actualPlayer.Should().Be(expectedPlayer);
@@ -47,7 +50,7 @@ namespace Rankings.UnitTests
         [Fact]
         public void WhenPlayerCannotBeFound()
         {
-            var actualPlayer = _rankingService.ProfileFor("does-not-exist@domain.nl");
+            var actualPlayer = _gamesService.ProfileFor("does-not-exist@domain.nl");
 
             // Assert
             actualPlayer.Should().Be(null);
@@ -59,7 +62,7 @@ namespace Rankings.UnitTests
             var emptyGame = new Game();
             
             // Assert
-            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+            _gamesService.Invoking(r => r.RegisterGame(emptyGame))
                 .Should().Throw<Exception>()
                 .WithMessage("Cannot register game because player1 is not specified");
         }
@@ -71,7 +74,7 @@ namespace Rankings.UnitTests
             {
                 EmailAddress = "player1@domail.nl"
             };
-            _rankingService.CreateProfile(player1);
+            _gamesService.CreateProfile(player1);
 
             var emptyGame = new Game
             {
@@ -79,7 +82,7 @@ namespace Rankings.UnitTests
             };
 
             // Assert
-            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+            _gamesService.Invoking(r => r.RegisterGame(emptyGame))
                 .Should().Throw<Exception>()
                 .WithMessage("Cannot register game because player2 is not specified");
         }
@@ -93,7 +96,7 @@ namespace Rankings.UnitTests
             };
 
             // Assert
-            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+            _gamesService.Invoking(r => r.RegisterGame(emptyGame))
                 .Should().Throw<Exception>()
                 .WithMessage("Cannot register game because player1 is not registered");
         }
@@ -105,7 +108,7 @@ namespace Rankings.UnitTests
             {
                 EmailAddress = "player1@domail.nl"
             };
-            _rankingService.CreateProfile(player1);
+            _gamesService.CreateProfile(player1);
 
             var emptyGame = new Game
             {
@@ -114,7 +117,7 @@ namespace Rankings.UnitTests
             };
 
             // Assert
-            _rankingService.Invoking(r => r.RegisterGame(emptyGame))
+            _gamesService.Invoking(r => r.RegisterGame(emptyGame))
                 .Should().Throw<Exception>()
                 .WithMessage("Cannot register game because player2 is not registered");
         }
@@ -132,13 +135,13 @@ namespace Rankings.UnitTests
         public void WhenFirstGameIsVictory(int score1, int score2, int expectedElo1, int expectedElo2)
         {
             // Arrange
-            _rankingService.CreateProfile(CreateProfile("One"));
-            _rankingService.CreateProfile(CreateProfile("Two"));
-            _rankingService.CreateGameType(CreateTafeltennisGameType());
+            _gamesService.CreateProfile(CreateProfile("One"));
+            _gamesService.CreateProfile(CreateProfile("Two"));
+            _gamesService.CreateGameType(CreateTafeltennisGameType());
 
             // Act
-            _rankingService.RegisterGame(CreateTafeltennisGame("One", "Two", score1, score2));
-            var ranking = _rankingService.Ranking("tafeltennis");
+            _gamesService.RegisterGame(CreateTafeltennisGame("One", "Two", score1, score2));
+            var ranking = _statisticsService.Ranking("tafeltennis");
 
             // Assert
             ranking.ForPlayer("one@domain.nl").Ranking.Should().Be(expectedElo1);
@@ -147,12 +150,12 @@ namespace Rankings.UnitTests
 
         private Game CreateTafeltennisGame(string player1, string player2, int score1, int score2)
         {
-            var gameTypes = _rankingService.GameTypes();
+            var gameTypes = _gamesService.GameTypes();
             return new Game
             {
                 GameType = gameTypes.Single(type => type.Code == "tafeltennis"),
-                Player1 = _rankingService.ProfileFor($"{player1}@domain.nl"),
-                Player2 = _rankingService.ProfileFor($"{player2}@domain.nl"),
+                Player1 = _gamesService.ProfileFor($"{player1}@domain.nl"),
+                Player2 = _gamesService.ProfileFor($"{player2}@domain.nl"),
                 Score1 = score1,
                 Score2 = score2
             };

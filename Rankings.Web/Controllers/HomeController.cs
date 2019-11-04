@@ -17,11 +17,11 @@ namespace Rankings.Web.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly IRankingService _rankingService;
+        private readonly IStatisticsService _statisticsService;
 
-        public HomeController(IRankingService rankingService)
+        public HomeController(IStatisticsService rankingService)
         {
-            _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
         }
 
         public IActionResult Index()
@@ -32,7 +32,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult WhatIf(WhatIfModel model)
         {
-            var deltaFirstPlayer = _rankingService.CalculateDeltaFirstPlayer(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
+            var deltaFirstPlayer = _statisticsService.CalculateDeltaFirstPlayer(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
             model.Delta = Math.Round(deltaFirstPlayer, 2, MidpointRounding.AwayFromZero);
             model.ExpectedToWinSet = NewEloCalculator.ExpectationOneSet(model.RatingPlayer1, model.RatingPlayer2);
             model.ExpectedToWinGame = NewEloCalculator.CalculateExpectationForResult(model.RatingPlayer1, model.RatingPlayer2, model.GameScore1, model.GameScore2);
@@ -47,7 +47,7 @@ namespace Rankings.Web.Controllers
 
             // TODO make it work for other types as well
             // TODO maybe better some build in types if it really means something different. Or consts to avoid strings all over the place.
-            var ratings = _rankingService.Ranking("tafeltennis").DeprecatedRatings;
+            var ratings = _statisticsService.Ranking("tafeltennis").DeprecatedRatings;
             var thisPlayerElo = ratings.First(pair => pair.Key.EmailAddress == User.Identity.Name).Value.Ranking;
             foreach (var stats in ratings.OrderByDescending(pair => pair.Value.Ranking))
             {
@@ -71,7 +71,7 @@ namespace Rankings.Web.Controllers
 
         private int CalculateDeltaResult(decimal thisPlayerElo, KeyValuePair<Profile, PlayerStats> stats, int gameScore1, int gameScore2)
         {
-            var deltaFirstPlayer = _rankingService.CalculateDeltaFirstPlayer(thisPlayerElo, stats.Value.Ranking, gameScore1, gameScore2);
+            var deltaFirstPlayer = _statisticsService.CalculateDeltaFirstPlayer(thisPlayerElo, stats.Value.Ranking, gameScore1, gameScore2);
             return (int) Math.Round(deltaFirstPlayer, 0, MidpointRounding.AwayFromZero);
         }
 

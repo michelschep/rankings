@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Rankings.Core.Entities;
-using Rankings.Core.Services;
 
-namespace Rankings.ConsoleApp
+namespace Rankings.Core.Services
 {
     public class RankingStats
     {

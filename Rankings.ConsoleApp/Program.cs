@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Rankings.Core;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.SqLite;
@@ -47,7 +48,7 @@ namespace Rankings.ConsoleApp
             var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
 
             var repository = repositoryFactory.Create(database);
-            var rankingService = new RankingService(repository);
+            var rankingService = new GamesService(repository);
             var statsService = new StatisticsService(rankingService);
             return statsService;
         }

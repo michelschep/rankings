@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Rankings.Core.Entities;
-using Rankings.Core.Services;
 
 namespace Rankings.Core.Interfaces
 {
-    public interface IRankingService
+    public interface IGamesService
     {
         IEnumerable<Venue> GetVenues();
         IEnumerable<Profile> Profiles();
@@ -23,9 +21,5 @@ namespace Rankings.Core.Interfaces
 
         void Save(Game entity);
         void Save(Venue entity);
-
-        Ranking Ranking(string gameType, DateTime rankingDate);
-        Ranking Ranking(string gameType);
-        decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2);
     }
 }

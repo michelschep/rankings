@@ -11,16 +11,16 @@ namespace Rankings.Web.Controllers
     [Authorize(Policy = "AdminPolicy")]
     public class VenuesController : Controller
     {
-        private readonly IRankingService _rankingService;
+        private readonly IGamesService _gamesService;
 
-        public VenuesController(IRankingService rankingService)
+        public VenuesController(IGamesService gamesService)
         {
-            _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
         }
 
         public IActionResult Index()
         {
-            var gameTypes = _rankingService.GetVenues();
+            var gameTypes = _gamesService.GetVenues();
             var model = gameTypes.Select(type => new VenueViewModel
             {
                 Id = type.Id,
@@ -39,7 +39,7 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(VenueViewModel model)
         {
-            _rankingService.CreateVenue(new Venue
+            _gamesService.CreateVenue(new Venue
             {
                 Code = model.Code,
                 DisplayName = model.DisplayName
@@ -50,7 +50,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Edit(int id)
         {
-            var venue = _rankingService.GetVenues().Single(v => v.Id == id);
+            var venue = _gamesService.GetVenues().Single(v => v.Id == id);
             var venueViewModel = new EditVenueViewModel()
             {
                 Id = venue.Id,
@@ -63,12 +63,12 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Edit(EditVenueViewModel viewModel)
         {
-            var venue = _rankingService.GetVenues().Single(v => v.Id == viewModel.Id);
+            var venue = _gamesService.GetVenues().Single(v => v.Id == viewModel.Id);
 
             venue.DisplayName = viewModel.DisplayName;
             venue.Code = viewModel.Code;
 
-            _rankingService.Save(venue);
+            _gamesService.Save(venue);
 
             return RedirectToAction("Index");
         }

@@ -12,11 +12,11 @@ namespace Rankings.Web.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly IRankingService _rankingService;
+        private readonly IGamesService _gamesService;
 
-        public GamesController(IRankingService rankingService)
+        public GamesController(IGamesService gamesService)
         {
-            _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
         }
 
         public IActionResult Index()
@@ -37,11 +37,11 @@ namespace Rankings.Web.Controllers
         private List<GameSummaryViewModel> CreateGameSummaryViewModels()
         {
             // TODO fix loading entities
-            var players = _rankingService.Profiles();
-            var venues = _rankingService.GetVenues();
-            var gameTypes = _rankingService.GameTypes();
+            var players = _gamesService.Profiles();
+            var venues = _gamesService.GetVenues();
+            var gameTypes = _gamesService.GameTypes();
 
-            var games = _rankingService
+            var games = _gamesService
                 .Games()
                 // TODO quick fix. Do not show same player games. 
                 // TODO edit game is missing and needed.
@@ -67,7 +67,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Create()
         {
-            var profiles = _rankingService.Profiles().ToList();
+            var profiles = _gamesService.Profiles().ToList();
             var currentProfile = profiles.Single(profile => profile.EmailAddress == User.Identity.Name);
             var oponentPlayers = profiles
                 .Where(profile => profile.EmailAddress != User.Identity.Name)
@@ -79,8 +79,8 @@ namespace Rankings.Web.Controllers
                 NameFirstPlayer = User.Identity.Name,
                 Players = new SelectListItem[1] {new SelectListItem(currentProfile.DisplayName, currentProfile.EmailAddress) },
                 OpponentPlayers = oponentPlayers,
-                GameTypes = _rankingService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _rankingService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code))
+                GameTypes = _gamesService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code))
             });
         }
 
@@ -88,9 +88,9 @@ namespace Rankings.Web.Controllers
         public IActionResult Create(CreateGameViewModel model)
         {
             // TODO must be a better way. For now make it work and no per or mem issue.
-            var players = _rankingService.Profiles().ToList();
-            var gameTypes = _rankingService.GameTypes().ToList();
-            var venues = _rankingService.GetVenues().ToList();
+            var players = _gamesService.Profiles().ToList();
+            var gameTypes = _gamesService.GameTypes().ToList();
+            var venues = _gamesService.GetVenues().ToList();
 
             var game = new Game
             {
@@ -102,13 +102,13 @@ namespace Rankings.Web.Controllers
                 Score2 = model.ScoreSecondPlayer,
             };
 
-            _rankingService.RegisterGame(game);
+            _gamesService.RegisterGame(game);
             return RedirectToAction("Index", "Rankings");
         }
 
         public IActionResult Edit(int id)
         {
-            var game = _rankingService.Games().Single(g => g.Id == id);
+            var game = _gamesService.Games().Single(g => g.Id == id);
 
             if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return RedirectToAction("Index", "Rankings");
@@ -119,9 +119,9 @@ namespace Rankings.Web.Controllers
 
             var viewModel = new CreateGameViewModel
             {
-                Players = _rankingService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
-                GameTypes = _rankingService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _rankingService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Players = _gamesService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
+                GameTypes = _gamesService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
                 RegistrationDate = game.RegistrationDate,
@@ -139,10 +139,10 @@ namespace Rankings.Web.Controllers
         public IActionResult Edit(CreateGameViewModel model)
         {
             // TODO must be a better way. For now make it work and no per or mem issue.
-            var venues = _rankingService.GetVenues().ToList();
-            var gameTypes = _rankingService.GameTypes().ToList();
+            var venues = _gamesService.GetVenues().ToList();
+            var gameTypes = _gamesService.GameTypes().ToList();
 
-            var game = _rankingService.Games().Single(g => g.Id == model.Id);
+            var game = _gamesService.Games().Single(g => g.Id == model.Id);
 
             //game.RegistrationDate = model.RegistrationDate;
             game.Venue =venues.Single(profile => profile.Code == model.Venue);
@@ -150,7 +150,7 @@ namespace Rankings.Web.Controllers
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
 
-            _rankingService.Save(game);
+            _gamesService.Save(game);
 
             return RedirectToAction("Index", "Rankings");
         }
@@ -158,7 +158,7 @@ namespace Rankings.Web.Controllers
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult Delete(int id)
         {
-            _rankingService.DeleteGame(id);
+            _gamesService.DeleteGame(id);
             return RedirectToAction("Index", "Rankings");
         }
     }

@@ -1,4 +1,5 @@
-﻿using Rankings.Core.SharedKernel;
+﻿using System.Collections.Generic;
+using Rankings.Core.SharedKernel;
 
 namespace Rankings.Core.Entities
 {

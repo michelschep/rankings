@@ -55,17 +55,16 @@ namespace Rankings.Web
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IRankingService, RankingService>((ctx) =>
+            services.AddSingleton<IStatisticsService, StatisticsService>();
+            services.AddSingleton<IGamesService, GamesService>((ctx) =>
             {
                 var connectionFactory = new SqLiteDatabaseConnectionFactory();
                 var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory);
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
-
                 // TODO what if setting is null or empty
                 var repository = repositoryFactory.Create(Configuration["Database"]);
-                var rankingService = new RankingService(repository);
-                
-                return rankingService;
+
+                return new GamesService(repository);
             });
         }
 
