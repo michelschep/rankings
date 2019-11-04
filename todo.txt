@@ -2,16 +2,12 @@
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
 - Remove own account name from matrix (that is confusing)
-- Admin cannot edit game (is redirected to ranking). Admin should always be able to edit a game
 
 ====================== technical debt ==============================================
 / refactor calculation
-- add logging
-- get rid of ugly loading of missing entities (use include)
 - use migrations for database updates
 
 ====================== must haves ================================================
-- edit venues
 - validation
   - do not enter same player name twice in game
   - name player unique
@@ -23,6 +19,7 @@
 - admin can do both always for all games
 
 ====================== should have =================================================
+- add logging
 - player can see readonly profile other players
 - Do not show email address in list of players
 - links to rankings on home page
@@ -35,7 +32,7 @@
 
 ====================== back log ======================================================
 - add elo explanation page 
-X matrix with possible elo points (opponents x results)
+
 - expose API for other apps (iphone app, android, windows notifier)
 - avatar for player
 - player can be disabled
@@ -100,3 +97,7 @@ X "the reply url specified in the request does not match the reply urls configur
 X edit older games not possible (after let's say 72 hours). Only admin can change older games
 X player can only edit his/her game
 X admin can edit venues and game types
+X Admin cannot edit game (is redirected to ranking). Admin should always be able to edit a game
+X matrix with possible elo points (opponents x results)
+X get rid of ugly loading of missing entities (use include)
+X edit venues

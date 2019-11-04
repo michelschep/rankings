@@ -9,5 +9,9 @@ namespace Rankings.Core.Specifications
         public SpecificProfile(string emailAddress): base(p=>string.Equals(p.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase))
         {
         }
+
+        public SpecificProfile(int id): base(p=>p.Id == id)
+        {
+        }
     }
 }

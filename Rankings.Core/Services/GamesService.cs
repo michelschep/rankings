@@ -50,7 +50,7 @@ namespace Rankings.Core.Services
 
         public void UpdateDisplayName(string emailAddress, string displayName)
         {
-            var profile = _repository.List<Profile>().Single(p => p.EmailAddress == emailAddress);
+            var profile = Item<Profile>(new SpecificProfile(emailAddress));
             profile.DisplayName = displayName;
             _repository.Update(profile);
         }
@@ -98,5 +98,11 @@ namespace Rankings.Core.Services
         {
             _repository.Delete(_repository.GetById<Game>(id));
         }
+
+        public bool IsDisplayNameUnique(string displayName)
+        {
+            return !List(new Profiles(displayName)).ToList().Any();
+        }
     }
+
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,13 @@ namespace Rankings.Web.Controllers
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGamesService _gamesService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public ProfilesController(IHttpContextAccessor httpContextAccessor, IGamesService gamesService)
+        public ProfilesController(IHttpContextAccessor httpContextAccessor, IGamesService gamesService, IAuthorizationService authorizationService)
         {
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
         }
 
         public IActionResult Index()
@@ -29,18 +32,25 @@ namespace Rankings.Web.Controllers
             ActivateCurrentUser();
 
             var list = _gamesService.List(new AllProfiles())
-                .Select(profile => new ProfileViewModel(profile.EmailAddress, profile.DisplayName));
+                .Select(profile => new ProfileViewModel
+                {
+                    Id = profile.Id,
+                    EmailAddress = profile.EmailAddress,
+                    DisplayName = profile.DisplayName
+                });
 
             return View(list);
         }
 
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(CreateProfileViewModel viewModel)
+        [Authorize(Policy = "AdminPolicy")]
+        public IActionResult Create(ProfileViewModel viewModel)
         {
             _gamesService.CreateProfile(new Profile
             {
@@ -51,26 +61,53 @@ namespace Rankings.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit(int id)
         {
+            // TODO get rid of this
             ActivateCurrentUser();
 
-            return View(ResolveProfileViewModel());
+            // TODO use mapper
+            var profile = _gamesService.Item(new SpecificProfile(id));
+            var resolveProfileViewModel = new ProfileViewModel
+            {
+                Id = profile.Id,
+                EmailAddress = profile.EmailAddress,
+                DisplayName = profile.DisplayName
+            };
+
+            var authResult = await _authorizationService.AuthorizeAsync(User, resolveProfileViewModel, "ProfileEditPolicy");
+            if (!authResult.Succeeded)
+            {
+                return RedirectToAction("Index", "Rankings");
+            }
+
+            return View(resolveProfileViewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(ProfileViewModel profileViewModel)
+        public async Task<IActionResult> Edit(ProfileViewModel profileViewModel)
         {
-            _gamesService.UpdateDisplayName(profileViewModel.EmailAddress, profileViewModel.DisplayName);
+            //var profile = _gamesService.Item(new SpecificProfile(profileViewModel.Id));
+            var authResult = await _authorizationService.AuthorizeAsync(User, profileViewModel, "ProfileEditPolicy");
+            if (!authResult.Succeeded)
+            {
+                return RedirectToAction("Index", "Rankings");
+            }
 
-            return View("Details", profileViewModel);
+            if (ModelState.IsValid)
+            {
+                _gamesService.UpdateDisplayName(profileViewModel.EmailAddress, profileViewModel.DisplayName);
+                return View("Details", profileViewModel);
+            }
+
+            return View(profileViewModel);
         }
 
-        public IActionResult Details()
+        public IActionResult Details(int id)
         {
             ActivateCurrentUser();
 
-            return View(ResolveProfileViewModel());
+            return View(ResolveProfileViewModel(id));
         }
 
         private void ActivateCurrentUser()
@@ -81,12 +118,17 @@ namespace Rankings.Web.Controllers
             _gamesService.ActivateProfile(email, name);
         }
 
-        private ProfileViewModel ResolveProfileViewModel()
+        private ProfileViewModel ResolveProfileViewModel(int id)
         {
-            var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            var profile = _gamesService.Item(new SpecificProfile(email));
+            //var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            var profile = _gamesService.Item(new SpecificProfile(id));
 
-            return new ProfileViewModel(profile.EmailAddress, profile.DisplayName);
+            return new ProfileViewModel
+            {
+                Id = profile.Id,
+                EmailAddress = profile.EmailAddress,
+                DisplayName = profile.DisplayName
+            };
         }
     }
 }

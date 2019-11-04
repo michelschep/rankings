@@ -20,5 +20,8 @@ namespace Rankings.Core.Interfaces
         void RegisterGame(Game game);
         void Save(Game entity);
         void DeleteGame(int registrationDate);
+
+        // Validations
+        bool IsDisplayNameUnique(string displayName);
     }
 }

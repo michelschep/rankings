@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
@@ -48,6 +45,8 @@ namespace Rankings.Web
                     policy => policy.RequireRole("Admin"));
                 options.AddPolicy("GameEditPolicy",
                     policy => policy.AddRequirements(new GameEditRequirement()));
+                options.AddPolicy("ProfileEditPolicy",
+                    policy => policy.AddRequirements(new ProfileEditRequirement()));
             });
 
             services.AddMvc(options =>
@@ -61,6 +60,7 @@ namespace Rankings.Web
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();
             services.AddSingleton<IStatisticsService, StatisticsService>();
             services.AddSingleton<IGamesService, GamesService>((ctx) =>
             {
@@ -107,44 +107,6 @@ namespace Rankings.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-        }
-    }
-
-    public class GameEditRequirement : IAuthorizationRequirement
-    {
-    }
-
-    public class GameEditAuthorizationHandler : AuthorizationHandler<GameEditRequirement, Game>
-    {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GameEditRequirement requirement, Game resource)
-        {
-            if (IsAuthorized(context, resource))
-            {
-                context.Succeed(requirement);
-                return Task.CompletedTask;
-            }
-
-            context.Fail();
-            return Task.CompletedTask;
-        }
-
-        private bool IsAuthorized(AuthorizationHandlerContext context, Game game)
-        {
-            var user = context.User;
-
-            if (user.IsInRole("Admin"))
-                return true;
-
-            if (game.RegistrationDate < DateTime.Now.AddHours(-24))
-                return false;
-
-            if (user.Identity.Name == game.Player1.EmailAddress)
-                return true;
-
-            if (user.Identity.Name == game.Player2.EmailAddress)
-                return true;
-
-            return false;
         }
     }
 }
