@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Rankings.Core.Entities;
 using Rankings.Web.Models;
 
 namespace Rankings.Web

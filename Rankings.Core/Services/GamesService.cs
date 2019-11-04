@@ -50,7 +50,7 @@ namespace Rankings.Core.Services
 
         public void UpdateDisplayName(string emailAddress, string displayName)
         {
-            var profile = Item<Profile>(new SpecificProfile(emailAddress));
+            var profile = Item(new SpecificProfile(emailAddress));
             profile.DisplayName = displayName;
             _repository.Update(profile);
         }

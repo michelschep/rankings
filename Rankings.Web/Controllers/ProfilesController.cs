@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 using Rankings.Web.Models;
+using Profile = Rankings.Core.Entities.Profile;
 
 namespace Rankings.Web.Controllers
 {
@@ -18,12 +19,15 @@ namespace Rankings.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGamesService _gamesService;
         private readonly IAuthorizationService _authorizationService;
+        private IMapper _mapper;
 
         public ProfilesController(IHttpContextAccessor httpContextAccessor, IGamesService gamesService, IAuthorizationService authorizationService)
         {
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
+            // TODO inject?
+            _mapper = CreateMapper();
         }
 
         public IActionResult Index()
@@ -32,12 +36,7 @@ namespace Rankings.Web.Controllers
             ActivateCurrentUser();
 
             var list = _gamesService.List(new AllProfiles())
-                .Select(profile => new ProfileViewModel
-                {
-                    Id = profile.Id,
-                    EmailAddress = profile.EmailAddress,
-                    DisplayName = profile.DisplayName
-                });
+                .Select(profile => _mapper.Map<Profile, ProfileViewModel>(profile));
 
             return View(list);
         }
@@ -52,11 +51,8 @@ namespace Rankings.Web.Controllers
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult Create(ProfileViewModel viewModel)
         {
-            _gamesService.CreateProfile(new Profile
-            {
-                EmailAddress = viewModel.EmailAddress,
-                DisplayName = viewModel.DisplayName
-            });
+            var profile = _mapper.Map<ProfileViewModel, Profile>(viewModel);
+            _gamesService.CreateProfile(profile);
 
             return RedirectToAction("Index");
         }
@@ -68,12 +64,7 @@ namespace Rankings.Web.Controllers
 
             // TODO use mapper
             var profile = _gamesService.Item(new SpecificProfile(id));
-            var resolveProfileViewModel = new ProfileViewModel
-            {
-                Id = profile.Id,
-                EmailAddress = profile.EmailAddress,
-                DisplayName = profile.DisplayName
-            };
+            var resolveProfileViewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
 
             var authResult = await _authorizationService.AuthorizeAsync(User, resolveProfileViewModel, "ProfileEditPolicy");
             if (!authResult.Succeeded)
@@ -82,6 +73,16 @@ namespace Rankings.Web.Controllers
             }
 
             return View(resolveProfileViewModel);
+        }
+
+        private static IMapper CreateMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Profile, ProfileViewModel>();
+                cfg.CreateMap<ProfileViewModel, Profile>();
+            });
+            return config.CreateMapper();
         }
 
         [HttpPost]
