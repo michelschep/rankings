@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Rankings.Web.Models
 {
-    public class CreateGameViewModel
+    public class GameViewModel
     {
         public int Id { get; set; }
 
         [Display(Name = "Registration Date")]
         [Required]
-        public DateTime RegistrationDate { get; set; }
+        public string RegistrationDate { get; set; }
 
         [Display(Name = "Game Type")]
         [Required]

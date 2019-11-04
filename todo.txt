@@ -4,7 +4,7 @@
 - Remove own account name from matrix (that is confusing)
 
 ====================== technical debt ==============================================
-- Use mapper in controllers
+- Use auto mapper in controllers
 - Rename methods in GamesService
 / refactor calculation
 - use migrations for database updates

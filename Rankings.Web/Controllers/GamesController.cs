@@ -39,13 +39,13 @@ namespace Rankings.Web.Controllers
             return View(model);
         }
 
-        private List<GameSummaryViewModel> CreateGameSummaryViewModels()
+        private List<GameViewModel> CreateGameSummaryViewModels()
         {
             var games = _gamesService
                 .List(new GamesForPeriodSpecification("tafeltennis", DateTime.Now.AddHours(-72), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate);
 
-            var model = games.Select(type => new GameSummaryViewModel
+            var model = games.Select(type => new GameViewModel
             {
                 Id = type.Id,
                 GameType = type.GameType.DisplayName,
@@ -56,10 +56,6 @@ namespace Rankings.Web.Controllers
                 RegistrationDate = type.RegistrationDate.AddHours(2).ToString("yyyy/MM/dd H:mm"),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2,
-                // TODO hide query
-                IsEditable =
-                    (type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name)
-                    && type.RegistrationDate > DateTime.Now.AddHours(-24)
             }).ToList();
             return model;
         }
@@ -71,7 +67,7 @@ namespace Rankings.Web.Controllers
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
-            return View(new CreateGameViewModel
+            return View(new GameViewModel
             {
                 NameFirstPlayer = User.Identity.Name,
                 Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) },
@@ -82,7 +78,7 @@ namespace Rankings.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateGameViewModel model)
+        public IActionResult Create(GameViewModel model)
         {
             var game = new Game
             {
@@ -108,7 +104,7 @@ namespace Rankings.Web.Controllers
                 return RedirectToAction("Index", "Rankings");
             }
 
-            var viewModel = new CreateGameViewModel
+            var viewModel = new GameViewModel
             {
                 Players = _gamesService.List(new AllProfiles())
                     .OrderBy(profile => profile.DisplayName)
@@ -117,7 +113,7 @@ namespace Rankings.Web.Controllers
                 Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
-                RegistrationDate = game.RegistrationDate,
+                RegistrationDate = game.RegistrationDate.ToString(),
                 NameFirstPlayer = game.Player1.EmailAddress,
                 NameSecondPlayer = game.Player2.EmailAddress,
                 GameType = game.GameType.Code,
@@ -129,7 +125,7 @@ namespace Rankings.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(CreateGameViewModel model)
+        public async Task<IActionResult> Edit(GameViewModel model)
         {
             var game = _gamesService.Item(new SpecificGame(model.Id));
 

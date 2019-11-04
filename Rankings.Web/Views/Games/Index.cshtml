@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Authorization
-@model IEnumerable<Rankings.Web.Models.GameSummaryViewModel>
+@model IEnumerable<Rankings.Web.Models.GameViewModel>
 @inject IAuthorizationService AuthorizationService
 
 <p>
@@ -58,16 +58,10 @@
                     @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
                 </td>
                 <td>
-                    @if (item.IsEditable)
+                    @if ((await AuthorizationService.AuthorizeAsync(User, item, "GameEditPolicy")).Succeeded)
                     {
-                        @Html.ActionLink("Edit", "Edit", new {id = item.Id})
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                     }
-                    @* @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) | *@
-@*                     @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded) *@
-@*                     { *@
-@*                         @Html.Raw(" | ") *@
-@*                         @Html.ActionLink("Delete", "Delete", new {Id = item.Id}) *@
-@*                     } *@
                 </td>
             </tr>
         }
