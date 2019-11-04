@@ -24,12 +24,12 @@ namespace Rankings.Web.Controllers
         public IActionResult Index(string gameType, string endDateInput)
         {
             gameType = gameType ?? "tafeltennis";
-            DateTime endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
+            var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
             
             var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
             var ranking = 1;
             
-            var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= 5)
+            var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= 6)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {

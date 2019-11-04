@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,10 +15,13 @@ namespace Rankings.Web.Controllers
     public class GamesController : Controller
     {
         private readonly IGamesService _gamesService;
+        private readonly IAuthorizationService _authorizationService;
+        private const string GameEditPolicy = "GameEditPolicy";
 
-        public GamesController(IGamesService gamesService)
+        public GamesController(IGamesService gamesService, IAuthorizationService authorizationService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
         }
 
         public IActionResult Index()
@@ -94,17 +98,15 @@ namespace Rankings.Web.Controllers
             return RedirectToAction("Index", "Rankings");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             var game = _gamesService.Item(new SpecificGame(id));
 
-            if (game.RegistrationDate < DateTime.Now.AddHours(-24))
+            var authResult = await _authorizationService.AuthorizeAsync(User, game, GameEditPolicy);
+            if (!authResult.Succeeded)
+            {
                 return RedirectToAction("Index", "Rankings");
-
-            // TODO could be better
-            if (game.Player1.EmailAddress != User.Identity.Name &&
-                game.Player2.EmailAddress != User.Identity.Name)
-                return RedirectToAction("Index", "Rankings");
+            }
 
             var viewModel = new CreateGameViewModel
             {
@@ -127,9 +129,16 @@ namespace Rankings.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(CreateGameViewModel model)
+        public async Task<IActionResult> Edit(CreateGameViewModel model)
         {
             var game = _gamesService.Item(new SpecificGame(model.Id));
+
+            var authResult = await _authorizationService.AuthorizeAsync(User, game, GameEditPolicy);
+            if (!authResult.Succeeded)
+            {
+                return RedirectToAction("Index", "Rankings");
+            }
+
             game.Venue = _gamesService.Item(new SpecificVenue(model.Venue));
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
