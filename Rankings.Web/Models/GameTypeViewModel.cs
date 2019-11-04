@@ -13,10 +13,5 @@ namespace Rankings.Web.Models
         [StringLength(30)]
         [Required]
         public string DisplayName { get; set; }
-
-//        public GameTypeViewModel()
-//        {
-//            // TODO needed?
-//        }
     }
 }
