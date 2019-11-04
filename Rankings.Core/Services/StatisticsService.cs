@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Specifications;
 
 namespace Rankings.Core.Services
 {
@@ -29,8 +30,7 @@ namespace Rankings.Core.Services
             var games = new Dictionary<string, int>();
             var minutes = new Dictionary<string, double>();
 
-            _gamesService.GameTypes();
-            var allGames = _gamesService.Games().Where(g => g.GameType.Code == "tafeltennis").ToList();
+            var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue));
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
             var Now = DateTime.Now;
             dateTimes.Add(Now);
@@ -105,10 +105,9 @@ namespace Rankings.Core.Services
             var lastPointInTime = history.OrderByDescending(h => h.Key).First();
 
             return lastPointInTime;
-            
+
         }
 
-        
         public Ranking Ranking(string gameType)
         {
             return Ranking(gameType, DateTime.MaxValue);
@@ -116,19 +115,11 @@ namespace Rankings.Core.Services
 
         public Ranking Ranking(string gameType, DateTime rankingDate)
         {
-            // TODO fix loading entities
-            var players = _gamesService.Profiles().ToList();
-            var gameTypes = _gamesService.GameTypes();
-            var venues = _gamesService.GetVenues();
-
-            var games = _gamesService.Games()
-                .Where(game => game.GameType.Code == gameType)
-                .Where(game => game.RegistrationDate <= rankingDate)
-                .OrderBy(game => game.RegistrationDate)
-                .ToList();
+            var gamesSpecification = new GamesForPeriodSpecification(gameType, DateTime.MinValue, rankingDate);
+            var games = _gamesService.List(gamesSpecification).ToList();
 
             var ratings = new Dictionary<Profile, PlayerStats>();
-            foreach (var profile in games.SelectMany(game => new List<Profile> {game.Player1, game.Player2}).Distinct())
+            foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
             {
                 ratings.Add(profile, new PlayerStats()
                 {
@@ -141,7 +132,7 @@ namespace Rankings.Core.Services
                 });
             }
 
-            foreach (var game in games)
+            foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
                 // TODO for tafel tennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0

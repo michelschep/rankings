@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ardalis.Specification;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.SharedKernel;
+using Rankings.Core.Specifications;
 
 namespace Rankings.Core.Services
 {
@@ -13,12 +16,16 @@ namespace Rankings.Core.Services
         public GamesService(IRepository repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-          
         }
 
-        public IEnumerable<Profile> Profiles()
+        public IEnumerable<T> List<T>(ISpecification<T> specification) where T : BaseEntity
         {
-            return _repository.List<Profile>();
+            return _repository.List<T>(specification);
+        }
+
+        public T Item<T>(ISpecification<T> specification) where T : BaseEntity
+        {
+            return List(specification).SingleOrDefault();
         }
 
         public void ActivateProfile(string email, string displayName)
@@ -33,10 +40,12 @@ namespace Rankings.Core.Services
             });
         }
 
-        public Profile ProfileFor(string email)
+        public void CreateProfile(Profile profile)
         {
-            return _repository.List<Profile>().SingleOrDefault(profile =>
-                string.Equals(profile.EmailAddress, email, StringComparison.CurrentCultureIgnoreCase));
+            if (List(new SpecificProfile(profile.EmailAddress)).Any())
+                return;
+
+            _repository.Add(profile);
         }
 
         public void UpdateDisplayName(string emailAddress, string displayName)
@@ -46,19 +55,19 @@ namespace Rankings.Core.Services
             _repository.Update(profile);
         }
 
-        public IEnumerable<GameType> GameTypes()
+        public void CreateVenue(Venue venue)
         {
-            return _repository.List<GameType>();
+            _repository.Add(venue);
+        }
+
+        public void Save(Venue entity)
+        {
+            _repository.Update(entity);
         }
 
         public void CreateGameType(GameType gameType)
         {
             _repository.Add(gameType);
-        }
-
-        public IEnumerable<Game> Games()
-        {
-            return _repository.List<Game>();
         }
 
         public void RegisterGame(Game game)
@@ -80,40 +89,14 @@ namespace Rankings.Core.Services
             _repository.Add(game);
         }
 
-        public void CreateVenue(Venue venue)
-        {
-            _repository.Add(venue);
-        }
-
-        public void DeleteGame(int Id)
-        {
-            // TODO use getbyid to delete
-            var entity = _repository.GetById<Game>(Id);
-            _repository.Delete(entity);
-        }
-
-        public void CreateProfile(Profile profile)
-        {
-            // TODO give feedback to client
-            if (_repository.List<Profile>().Any(profile1 => profile1.EmailAddress == profile.EmailAddress))
-                return;
-
-            _repository.Add(profile);
-        }
-
         public void Save(Game entity)
         {
             _repository.Update(entity);
         }
 
-        public void Save(Venue entity)
+        public void DeleteGame(int id)
         {
-            _repository.Update(entity);
-        }
-
-        public IEnumerable<Venue> GetVenues()
-        {
-            return _repository.List<Venue>();
+            _repository.Delete(_repository.GetById<Game>(id));
         }
     }
 }

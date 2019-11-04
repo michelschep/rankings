@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 using Rankings.Core.Interfaces;
 using Rankings.Core.SharedKernel;
 
 namespace Rankings.Infrastructure.Data
 {
-    public class EfRepository : IRepository
+    public class EfRepository: IRepository
     {
         private readonly DbContext _dbContext;
 
@@ -23,6 +24,11 @@ namespace Rankings.Infrastructure.Data
         public List<T> List<T>() where T : BaseEntity
         {
             return _dbContext.Set<T>().ToList();
+        }
+
+        public List<T> List<T>(ISpecification<T> spec) where T : BaseEntity
+        {
+            return ApplySpecification<T>(spec).ToList();
         }
 
         public T Add<T>(T entity) where T : BaseEntity
@@ -43,6 +49,11 @@ namespace Rankings.Infrastructure.Data
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             _dbContext.SaveChanges();
+        }
+
+        private IQueryable<T> ApplySpecification<T>(ISpecification<T> spec) where T : BaseEntity
+        {
+            return EfSpecificationEvaluator<T, int>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
         }
     }
 }

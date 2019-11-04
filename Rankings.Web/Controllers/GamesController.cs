@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Specifications;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -36,18 +37,10 @@ namespace Rankings.Web.Controllers
 
         private List<GameSummaryViewModel> CreateGameSummaryViewModels()
         {
-            // TODO fix loading entities
-            var players = _gamesService.Profiles();
-            var venues = _gamesService.GetVenues();
-            var gameTypes = _gamesService.GameTypes();
-
             var games = _gamesService
-                .Games()
-                // TODO quick fix. Do not show same player games. 
-                // TODO edit game is missing and needed.
-                .Where(game => game.Player1.EmailAddress != game.Player2.EmailAddress)
-                .Where(game => game.RegistrationDate > DateTime.Now.AddHours(-72))
+                .List(new GamesForPeriodSpecification("tafeltennis", DateTime.Now.AddHours(-72), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate);
+
             var model = games.Select(type => new GameSummaryViewModel
             {
                 Id = type.Id,
@@ -55,9 +48,11 @@ namespace Rankings.Web.Controllers
                 Venue = type.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = type.Player1.DisplayName,
                 NameSecondPlayer = type.Player2.DisplayName,
+                // TODO fix issue with dates. Add timezone
                 RegistrationDate = type.RegistrationDate.AddHours(2).ToString("yyyy/MM/dd H:mm"),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2,
+                // TODO hide query
                 IsEditable =
                     (type.Player1.EmailAddress == User.Identity.Name || type.Player2.EmailAddress == User.Identity.Name)
                     && type.RegistrationDate > DateTime.Now.AddHours(-24)
@@ -67,37 +62,30 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Create()
         {
-            var profiles = _gamesService.Profiles().ToList();
-            var currentProfile = profiles.Single(profile => profile.EmailAddress == User.Identity.Name);
-            var oponentPlayers = profiles
-                .Where(profile => profile.EmailAddress != User.Identity.Name)
+            var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
+            var oponentPlayers =  _gamesService.List(new Oponents(User.Identity.Name))
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
             return View(new CreateGameViewModel
             {
                 NameFirstPlayer = User.Identity.Name,
-                Players = new SelectListItem[1] {new SelectListItem(currentProfile.DisplayName, currentProfile.EmailAddress) },
+                Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) },
                 OpponentPlayers = oponentPlayers,
-                GameTypes = _gamesService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code))
+                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
             });
         }
 
         [HttpPost]
         public IActionResult Create(CreateGameViewModel model)
         {
-            // TODO must be a better way. For now make it work and no per or mem issue.
-            var players = _gamesService.Profiles().ToList();
-            var gameTypes = _gamesService.GameTypes().ToList();
-            var venues = _gamesService.GetVenues().ToList();
-
             var game = new Game
             {
-                GameType = gameTypes.Single(type => type.Code == model.GameType),
-                Venue = venues.Single(profile => profile.Code == model.Venue),
-                Player1 = players.Single(profile => profile.EmailAddress == model.NameFirstPlayer),
-                Player2 = players.Single(profile => profile.EmailAddress == model.NameSecondPlayer),
+                GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
+                Venue = _gamesService.Item(new SpecificVenue(model.Venue)),
+                Player1 = _gamesService.Item(new SpecificProfile(model.NameFirstPlayer)),
+                Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
                 Score1 = model.ScoreFirstPlayer,
                 Score2 = model.ScoreSecondPlayer,
             };
@@ -108,20 +96,23 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Edit(int id)
         {
-            var game = _gamesService.Games().Single(g => g.Id == id);
+            var game = _gamesService.Item(new SpecificGame(id));
 
             if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return RedirectToAction("Index", "Rankings");
 
+            // TODO could be better
             if (game.Player1.EmailAddress != User.Identity.Name &&
                 game.Player2.EmailAddress != User.Identity.Name)
                 return RedirectToAction("Index", "Rankings");
 
             var viewModel = new CreateGameViewModel
             {
-                Players = _gamesService.Profiles().OrderBy(profile => profile.DisplayName).Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
-                GameTypes = _gamesService.GameTypes().Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.GetVenues().Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Players = _gamesService.List(new AllProfiles())
+                    .OrderBy(profile => profile.DisplayName)
+                    .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
+                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
                 RegistrationDate = game.RegistrationDate,
@@ -138,18 +129,10 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Edit(CreateGameViewModel model)
         {
-            // TODO must be a better way. For now make it work and no per or mem issue.
-            var venues = _gamesService.GetVenues().ToList();
-            var gameTypes = _gamesService.GameTypes().ToList();
-
-            var game = _gamesService.Games().Single(g => g.Id == model.Id);
-
-            //game.RegistrationDate = model.RegistrationDate;
-            game.Venue =venues.Single(profile => profile.Code == model.Venue);
-            game.GameType = gameTypes.Single(type => type.Code == model.GameType);
+            var game = _gamesService.Item(new SpecificGame(model.Id));
+            game.Venue = _gamesService.Item(new SpecificVenue(model.Venue));
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
-
             _gamesService.Save(game);
 
             return RedirectToAction("Index", "Rankings");

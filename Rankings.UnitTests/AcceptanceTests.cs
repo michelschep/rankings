@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using FluentAssertions;
 using Rankings.Core.Entities;
 using Rankings.Core.Services;
+using Rankings.Core.Specifications;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Xunit;
@@ -36,10 +38,10 @@ namespace Rankings.UnitTests
             _gamesService.ActivateProfile("cindy@domain.nl", "Cindy");
             _gamesService.ActivateProfile("dirk@domain.nl", "Dirk");
 
-            var amy = _gamesService.ProfileFor("amy@domain.nl");
-            var brad = _gamesService.ProfileFor("brad@domain.nl");
-            var cindy = _gamesService.ProfileFor("cindy@domain.nl");
-            var dirk = _gamesService.ProfileFor("dirk@domain.nl");
+            var amy = _gamesService.List(new SpecificProfile("amy@domain.nl")).Single();
+            var brad = _gamesService.List(new SpecificProfile("brad@domain.nl")).Single();
+            var cindy = _gamesService.List(new SpecificProfile("cindy@domain.nl")).Single();
+            var dirk = _gamesService.List(new SpecificProfile("dirk@domain.nl")).Single();
 
             _gamesService.RegisterGame(CreateGame(amy, brad, 1, 0));
             _gamesService.RegisterGame(CreateGame(dirk, cindy, 1, 0));

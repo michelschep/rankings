@@ -4,6 +4,7 @@ using FluentAssertions;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Core.Specifications;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Xunit;
@@ -41,7 +42,7 @@ namespace Rankings.UnitTests
                 DisplayName = "Display Name"
             };
             _gamesService.CreateProfile(expectedPlayer);
-            var actualPlayer = _gamesService.ProfileFor("EMAIL@ADDRESS.NL");
+            var actualPlayer = _gamesService.List(new SpecificProfile("EMAIL@ADDRESS.NL")).SingleOrDefault();
 
             // Assert
             actualPlayer.Should().Be(expectedPlayer);
@@ -50,7 +51,7 @@ namespace Rankings.UnitTests
         [Fact]
         public void WhenPlayerCannotBeFound()
         {
-            var actualPlayer = _gamesService.ProfileFor("does-not-exist@domain.nl");
+            var actualPlayer = _gamesService.List(new SpecificProfile("does-not-exist@domain.nl")).SingleOrDefault();
 
             // Assert
             actualPlayer.Should().Be(null);
@@ -150,12 +151,13 @@ namespace Rankings.UnitTests
 
         private Game CreateTafeltennisGame(string player1, string player2, int score1, int score2)
         {
-            var gameTypes = _gamesService.GameTypes();
+            var gameType = _gamesService.List(new SpecificGameType("tafeltennis")).Single();
+
             return new Game
             {
-                GameType = gameTypes.Single(type => type.Code == "tafeltennis"),
-                Player1 = _gamesService.ProfileFor($"{player1}@domain.nl"),
-                Player2 = _gamesService.ProfileFor($"{player2}@domain.nl"),
+                GameType = gameType,
+                Player1 = _gamesService.List(new SpecificProfile($"{player1}@domain.nl")).Single(),
+                Player2 = _gamesService.List(new SpecificProfile($"{player2}@domain.nl")).Single(),
                 Score1 = score1,
                 Score2 = score2
             };

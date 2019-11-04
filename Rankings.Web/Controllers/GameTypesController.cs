@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Specifications;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -20,12 +21,12 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Index()
         {
-            var gameTypes = _gamesService.GameTypes();
-            var model = gameTypes.Select(type => new GameTypeViewModel
-            {
-                Code = type.Code,
-                DisplayName = type.DisplayName
-            }).ToList();
+            var model = _gamesService.List(new AllGameTypes())
+                .Select(type => new GameTypeViewModel
+                {
+                    Code = type.Code,
+                    DisplayName = type.DisplayName
+                }).ToList();
 
             return View(model);
         }

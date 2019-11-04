@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Specifications;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -24,9 +25,11 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Index()
         {
+            // TODO get rid of this silly thing
             ActivateCurrentUser();
 
-            var list = _gamesService.Profiles().Select(profile => new ProfileViewModel(profile.EmailAddress, profile.DisplayName));
+            var list = _gamesService.List(new AllProfiles())
+                .Select(profile => new ProfileViewModel(profile.EmailAddress, profile.DisplayName));
 
             return View(list);
         }
@@ -81,9 +84,9 @@ namespace Rankings.Web.Controllers
         private ProfileViewModel ResolveProfileViewModel()
         {
             var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            var profile = _gamesService.ProfileFor(email);
-            var profileViewModel = new ProfileViewModel(profile.EmailAddress, profile.DisplayName);
-            return profileViewModel;
+            var profile = _gamesService.Item(new SpecificProfile(email));
+
+            return new ProfileViewModel(profile.EmailAddress, profile.DisplayName);
         }
     }
 }
