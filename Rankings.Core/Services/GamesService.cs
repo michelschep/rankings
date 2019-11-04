@@ -20,7 +20,7 @@ namespace Rankings.Core.Services
 
         public IEnumerable<T> List<T>(ISpecification<T> specification) where T : BaseEntity
         {
-            return _repository.List<T>(specification);
+            return _repository.List(specification);
         }
 
         public T Item<T>(ISpecification<T> specification) where T : BaseEntity

@@ -3,10 +3,11 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Infrastructure.Data
 {
-    public class RankingContext : DbContext
+    public sealed class RankingContext : DbContext
     {
         public RankingContext(DbContextOptions<RankingContext> options) : base(options)
         {
+            // TODO get rid of
             Database.EnsureCreated();
         }
 

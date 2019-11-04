@@ -4,7 +4,7 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Core.Specifications
 {
-    public class GamesForPeriodSpecification : BaseSpecification<Game>
+    public sealed class GamesForPeriodSpecification : BaseSpecification<Game>
     {
         public GamesForPeriodSpecification(string gameType, DateTime startDate, DateTime endDate) 
             : base(g => g.GameType.Code == gameType 

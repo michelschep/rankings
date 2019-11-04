@@ -14,8 +14,9 @@ namespace Rankings.Web.Models
         [Required]
         public string DisplayName { get; set; }
 
-        public GameTypeViewModel()
-        {
-        }
+//        public GameTypeViewModel()
+//        {
+//            // TODO needed?
+//        }
     }
 }

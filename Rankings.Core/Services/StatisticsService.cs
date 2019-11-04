@@ -24,17 +24,17 @@ namespace Rankings.Core.Services
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats()
         {
-            DateTime currentDate = DateTime.MinValue;
+            //DateTime currentDate = DateTime.MinValue;
 
-            var days = new Dictionary<string, int>();
-            var games = new Dictionary<string, int>();
-            var minutes = new Dictionary<string, double>();
+//            var days = new Dictionary<string, int>();
+//            var games = new Dictionary<string, int>();
+//            var minutes = new Dictionary<string, double>();
 
-            var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue));
+            var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue)).ToList();
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
-            var Now = DateTime.Now;
-            dateTimes.Add(Now);
-            DateTime previousGame = allGames.First().RegistrationDate;
+            var now = DateTime.Now;
+            dateTimes.Add(now);
+            //DateTime previousGame = allGames.First().RegistrationDate;
 
             var history = new Dictionary<DateTime, RankingStats>();
             foreach (var game in allGames)
@@ -47,9 +47,9 @@ namespace Rankings.Core.Services
                 rankingStats.Games = allGames.Where(g => g.RegistrationDate == game.RegistrationDate).ToList();
             }
 
-            history.Add(Now, new RankingStats
+            history.Add(now, new RankingStats
             {
-                DateTime = Now,
+                DateTime = now,
                 Games = new List<Game>(),
             });
 
@@ -62,8 +62,8 @@ namespace Rankings.Core.Services
                 pointInTime.Value.NewPlayerStats = new Dictionary<Profile, NewPlayerStats>();
             }
 
-            Profile previousNumberOneProfile = null;
-            PlayerStats previousNumberOneStats = null;
+            //Profile previousNumberOneProfile = null;
+            //PlayerStats previousNumberOneStats = null;
             DateTime? previousPointInTimeDate = null;
             RankingStats previousPointInTimeRankingStats = null;
 
@@ -76,7 +76,7 @@ namespace Rankings.Core.Services
                 CalculateGameStats(pointInTime.Value, previousPointInTimeRankingStats);
 
                 // Who is number one?
-                var ranking = pointInTime.Value.Ranking.DeprecatedRatings.OrderByDescending(pair => pair.Value.Ranking);
+                var ranking = pointInTime.Value.Ranking.DeprecatedRatings.OrderByDescending(pair => pair.Value.Ranking).ToList();
                 foreach (var item in ranking)
                 {
                     var player = pointInTime.Value.NewPlayerStats[item.Key];

@@ -28,7 +28,7 @@ namespace Rankings.Infrastructure.Data
 
         public List<T> List<T>(ISpecification<T> spec) where T : BaseEntity
         {
-            return ApplySpecification<T>(spec).ToList();
+            return ApplySpecification(spec).ToList();
         }
 
         public T Add<T>(T entity) where T : BaseEntity

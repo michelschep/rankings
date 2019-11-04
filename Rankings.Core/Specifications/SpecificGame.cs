@@ -3,7 +3,7 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Core.Specifications
 {
-    public class SpecificGame : BaseSpecification<Game>
+    public sealed class SpecificGame : BaseSpecification<Game>
     {
         public SpecificGame(int id) : base(g => g.Id == id)
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using Rankings.Core;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.SqLite;
@@ -10,7 +9,7 @@ namespace Rankings.ConsoleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var statsService = CreateStatisticsService();
             var lastPointInTime = statsService.CalculateStats();
@@ -20,10 +19,10 @@ namespace Rankings.ConsoleApp
             {
                 var playerStats = item.Value;
                 var timespan = new TimeSpan(0, playerStats.TimeNumberOne, 0);
-                var meanEloWon = (int)(playerStats.EloWonOpponent / (playerStats.Won + 0.00001m));
-                var meanEloLost = (int)(playerStats.EloLostOpponent / (playerStats.Lost + 0.00001m));
-                var meanEloTotal = (int)((playerStats.EloLostOpponent + playerStats.EloWonOpponent) /
-                                         (playerStats.NumberOfGames + 0.00001m));
+                //var meanEloWon = (int)(playerStats.EloWonOpponent / (playerStats.Won + 0.00001m));
+                //var meanEloLost = (int)(playerStats.EloLostOpponent / (playerStats.Lost + 0.00001m));
+                //var meanEloTotal = (int)((playerStats.EloLostOpponent + playerStats.EloWonOpponent) /
+                //                         (playerStats.NumberOfGames + 0.00001m));
                 // {100*playerStats.NumberOfCleanSheets/playerStats.NumberOfGames, 5}
                 Console.WriteLine($"\t{item.Key.DisplayName,-20} {playerStats.Rating,5} {playerStats.WonStreakRecord,3} {playerStats.WonStreak,3} {playerStats.GoatRating,5}  {timespan,15} ");
                 //Console.WriteLine($"\t{item.Key.DisplayName, -20} {playerStats.Rating, 5} {playerStats.WonStreakRecord, 3} {playerStats.WonStreak, 3} {playerStats.GoatRating, 5} {meanEloTotal, 5} {meanEloWon, 5} {meanEloLost, 5} {timespan, 15} ");

@@ -27,7 +27,6 @@ namespace Rankings.Core.Services
             foreach (var stats in ratings)
             {
                 convertedRatings.Add(stats.Key, ConvertStats(stats.Value, _precision));
-                ;
             }
 
             return convertedRatings;
