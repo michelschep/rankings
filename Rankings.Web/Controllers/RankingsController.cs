@@ -12,18 +12,21 @@ namespace Rankings.Web.Controllers
 {
     public class RankingsController : Controller
     {
-        private readonly IStatisticsService _rankingService;
+        private readonly IStatisticsService _statisticsService;
 
         public RankingsController(IStatisticsService rankingService)
         {
-            _rankingService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
         }
 
         [HttpGet("/rankings")]
-        [HttpGet("/rankings/{gametype}")]
-        public IActionResult Index(string gameType = "tafeltennis")
+        [HttpGet("/rankings/{gametype}/{endDateInput}")]
+        public IActionResult Index(string gameType, string endDateInput)
         {
-            var ratings = _rankingService.Ranking(gameType);
+            gameType = gameType ?? "tafeltennis";
+            DateTime endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
+            
+            var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
             var ranking = 1;
             
             var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= 5)

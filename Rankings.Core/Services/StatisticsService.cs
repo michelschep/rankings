@@ -110,12 +110,17 @@ namespace Rankings.Core.Services
 
         public Ranking Ranking(string gameType)
         {
-            return Ranking(gameType, DateTime.MaxValue);
+            return Ranking(gameType, DateTime.MinValue, DateTime.MaxValue);
         }
 
-        public Ranking Ranking(string gameType, DateTime rankingDate)
+        public Ranking Ranking(string gameType, DateTime endDate)
         {
-            var gamesSpecification = new GamesForPeriodSpecification(gameType, DateTime.MinValue, rankingDate);
+            return Ranking(gameType, DateTime.MinValue, endDate);
+        }
+
+        public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
+        {
+            var gamesSpecification = new GamesForPeriodSpecification(gameType, startDate, endDate);
             var games = _gamesService.List(gamesSpecification).ToList();
 
             var ratings = new Dictionary<Profile, PlayerStats>();
