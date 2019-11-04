@@ -4,26 +4,25 @@
 - Remove own account name from matrix (that is confusing)
 
 ====================== technical debt ==============================================
+- Use mapper in controllers
+- Rename methods in GamesService
 / refactor calculation
 - use migrations for database updates
 
 ====================== must haves ================================================
 - validation
   - do not enter same player name twice in game
-  - name player unique
   - names player contains at least visisble character
   - for table tennis 0-0 is not allowed
-  
-- player can approve its game
-- player can disapprove its game
-- admin can do both always for all games
 
 ====================== should have =================================================
 - add logging
-- player can see readonly profile other players
 - Do not show email address in list of players
 - links to rankings on home page
 - show + elo next to game
+- player can approve its game
+- player can disapprove its game
+- admin can do both always for all games
 
 ====================== could have ================================================
 - alignment elo score in ranking. Not always 4 digits.
@@ -101,3 +100,5 @@ X Admin cannot edit game (is redirected to ranking). Admin should always be able
 X matrix with possible elo points (opponents x results)
 X get rid of ugly loading of missing entities (use include)
 X edit venues
+X Name player unique
+X player can see readonly profile other players
