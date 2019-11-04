@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
@@ -13,21 +14,19 @@ namespace Rankings.Web.Controllers
     public class VenuesController : Controller
     {
         private readonly IGamesService _gamesService;
+        private readonly IMapper _mapper;
 
         public VenuesController(IGamesService gamesService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            // TODO inject?
+            _mapper = CreateMapper();
         }
 
         public IActionResult Index()
         {
             var model = _gamesService.List(new AllVenues())
-                .Select(type => new VenueViewModel
-                {
-                    Id = type.Id,
-                    Code = type.Code,
-                    DisplayName = type.DisplayName
-                }).ToList();
+                .Select(venue => _mapper.Map<Venue, VenueViewModel>(venue)).ToList();
 
             return View(model);
         }
@@ -52,25 +51,29 @@ namespace Rankings.Web.Controllers
         public IActionResult Edit(int id)
         {
             var venue = _gamesService.Item(new SpecificVenue(id));
-            var venueViewModel = new EditVenueViewModel()
-            {
-                Id = venue.Id,
-                Code = venue.Code,
-                DisplayName = venue.DisplayName
-            };
+            var viewModel = _mapper.Map<Venue, VenueViewModel>(venue);
 
-            return View(venueViewModel);
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(EditVenueViewModel viewModel)
+        public IActionResult Edit(VenueViewModel viewModel)
         {
             var venue = _gamesService.Item(new SpecificVenue(viewModel.Id));
-            venue.Code = viewModel.Code;
-            venue.DisplayName = viewModel.DisplayName;
+            _mapper.Map(viewModel, venue);
+
             _gamesService.Save(venue);
 
             return RedirectToAction("Index");
+        }
+
+        private static IMapper CreateMapper()
+        {
+            return new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Venue, VenueViewModel>();
+                cfg.CreateMap<VenueViewModel, Venue>();
+            }).CreateMapper();
         }
     }
 }

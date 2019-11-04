@@ -19,7 +19,7 @@ namespace Rankings.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGamesService _gamesService;
         private readonly IAuthorizationService _authorizationService;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public ProfilesController(IHttpContextAccessor httpContextAccessor, IGamesService gamesService, IAuthorizationService authorizationService)
         {
@@ -62,7 +62,6 @@ namespace Rankings.Web.Controllers
             // TODO get rid of this
             ActivateCurrentUser();
 
-            // TODO use mapper
             var profile = _gamesService.Item(new SpecificProfile(id));
             var resolveProfileViewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
 
@@ -73,16 +72,6 @@ namespace Rankings.Web.Controllers
             }
 
             return View(resolveProfileViewModel);
-        }
-
-        private static IMapper CreateMapper()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Profile, ProfileViewModel>();
-                cfg.CreateMap<ProfileViewModel, Profile>();
-            });
-            return config.CreateMapper();
         }
 
         [HttpPost]
@@ -108,7 +97,19 @@ namespace Rankings.Web.Controllers
         {
             ActivateCurrentUser();
 
-            return View(ResolveProfileViewModel(id));
+            var profile = _gamesService.Item(new SpecificProfile(id));
+            var viewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
+
+            return View(viewModel);
+        }
+
+        private static IMapper CreateMapper()
+        {
+            return new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Profile, ProfileViewModel>();
+                cfg.CreateMap<ProfileViewModel, Profile>();
+            }).CreateMapper();
         }
 
         private void ActivateCurrentUser()
@@ -117,19 +118,6 @@ namespace Rankings.Web.Controllers
             var name = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname).Value;
 
             _gamesService.ActivateProfile(email, name);
-        }
-
-        private ProfileViewModel ResolveProfileViewModel(int id)
-        {
-            //var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            var profile = _gamesService.Item(new SpecificProfile(id));
-
-            return new ProfileViewModel
-            {
-                Id = profile.Id,
-                EmailAddress = profile.EmailAddress,
-                DisplayName = profile.DisplayName
-            };
         }
     }
 }
