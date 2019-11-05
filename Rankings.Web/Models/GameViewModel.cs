@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Rankings.Web.Models
 {
-    public class GameViewModel
+    public class GameViewModel: IValidatableObject
     {
         public int Id { get; set; }
 
@@ -43,5 +43,13 @@ namespace Rankings.Web.Models
         public IEnumerable<SelectListItem> OpponentPlayers { get; set; }
         public IEnumerable<SelectListItem> GameTypes { get; set; }
         public IEnumerable<SelectListItem> Venues { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (ScoreFirstPlayer == 0 && ScoreSecondPlayer == 0)
+            {
+                yield return new ValidationResult("Game result for table tennis cannot be 0-0");
+            }
+        }
     }
 }

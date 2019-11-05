@@ -53,24 +53,31 @@ namespace Rankings.Web.Controllers
                 NameFirstPlayer = type.Player1.DisplayName,
                 NameSecondPlayer = type.Player2.DisplayName,
                 // TODO fix issue with dates. Add timezone
-                RegistrationDate = type.RegistrationDate.AddHours(2).ToString("yyyy/MM/dd H:mm"),
+                RegistrationDate = RegistrationDate(type),
                 ScoreFirstPlayer = type.Score1,
                 ScoreSecondPlayer = type.Score2,
             }).ToList();
             return model;
         }
 
+        private static string RegistrationDate(Game game)
+        {
+            var registrationDate = game.RegistrationDate;
+            var correction = registrationDate > new DateTime(2019, 10, 31) ? 1 : 2;
+            return registrationDate.AddHours(correction).ToString("yyyy/MM/dd H:mm");
+        }
+
         public IActionResult Create()
         {
             var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
-            var oponentPlayers =  _gamesService.List(new Oponents(User.Identity.Name))
+            var oponentPlayers = _gamesService.List(new Oponents(User.Identity.Name))
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
             return View(new GameViewModel
             {
                 NameFirstPlayer = User.Identity.Name,
-                Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) },
+                Players = new[] { new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) },
                 OpponentPlayers = oponentPlayers,
                 GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
                 Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
