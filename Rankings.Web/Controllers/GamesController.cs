@@ -42,7 +42,7 @@ namespace Rankings.Web.Controllers
         private List<GameViewModel> CreateGameSummaryViewModels()
         {
             var games = _gamesService
-                .List(new GamesForPeriodSpecification("tafeltennis", DateTime.Now.AddHours(-72), DateTime.MaxValue))
+                .List(new GamesForPeriodSpecification("tafeltennis", DateTime.Now.AddDays(-7), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate);
 
             var model = games.Select(type => new GameViewModel
