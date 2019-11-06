@@ -77,7 +77,6 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(ProfileViewModel profileViewModel)
         {
-            //var profile = _gamesService.Item(new SpecificProfile(profileViewModel.Id));
             var authResult = await _authorizationService.AuthorizeAsync(User, profileViewModel, "ProfileEditPolicy");
             if (!authResult.Succeeded)
             {

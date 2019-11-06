@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +16,7 @@ namespace Rankings.Web.Controllers
     {
         private readonly IGamesService _gamesService;
         private readonly IAuthorizationService _authorizationService;
+        // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
         public GamesController(IGamesService gamesService, IAuthorizationService authorizationService)
@@ -28,6 +29,7 @@ namespace Rankings.Web.Controllers
         {
             var model = CreateGameSummaryViewModels();
             Response.Headers.Add("Refresh", "30");
+
             return View(model);
         }
 
@@ -41,6 +43,7 @@ namespace Rankings.Web.Controllers
 
         private List<GameViewModel> CreateGameSummaryViewModels()
         {
+            // TODO use parameter to chose game type.
             var games = _gamesService
                 .List(new GamesForPeriodSpecification("tafeltennis", DateTime.Now.AddDays(-7), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate);
@@ -74,6 +77,7 @@ namespace Rankings.Web.Controllers
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
+            // TODO auto mapper
             return View(new GameViewModel
             {
                 NameFirstPlayer = User.Identity.Name,
@@ -87,6 +91,12 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(GameViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // TODO use auto mapper
             var game = new Game
             {
                 GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
@@ -103,14 +113,14 @@ namespace Rankings.Web.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var game = _gamesService.Item(new SpecificGame(id));
-
-            var authResult = await _authorizationService.AuthorizeAsync(User, game, GameEditPolicy);
+            var authResult = await _authorizationService.AuthorizeAsync(User, id, GameEditPolicy);
             if (!authResult.Succeeded)
             {
                 return RedirectToAction("Index", "Rankings");
             }
 
+            var game = _gamesService.Item(new SpecificGame(id));
+            // TODO use auto mapper
             var viewModel = new GameViewModel
             {
                 Players = _gamesService.List(new AllProfiles())
@@ -134,14 +144,16 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(GameViewModel model)
         {
-            var game = _gamesService.Item(new SpecificGame(model.Id));
 
-            var authResult = await _authorizationService.AuthorizeAsync(User, game, GameEditPolicy);
+            var authResult = await _authorizationService.AuthorizeAsync(User, model.Id, GameEditPolicy);
             if (!authResult.Succeeded)
             {
                 return RedirectToAction("Index", "Rankings");
             }
 
+            var game = _gamesService.Item(new SpecificGame(model.Id));
+
+            // TODO use auto mapper
             game.Venue = _gamesService.Item(new SpecificVenue(model.Venue));
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;

@@ -2,12 +2,23 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Rankings.Core.Entities;
+using Rankings.Core.Interfaces;
+using Rankings.Core.Services;
+using Rankings.Core.Specifications;
+using Rankings.Web.Models;
 
 namespace Rankings.Web
 {
-    public class GameEditAuthorizationHandler : AuthorizationHandler<GameEditRequirement, Game>
+    public class GameEditAuthorizationHandler : AuthorizationHandler<GameEditRequirement, int>
     {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GameEditRequirement requirement, Game resource)
+        private readonly IGamesService _gamesService;
+
+        public GameEditAuthorizationHandler(IGamesService gamesService)
+        {
+            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+        }
+
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GameEditRequirement requirement, int resource)
         {
             if (IsAuthorized(context, resource))
             {
@@ -19,12 +30,15 @@ namespace Rankings.Web
             return Task.CompletedTask;
         }
 
-        private bool IsAuthorized(AuthorizationHandlerContext context, Game game)
+        private bool IsAuthorized(AuthorizationHandlerContext context, int viewModel)
         {
             var user = context.User;
 
+            // TODO can we move this to other requirement?
             if (user.IsInRole("Admin"))
                 return true;
+
+            var game = _gamesService.Item(new SpecificGame(viewModel));
 
             if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return false;
