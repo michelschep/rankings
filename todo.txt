@@ -2,10 +2,10 @@
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
 - Remove own account name from matrix (that is confusing)
+- Add probability to matrix
 
 ====================== technical debt ==============================================
-- Use auto mapper in controllers
-- Rename methods in GamesService
+- Rename methods in IGamesService
 / refactor calculation
 - use migrations for database updates
 
@@ -13,24 +13,22 @@
 - validation
   - do not enter same player name twice in game
   - names player contains at least visisble character
-  - for table tennis 0-0 is not allowed
+
+- games, ranks for each gametype (now very table tennis orientated
 
 ====================== should have =================================================
 - add logging
 - Do not show email address in list of players
 - links to rankings on home page
 - show + elo next to game
-- player can approve its game
-- player can disapprove its game
-- admin can do both always for all games
 
 ====================== could have ================================================
-- alignment elo score in ranking. Not always 4 digits.
 - alignment elo score in ranking. Not always 4 digits.
 - website favicon
 
 ====================== back log ======================================================
 - add elo explanation page 
+- show always winner game in first column
 
 - expose API for other apps (iphone app, android, windows notifier)
 - avatar for player
@@ -85,7 +83,9 @@
       - 25 victories, etc
       - 1300+, 1400+, 1500+ (when crossing from one to next level)
           
-
+- player can approve its game
+- player can disapprove its game
+- admin can do both always for all games
     
 ======================= done =====================================================
 X points that can be gained per player in ranking or other page
@@ -102,3 +102,5 @@ X get rid of ugly loading of missing entities (use include)
 X edit venues
 X Name player unique
 X player can see readonly profile other players
+X Use auto mapper in controllers
+X for table tennis 0-0 is not allowed
