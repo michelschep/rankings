@@ -8,7 +8,6 @@
 - validation
   - do not enter same player name twice in game
   - names player contains at least visisble character
-- games, ranks for each gametype (now very table tennis orientated
 
 ====================== back log ===========================================================
 - add elo explanation page 
@@ -21,7 +20,6 @@
 - links to rankings on home page
 - show + elo next to game
 
-- website favicon
 - expose API for other apps (iphone app, android, windows notifier)
 - avatar for player
 - player can be disabled
@@ -97,3 +95,5 @@ X player can see readonly profile other players
 X Use auto mapper in controllers
 X for table tennis 0-0 is not allowed
 X alignment elo score in ranking. Not always 4 digits.
+X website favicon
+X games, ranks for each gametype (now very table tennis orientated)
