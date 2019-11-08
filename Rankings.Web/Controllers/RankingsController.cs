@@ -28,8 +28,9 @@ namespace Rankings.Web.Controllers
             
             var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
             var ranking = 1;
-            
-            var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= 6)
+            var numberOfGames = gameType == "tafeltennis" ? 6 : 0;
+
+            var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {
