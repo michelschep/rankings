@@ -1,35 +1,27 @@
-====================== bugs =======================================================
+====================== current sprint =======================================================
+- refactor calculation (statistics service)
+- use specflow to create end to end acceptance tests
+- use migrations for database updates
+- Rename methods in IGamesService
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
-- Remove own account name from matrix (that is confusing)
-- Add probability to matrix
-
-====================== technical debt ==============================================
-- Rename methods in IGamesService
-/ refactor calculation
-- use migrations for database updates
-
-====================== must haves ================================================
 - validation
   - do not enter same player name twice in game
   - names player contains at least visisble character
-
 - games, ranks for each gametype (now very table tennis orientated
 
-====================== should have =================================================
+====================== back log ===========================================================
+- add elo explanation page 
+- show always winner game in first column
+- Add probability to matrix
+- Remove own account name from matrix (that is confusing)
+
 - add logging
 - Do not show email address in list of players
 - links to rankings on home page
 - show + elo next to game
 
-====================== could have ================================================
-- alignment elo score in ranking. Not always 4 digits.
 - website favicon
-
-====================== back log ======================================================
-- add elo explanation page 
-- show always winner game in first column
-
 - expose API for other apps (iphone app, android, windows notifier)
 - avatar for player
 - player can be disabled
@@ -104,3 +96,4 @@ X Name player unique
 X player can see readonly profile other players
 X Use auto mapper in controllers
 X for table tennis 0-0 is not allowed
+X alignment elo score in ranking. Not always 4 digits.
