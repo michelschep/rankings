@@ -1,7 +1,7 @@
 ====================== current sprint =======================================================
-- refactor calculation (statistics service)
-- use specflow to create end to end acceptance tests
 - use migrations for database updates
+- use specflow to create end to end acceptance tests
+- refactor calculation (statistics service)
 - Rename methods in IGamesService
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
