@@ -41,6 +41,7 @@ namespace Rankings.Web.Controllers
                     History = ToHistory(r)
                 });
 
+            Response.Headers.Add("Refresh", "30");
             return View(model);
         }
 
