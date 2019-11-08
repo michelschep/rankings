@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -8,9 +7,8 @@ namespace Rankings.Web.Models
     public class GameViewModel: IValidatableObject
     {
         public int Id { get; set; }
-
+        
         [Display(Name = "Registration Date")]
-        [Required]
         public string RegistrationDate { get; set; }
 
         [Display(Name = "Game Type")]
@@ -32,6 +30,7 @@ namespace Rankings.Web.Models
         [Display(Name = "Score First Player")]
         [Required]
         [Range(0, 100)]
+        [NoPointsDrawIsNotAllowed]
         public int ScoreFirstPlayer { get; set; }
 
         [Display(Name = "Score Second Player")]

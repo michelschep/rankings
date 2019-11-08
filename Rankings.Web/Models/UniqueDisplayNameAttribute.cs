@@ -18,4 +18,20 @@ namespace Rankings.Web.Models
             return ValidationResult.Success;
         }
     }
+
+    public class NoPointsDrawIsNotAllowedAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(
+            object value, ValidationContext validationContext)
+        {
+            var game = (GameViewModel)validationContext.ObjectInstance;
+
+            if (game.ScoreFirstPlayer == 0 && game.ScoreSecondPlayer == 0)
+            {
+                return new ValidationResult("Draw without sets is not allowed");
+            }
+
+            return ValidationResult.Success;
+        }
+    }
 }
