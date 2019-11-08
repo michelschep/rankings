@@ -10,19 +10,19 @@
             <th style="width: 20px;">
                 @Html.DisplayNameFor(model => model.Ranking)
             </th>
-            <th style="width: 200px;">
+            <th style="width: 100px;">
                 @Html.DisplayNameFor(model => model.NamePlayer)
             </th>
-            <th style="width: 100px;">
+            <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.Points)
             </th>
-            <th style="width: 100px;">
+            <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.WinPercentage)
             </th>
-            <th style="width: 100px;">
+            <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.SetWinPercentage)
             </th>
-            <th style="width: 300px;">
+            <th style="width: 100px; text-align: right">
                 @Html.DisplayNameFor(model => model.History)
             </th>
         </tr>
@@ -33,19 +33,19 @@
             <td style="width: 20px;">
                 @Html.DisplayFor(modelItem => item.Ranking)
             </td>
-            <td style="width: 200px;">
+            <td style="width: 100px;">
                 @Html.DisplayFor(modelItem => item.NamePlayer)
             </td>
-            <td style="width: 100px;">
+            <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.Points)
             </td>
-            <td style="width: 100px;">
+            <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.WinPercentage)
             </td>
-            <td style="width: 100px;">
+            <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.SetWinPercentage)
             </td>
-            <td style="width: 300px;">
+            <td style="width: 100px; text-align: right">
                 <ol class="results">@foreach (var result in item.History){<li class="result"><div class="result--@result">@result</div></li>}</ol>
             </td>
         </tr>
