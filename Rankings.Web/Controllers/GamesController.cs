@@ -53,12 +53,12 @@ namespace Rankings.Web.Controllers
                 Id = type.Id,
                 GameType = type.GameType.DisplayName,
                 Venue = type.Venue?.DisplayName ?? "Unknown",
-                NameFirstPlayer = type.Player1.DisplayName,
-                NameSecondPlayer = type.Player2.DisplayName,
+                NameFirstPlayer = type.Score1 > type.Score2 ? type.Player1.DisplayName : type.Player2.DisplayName,
+                NameSecondPlayer = type.Score1 > type.Score2 ? type.Player2.DisplayName : type.Player1.DisplayName,
                 // TODO fix issue with dates. Add timezone
                 RegistrationDate = RegistrationDate(type),
-                ScoreFirstPlayer = type.Score1,
-                ScoreSecondPlayer = type.Score2,
+                ScoreFirstPlayer = type.Score1 > type.Score2 ? type.Score1 : type.Score2,
+                ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
             }).ToList();
             return model;
         }
@@ -93,6 +93,15 @@ namespace Rankings.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
+                var oponentPlayers = _gamesService.List(new Oponents(User.Identity.Name))
+                    .OrderBy(profile => profile.DisplayName)
+                    .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
+
+                model.OpponentPlayers = oponentPlayers;
+                model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)};
                 return View(model);
             }
 
