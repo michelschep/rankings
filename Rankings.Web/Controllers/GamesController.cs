@@ -25,27 +25,33 @@ namespace Rankings.Web.Controllers
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
         }
 
-        public IActionResult Index()
+        [HttpGet("/games")]
+        [HttpGet("/games/{gametype}")]
+        public IActionResult Index(string gameType)
         {
-            var model = CreateGameSummaryViewModels();
+            var model = CreateGameSummaryViewModels(gameType);
             Response.Headers.Add("Refresh", "30");
 
             return View(model);
         }
 
         [Authorize(Policy = "AdminPolicy")]
-        public IActionResult AdminIndex()
+        [HttpGet("/adminindex")]
+        [HttpGet("/adminindex/{gametype}")]
+        public IActionResult AdminIndex(string gameType)
         {
-            var model = CreateGameSummaryViewModels();
+            var model = CreateGameSummaryViewModels(gameType);
 
             return View(model);
         }
 
-        private List<GameViewModel> CreateGameSummaryViewModels()
+        private List<GameViewModel> CreateGameSummaryViewModels(string gameType)
         {
-            // TODO use parameter to chose game type.
+            gameType = gameType ?? "tafeltennis";
+            var daysBack = gameType == "tafeltennis" ? -7 : -365;
+
             var games = _gamesService
-                .List(new GamesForPeriodSpecification("tafeltennis", DateTime.Now.AddDays(-7), DateTime.MaxValue))
+                .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate);
 
             var model = games.Select(type => new GameViewModel

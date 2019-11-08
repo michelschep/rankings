@@ -22,7 +22,7 @@
             <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.SetWinPercentage)
             </th>
-            <th style="width: 100px; text-align: right">
+            <th style="width: 150px; text-align: right">
                 @Html.DisplayNameFor(model => model.History)
             </th>
         </tr>
@@ -30,7 +30,7 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td style="width: 20px;">
+            <td style="width: 20px; text-align: right">
                 @Html.DisplayFor(modelItem => item.Ranking)
             </td>
             <td style="width: 100px;">
@@ -45,7 +45,7 @@
             <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.SetWinPercentage)
             </td>
-            <td style="width: 100px; text-align: right">
+            <td style="width: 150px; text-align: right">
                 <ol class="results">@foreach (var result in item.History){<li class="result"><div class="result--@result">@result</div></li>}</ol>
             </td>
         </tr>

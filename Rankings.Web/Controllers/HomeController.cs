@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Core.Specifications;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -15,15 +16,35 @@ namespace Rankings.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IStatisticsService _statisticsService;
+        private readonly IGamesService _gamesService;
 
-        public HomeController(IStatisticsService rankingService)
+        public HomeController(IStatisticsService rankingService, IGamesService gamesService)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _gamesService = gamesService;
         }
 
         public IActionResult Index()
         {
             var model = new WhatIfModel();
+//            var games = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue))
+//                .ToList();
+//
+//            foreach (var game in games)
+//            {
+//                var newGame = new Game()
+//                {
+//                    RegistrationDate = DateTime.Now,
+//                    GameType = game.GameType,
+//                    Player1 = game.Player1,
+//                    Player2 = game.Player2,
+//                    Score1 = game.Score1,
+//                    Score2 = game.Score2
+//                };
+//
+//                _gamesService.RegisterGame(newGame);
+//            }
+
             return View(model);
         }
 

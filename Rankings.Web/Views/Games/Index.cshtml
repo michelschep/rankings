@@ -3,16 +3,13 @@
 @inject IAuthorizationService AuthorizationService
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Register new game</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.RegistrationDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameType)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Venue)
@@ -24,10 +21,6 @@
                 @Html.DisplayNameFor(model => model.NameSecondPlayer)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ScoreFirstPlayer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ScoreSecondPlayer)
             </th>
             <th></th>
         </tr>
@@ -40,9 +33,6 @@
                     @Html.DisplayFor(modelItem => item.RegistrationDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.GameType)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.Venue)
                 </td>
                 <td>
@@ -52,10 +42,7 @@
                     @Html.DisplayFor(modelItem => item.NameSecondPlayer)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ScoreFirstPlayer)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
+                    @Html.DisplayFor(modelItem => item.ScoreFirstPlayer) - @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
                 </td>
                 <td>
                     @if ((await AuthorizationService.AuthorizeAsync(User, item.Id, "GameEditPolicy")).Succeeded)
