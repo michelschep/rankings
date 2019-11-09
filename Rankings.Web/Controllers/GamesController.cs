@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -145,7 +146,7 @@ namespace Rankings.Web.Controllers
                 Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
-                RegistrationDate = game.RegistrationDate.ToString(),
+                RegistrationDate = game.RegistrationDate.ToString(CultureInfo.InvariantCulture),
                 NameFirstPlayer = game.Player1.EmailAddress,
                 NameSecondPlayer = game.Player2.EmailAddress,
                 GameType = game.GameType.Code,

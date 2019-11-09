@@ -54,7 +54,7 @@ namespace Rankings.Core.Services
                 NumberOfSetWins = stats.NumberOfSetWins,
                 NumberOfWins = stats.NumberOfWins,
                 NumberOfGames = stats.NumberOfGames,
-                // TODO fix bug 0.001
+                // TODO fix 0.001 hack
                 WinPercentage = Math.Round((100m*stats.NumberOfWins/(stats.NumberOfGames+0.001m)), 2, MidpointRounding.AwayFromZero),
                 SetWinPercentage = Math.Round((100m*stats.NumberOfSetWins/(stats.NumberOfSets+0.001m)), 2, MidpointRounding.AwayFromZero),
             };

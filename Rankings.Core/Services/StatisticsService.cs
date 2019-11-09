@@ -126,7 +126,7 @@ namespace Rankings.Core.Services
             var ratings = new Dictionary<Profile, PlayerStats>();
             foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
             {
-                ratings.Add(profile, new PlayerStats()
+                ratings.Add(profile, new PlayerStats
                 {
                     NumberOfGames = 0,
                     NumberOfSetWins = 0,
