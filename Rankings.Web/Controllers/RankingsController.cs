@@ -46,6 +46,7 @@ namespace Rankings.Web.Controllers
                     RecordWinningStreak = ToWinningStreak(r),
                     CurrentWinningStreak = ToCurrentWinningStreak(r),
                     RecordEloStreak = (int) r.Value.BestEloSeries,
+                    CurrentEloStreak = (int) r.Value.CurrentEloSeries
                 });
 
             Response.Headers.Add("Refresh", "30");

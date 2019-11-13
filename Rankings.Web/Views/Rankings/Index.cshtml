@@ -10,7 +10,7 @@
             <th style="width: 20px;">
                 @Html.DisplayNameFor(model => model.Ranking)
             </th>
-            <th style="width: 100px;">
+            <th style="width: 140px;">
                 @Html.DisplayNameFor(model => model.NamePlayer)
             </th>
             <th style="width: 80px; text-align: right">
@@ -31,6 +31,9 @@
             <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.RecordEloStreak)
             </th>
+            <th style="width: 80px; text-align: right">
+                @Html.DisplayNameFor(model => model.CurrentEloStreak)
+            </th>
             <th style="width: 150px; text-align: right">
                 @Html.DisplayNameFor(model => model.History)
             </th>
@@ -42,7 +45,7 @@
             <td style="width: 20px; text-align: right">
                 @Html.DisplayFor(modelItem => item.Ranking)
             </td>
-            <td style="width: 100px;">
+            <td style="width: 140px;">
                 @Html.DisplayFor(modelItem => item.NamePlayer)
             </td>
             <td style="width: 80px; text-align: right">
@@ -62,6 +65,9 @@
             </td>
             <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.RecordEloStreak)
+            </td>
+            <td style="width: 80px; text-align: right">
+                @Html.DisplayFor(modelItem => item.CurrentEloStreak)
             </td>
             <td style="width: 150px; text-align: right">
                 <ol class="results">@foreach (var result in item.History){<li class="result"><div class="result--@result">@result</div></li>}</ol>

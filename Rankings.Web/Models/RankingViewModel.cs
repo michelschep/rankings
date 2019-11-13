@@ -33,5 +33,8 @@ namespace Rankings.Web.Models
 
         [Display(Name = "Current WStreak")]
         public int CurrentWinningStreak { get; set; }
+
+        [Display(Name = "Current Elo Streak")]
+        public int CurrentEloStreak { get; set; }
     }
 }
