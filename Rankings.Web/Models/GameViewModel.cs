@@ -19,21 +19,21 @@ namespace Rankings.Web.Models
         [Required]
         public string Venue { get; set; }
 
-        [Display(Name = "Winner")]
+        [Display(Name = "First Player")]
         [Required]
         public string NameFirstPlayer { get; set; }
 
-        [Display(Name = "Loser")]
+        [Display(Name = "Second Player")]
         [Required]
         public string NameSecondPlayer { get; set; }
 
-        [Display(Name = "")]
+        [Display(Name = "Score First Player")]
         [Required]
         [Range(0, 100)]
         [NoPointsDrawIsNotAllowed]
         public int ScoreFirstPlayer { get; set; }
 
-        [Display(Name = "")]
+        [Display(Name = "Score Second Player")]
         [Required]
         [Range(0, 100)]
         public int ScoreSecondPlayer { get; set; }

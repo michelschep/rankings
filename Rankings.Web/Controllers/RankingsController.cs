@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
@@ -29,26 +30,36 @@ namespace Rankings.Web.Controllers
             var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
             var ranking = 1;
             var numberOfGames = gameType == "tafeltennis" ? 6 : 0;
+            //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
 
             var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.Ranking)
                 .Select(r => new RankingViewModel
                 {
+                    NumberOfGames = r.Value.NumberOfGames,
                     WinPercentage = Math.Round(r.Value.WinPercentage,0,MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture),
                     SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture),
                     Points = Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture), 
                     NamePlayer = r.Key.DisplayName, 
                     Ranking = (ranking++) + ".",
-                    History = ToHistory(r)
+                    History = ToHistory(r),
+                    RecordWinningStreak = ToWinningStreak(r),
+                    RecordEloStreak = (int) r.Value.BestEloSeries
                 });
 
             Response.Headers.Add("Refresh", "30");
             return View(model);
         }
 
+        private int ToWinningStreak(in KeyValuePair<Profile, PlayerStats> r)
+        {
+            return r.Value.History.Split('L').Select(s => s.Length).Max();
+        }
+
         private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
         {
-            return r.Value.History.ToCharArray().Reverse().ToList().Take(7).Reverse().ToList();
+            var chars = r.Value.History.ToCharArray().Reverse().ToList();
+            return chars.Take(7).Reverse().ToList();
         }
     }
 }

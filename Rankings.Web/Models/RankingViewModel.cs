@@ -22,5 +22,13 @@ namespace Rankings.Web.Models
 
         [Display(Name = "History")]
         public List<char> History { get; set; }
+
+        public int NumberOfGames { get; set; }
+
+        [Display(Name = "Best WStreak")]
+        public int RecordWinningStreak { get; set; }
+
+        [Display(Name = "Best Elo Streak")]
+        public int RecordEloStreak { get; set; }
     }
 }

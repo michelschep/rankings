@@ -11,5 +11,7 @@
         public decimal WinPercentage { get; set; }
         public decimal SetWinPercentage { get; set; }
         public int TimeNumberOne { get; set; }
+        public decimal CurrentEloSeries { get; set; }
+        public decimal BestEloSeries { get; set; }
     }
 }

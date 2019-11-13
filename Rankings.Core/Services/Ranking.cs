@@ -57,6 +57,7 @@ namespace Rankings.Core.Services
                 // TODO fix 0.001 hack
                 WinPercentage = Math.Round((100m*stats.NumberOfWins/(stats.NumberOfGames+0.001m)), 2, MidpointRounding.AwayFromZero),
                 SetWinPercentage = Math.Round((100m*stats.NumberOfSetWins/(stats.NumberOfSets+0.001m)), 2, MidpointRounding.AwayFromZero),
+                BestEloSeries = stats.BestEloSeries,
             };
         }
     }

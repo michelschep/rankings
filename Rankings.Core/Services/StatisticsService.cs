@@ -133,7 +133,9 @@ namespace Rankings.Core.Services
                     NumberOfSets = 0,
                     NumberOfWins = 0,
                     Ranking = _initalElo,
-                    History = ""
+                    History = "",
+                    CurrentEloSeries = 0,
+                    BestEloSeries = 0
                 });
             }
 
@@ -157,6 +159,28 @@ namespace Rankings.Core.Services
 
                 var newRatingPlayer1 = oldRatingPlayer1.Ranking + player1Delta;
                 var newRatingPlayer2 = oldRatingPlayer2.Ranking - player1Delta;
+
+                if (player1Delta > 0)
+                {
+                    ratings[game.Player1].CurrentEloSeries += player1Delta;
+                    ratings[game.Player2].CurrentEloSeries = 0;
+
+                    if (ratings[game.Player1].CurrentEloSeries > ratings[game.Player1].BestEloSeries)
+                    {
+                        ratings[game.Player1].BestEloSeries = ratings[game.Player1].CurrentEloSeries;
+                    }
+                }
+
+                if (player1Delta < 0)
+                {
+                    ratings[game.Player2].CurrentEloSeries += -1 * player1Delta;
+                    ratings[game.Player1].CurrentEloSeries = 0;
+
+                    if (ratings[game.Player2].CurrentEloSeries > ratings[game.Player2].BestEloSeries)
+                    {
+                        ratings[game.Player2].BestEloSeries = ratings[game.Player2].CurrentEloSeries;
+                    }
+                }
 
                 ratings[game.Player1].Ranking = newRatingPlayer1;
                 ratings[game.Player2].Ranking = newRatingPlayer2;

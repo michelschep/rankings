@@ -22,9 +22,16 @@
             <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.SetWinPercentage)
             </th>
+            <th style="width: 80px; text-align: right">
+                @Html.DisplayNameFor(model => model.RecordWinningStreak)
+            </th>
+            <th style="width: 80px; text-align: right">
+                @Html.DisplayNameFor(model => model.RecordEloStreak)
+            </th>
             <th style="width: 150px; text-align: right">
                 @Html.DisplayNameFor(model => model.History)
             </th>
+           
         </tr>
     </thead>
     <tbody>
@@ -44,6 +51,12 @@
             </td>
             <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.SetWinPercentage)
+            </td>
+            <td style="width: 80px; text-align: right">
+                @Html.DisplayFor(modelItem => item.RecordWinningStreak)
+            </td>
+            <td style="width: 80px; text-align: right">
+                @Html.DisplayFor(modelItem => item.RecordEloStreak)
             </td>
             <td style="width: 150px; text-align: right">
                 <ol class="results">@foreach (var result in item.History){<li class="result"><div class="result--@result">@result</div></li>}</ol>
