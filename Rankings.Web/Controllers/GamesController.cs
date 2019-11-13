@@ -134,7 +134,7 @@ namespace Rankings.Web.Controllers
             {
                 return RedirectToAction("Index", "Rankings");
             }
-
+            
             var game = _gamesService.Item(new SpecificGame(id));
             // TODO use auto mapper
             var viewModel = new GameViewModel

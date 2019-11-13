@@ -29,7 +29,7 @@ namespace Rankings.Web.Controllers
             
             var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
             var ranking = 1;
-            var numberOfGames = gameType == "tafeltennis" ? 6 : 0;
+            var numberOfGames = gameType == "tafeltennis" ? 7 : 0;
             //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
 
             var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
@@ -44,7 +44,8 @@ namespace Rankings.Web.Controllers
                     Ranking = (ranking++) + ".",
                     History = ToHistory(r),
                     RecordWinningStreak = ToWinningStreak(r),
-                    RecordEloStreak = (int) r.Value.BestEloSeries
+                    CurrentWinningStreak = ToCurrentWinningStreak(r),
+                    RecordEloStreak = (int) r.Value.BestEloSeries,
                 });
 
             Response.Headers.Add("Refresh", "30");
@@ -54,6 +55,11 @@ namespace Rankings.Web.Controllers
         private int ToWinningStreak(in KeyValuePair<Profile, PlayerStats> r)
         {
             return r.Value.History.Split('L').Select(s => s.Length).Max();
+        }
+
+        private int ToCurrentWinningStreak(in KeyValuePair<Profile, PlayerStats> r)
+        {
+            return r.Value.History.Split('L').Select(s => s.Length).Last();
         }
 
         private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)

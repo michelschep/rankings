@@ -3,7 +3,7 @@
 <p>
     <a asp-controller="Games" asp-action="Create">Register a new game!</a>
 </p>
-<p>A player needs to play at least 6 games to see it's ranking (and other stats)</p>
+<p>A player needs to play at least 7 games to see it's ranking (and other stats)</p>
 <table class="table" style="table-layout: fixed;">
     <thead>
         <tr>
@@ -26,12 +26,14 @@
                 @Html.DisplayNameFor(model => model.RecordWinningStreak)
             </th>
             <th style="width: 80px; text-align: right">
+                @Html.DisplayNameFor(model => model.CurrentWinningStreak)
+            </th>
+            <th style="width: 80px; text-align: right">
                 @Html.DisplayNameFor(model => model.RecordEloStreak)
             </th>
             <th style="width: 150px; text-align: right">
                 @Html.DisplayNameFor(model => model.History)
             </th>
-           
         </tr>
     </thead>
     <tbody>
@@ -54,6 +56,9 @@
             </td>
             <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.RecordWinningStreak)
+            </td>
+            <td style="width: 80px; text-align: right">
+                @Html.DisplayFor(modelItem => item.CurrentWinningStreak)
             </td>
             <td style="width: 80px; text-align: right">
                 @Html.DisplayFor(modelItem => item.RecordEloStreak)
