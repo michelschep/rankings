@@ -1,31 +1,31 @@
 ====================== current sprint =======================================================
 - use migrations for database updates
+- add logging
 - use specflow to create end to end acceptance tests
 - refactor calculation (statistics service)
+
+====================== back log ===========================================================
+- show + elo next to game
+- avatar for player
+- player of the month ranking + historical overview
+- doubles
+- Remove own account name from matrix (that is confusing)
+- tournament options
+
 - Rename methods in IGamesService
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
+
 - validation
   - do not enter same player name twice in game
   - names player contains at least visisble character
 
-====================== back log ===========================================================
 - add elo explanation page 
-- show always winner game in first column
 - Add probability to matrix
-- Remove own account name from matrix (that is confusing)
-
-- add logging
 - Do not show email address in list of players
-- links to rankings on home page
-- show + elo next to game
-
 - expose API for other apps (iphone app, android, windows notifier)
-- avatar for player
 - player can be disabled
-- doubles 
 - social media stream (results, records, comments)
-- tournament options
 
 - notifications
     - with signalR: game results, breaking news
@@ -97,3 +97,5 @@ X for table tennis 0-0 is not allowed
 X alignment elo score in ranking. Not always 4 digits.
 X website favicon
 X games, ranks for each gametype (now very table tennis orientated)
+X  show always winner game in first column
+X links to rankings on home page
