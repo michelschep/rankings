@@ -25,16 +25,23 @@ namespace Rankings.Web.Models
 
         public int NumberOfGames { get; set; }
 
-        [Display(Name = "Best WStreak")]
+        [Display(Name = "BWS")]
         public int RecordWinningStreak { get; set; }
 
-        [Display(Name = "Best Elo Streak")]
+        [Display(Name = "BES")]
         public int RecordEloStreak { get; set; }
 
-        [Display(Name = "Current WStreak")]
+        [Display(Name = "CWS")]
         public int CurrentWinningStreak { get; set; }
 
-        [Display(Name = "Current Elo Streak")]
+        [Display(Name = "CES")]
         public int CurrentEloStreak { get; set; }
+
+        [Display(Name = "Skalp Streak")]
+        public int SkalpStreak { get; set; }
+        public int Goat { get; set; }
+
+        [Display(Name = "Days #1")]
+        public string TimeNumberOne { get; set; }
     }
 }

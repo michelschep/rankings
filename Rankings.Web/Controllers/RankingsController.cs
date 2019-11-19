@@ -31,6 +31,9 @@ namespace Rankings.Web.Controllers
             var ranking = 1;
             var numberOfGames = gameType == "tafeltennis" ? 7 : 0;
             //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
+            
+            var lastPointInTime = _statisticsService.CalculateStats();
+
 
             var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.Ranking)
@@ -46,9 +49,12 @@ namespace Rankings.Web.Controllers
                     RecordWinningStreak = ToWinningStreak(r),
                     CurrentWinningStreak = ToCurrentWinningStreak(r),
                     RecordEloStreak = (int) r.Value.BestEloSeries,
-                    CurrentEloStreak = (int) r.Value.CurrentEloSeries
+                    CurrentEloStreak = (int) r.Value.CurrentEloSeries,
+                    SkalpStreak = (int) r.Value.SkalpStreak,
+                    Goat = (int) r.Value.Goat,
+                    TimeNumberOne = Math.Round((new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays),0,MidpointRounding.AwayFromZero).ToString()
                 });
-
+            // 
             Response.Headers.Add("Refresh", "30");
             return View(model);
         }

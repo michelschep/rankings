@@ -135,7 +135,9 @@ namespace Rankings.Core.Services
                     Ranking = _initalElo,
                     History = "",
                     CurrentEloSeries = 0,
-                    BestEloSeries = 0
+                    BestEloSeries = 0,
+                    SkalpStreak = 0,
+                    Goat = 0
                 });
             }
 
@@ -214,6 +216,13 @@ namespace Rankings.Core.Services
 
                 ratings[game.Player1].NumberOfSetWins += game.Score1;
                 ratings[game.Player2].NumberOfSetWins += game.Score2;
+
+                // goat
+                if (ratings[game.Player1].Ranking > ratings[game.Player1].Goat)
+                    ratings[game.Player1].Goat = ratings[game.Player1].Ranking;
+                if (ratings[game.Player2].Ranking > ratings[game.Player2].Goat)
+                    ratings[game.Player2].Goat = ratings[game.Player2].Ranking;
+
             }
 
             return new Ranking(ratings, _precision);
@@ -246,7 +255,7 @@ namespace Rankings.Core.Services
                         Won = 0,
                         WonStreak = 0,
                         WonStreakRecord = 0,
-                        Lost = 0
+                        Lost = 0,
                     });
                 }
                 else
@@ -266,7 +275,7 @@ namespace Rankings.Core.Services
                         Won = previousStats.Won,
                         WonStreak = previousStats.WonStreak,
                         WonStreakRecord = previousStats.WonStreakRecord,
-                        Lost = previousStats.Lost
+                        Lost = previousStats.Lost,
                     });
                 }
             }

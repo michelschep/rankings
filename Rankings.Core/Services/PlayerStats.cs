@@ -13,5 +13,7 @@
         public int TimeNumberOne { get; set; }
         public decimal CurrentEloSeries { get; set; }
         public decimal BestEloSeries { get; set; }
+        public decimal SkalpStreak { get; set; }
+        public decimal Goat { get; set; }
     }
 }

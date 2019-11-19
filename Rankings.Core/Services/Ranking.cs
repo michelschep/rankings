@@ -46,6 +46,7 @@ namespace Rankings.Core.Services
 
         private static PlayerStats ConvertStats(PlayerStats stats, int precision)
         {
+            // TODO get rid of or at least with mapper
             return new PlayerStats
             {
                 Ranking = Math.Round(stats.Ranking, precision, MidpointRounding.AwayFromZero),
@@ -58,7 +59,9 @@ namespace Rankings.Core.Services
                 WinPercentage = Math.Round((100m*stats.NumberOfWins/(stats.NumberOfGames+0.001m)), 2, MidpointRounding.AwayFromZero),
                 SetWinPercentage = Math.Round((100m*stats.NumberOfSetWins/(stats.NumberOfSets+0.001m)), 2, MidpointRounding.AwayFromZero),
                 BestEloSeries = stats.BestEloSeries,
-                CurrentEloSeries = stats.CurrentEloSeries
+                CurrentEloSeries = stats.CurrentEloSeries,
+                Goat =  Math.Round(stats.Goat, precision, MidpointRounding.AwayFromZero),
+                TimeNumberOne = stats.TimeNumberOne
             };
         }
     }
