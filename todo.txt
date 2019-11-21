@@ -1,13 +1,17 @@
 ====================== current sprint =======================================================
 - caching ranking
+  - only when game is new
+  - when game result is updated
+  - when game is deleted
+  - use date in cache key
 - use specflow to create end to end acceptance tests
 - refactor calculation (statistics service)
 - use migrations for database updates
-- add logging
-- courier for numbers in ranking
-- time #1 => days+hours+minutes
 
 ====================== back log ===========================================================
+- time #1 => days+hours+minutes
+- courier for numbers in ranking
+- add logging
 - show + elo next to game
 - avatar for player
 - player of the month ranking + historical overview
@@ -15,7 +19,10 @@
 - Remove own account name from matrix (that is confusing)
 - tournament options
 
-- volume streaks (n x elo opponents)
+- volume streaks 
+    - n x elo opponents
+    - n x percentage elo ranking
+
 - elo improvements
   - k factor lower for experienced players
   - less influence game score
