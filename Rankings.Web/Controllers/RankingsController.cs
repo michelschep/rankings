@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
@@ -14,10 +14,12 @@ namespace Rankings.Web.Controllers
     public class RankingsController : Controller
     {
         private readonly IStatisticsService _statisticsService;
+        private readonly IMemoryCache _memoryCache;
 
-        public RankingsController(IStatisticsService rankingService)
+        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
         [HttpGet("/rankings")]
@@ -27,11 +29,23 @@ namespace Rankings.Web.Controllers
             gameType = gameType ?? "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
             
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
+            {
+                var model = RankingViewModelsFor(gameType, endDate).ToList();
+                return model;
+            });
+            
+            Response.Headers.Add("Refresh", "60");
+            return View(cacheEntry);
+        }
+
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime endDate)
+        {
             var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
             var ranking = 1;
             var numberOfGames = gameType == "tafeltennis" ? 7 : 0;
             //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
-            
+
             var lastPointInTime = _statisticsService.CalculateStats();
 
 
@@ -40,10 +54,13 @@ namespace Rankings.Web.Controllers
                 .Select(r => new RankingViewModel
                 {
                     NumberOfGames = r.Value.NumberOfGames,
-                    WinPercentage = Math.Round(r.Value.WinPercentage,0,MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture),
-                    SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture),
-                    Points = Math.Round(r.Value.Ranking,0,MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture), 
-                    NamePlayer = r.Key.DisplayName, 
+                    WinPercentage = Math.Round(r.Value.WinPercentage, 0, MidpointRounding.AwayFromZero)
+                        .ToString(CultureInfo.InvariantCulture),
+                    SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero)
+                        .ToString(CultureInfo.InvariantCulture),
+                    Points = Math.Round(r.Value.Ranking, 0, MidpointRounding.AwayFromZero)
+                        .ToString(CultureInfo.InvariantCulture),
+                    NamePlayer = r.Key.DisplayName,
                     Ranking = (ranking++) + ".",
                     History = ToHistory(r),
                     RecordWinningStreak = ToWinningStreak(r),
@@ -52,11 +69,11 @@ namespace Rankings.Web.Controllers
                     CurrentEloStreak = (int) r.Value.CurrentEloSeries,
                     SkalpStreak = (int) r.Value.SkalpStreak,
                     Goat = (int) r.Value.Goat,
-                    TimeNumberOne = Math.Round((new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays),0,MidpointRounding.AwayFromZero).ToString()
+                    TimeNumberOne =
+                        Math.Round((new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays), 0,
+                            MidpointRounding.AwayFromZero).ToString()
                 });
-            // 
-            Response.Headers.Add("Refresh", "30");
-            return View(model);
+            return model;
         }
 
         private int ToWinningStreak(in KeyValuePair<Profile, PlayerStats> r)

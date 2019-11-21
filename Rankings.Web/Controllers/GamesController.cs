@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
@@ -17,13 +18,17 @@ namespace Rankings.Web.Controllers
     {
         private readonly IGamesService _gamesService;
         private readonly IAuthorizationService _authorizationService;
+
+        private readonly IMemoryCache _memoryCache;
+
         // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
-        public GamesController(IGamesService gamesService, IAuthorizationService authorizationService)
+        public GamesController(IGamesService gamesService, IAuthorizationService authorizationService, IMemoryCache memoryCache)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
         [HttpGet("/games")]
@@ -84,6 +89,7 @@ namespace Rankings.Web.Controllers
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
+           
             // TODO auto mapper
             return View(new GameViewModel
             {
@@ -124,6 +130,8 @@ namespace Rankings.Web.Controllers
             };
 
             _gamesService.RegisterGame(game);
+
+            _memoryCache.Remove("ranking-" + game.GameType.Code);
             return RedirectToAction("Index", "Rankings");
         }
 
@@ -175,6 +183,7 @@ namespace Rankings.Web.Controllers
             game.Score2 = model.ScoreSecondPlayer;
             _gamesService.Save(game);
 
+            _memoryCache.Remove("ranking-" + game.GameType.Code);
             return RedirectToAction("Index", "Rankings");
         }
 
