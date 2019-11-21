@@ -168,7 +168,6 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(GameViewModel model)
         {
-
             var authResult = await _authorizationService.AuthorizeAsync(User, model.Id, GameEditPolicy);
             if (!authResult.Succeeded)
             {
@@ -177,13 +176,15 @@ namespace Rankings.Web.Controllers
 
             var game = _gamesService.Item(new SpecificGame(model.Id));
 
+            if (model.ScoreFirstPlayer != game.Score1 || model.ScoreSecondPlayer != game.Score2)
+                _memoryCache.Remove("ranking-" + game.GameType.Code);
+
             // TODO use auto mapper
             game.Venue = _gamesService.Item(new SpecificVenue(model.Venue));
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
             _gamesService.Save(game);
-
-            _memoryCache.Remove("ranking-" + game.GameType.Code);
+            
             return RedirectToAction("Index", "Rankings");
         }
 
