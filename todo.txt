@@ -4,6 +4,8 @@
   - when game result is updated
   - when game is deleted
   - use date in cache key
+- calculate ranking async (not when opening ranking page after registrating game)
+
 - use specflow to create end to end acceptance tests
 - refactor calculation (statistics service)
 - use migrations for database updates
