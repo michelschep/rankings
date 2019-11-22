@@ -11,6 +11,10 @@
 - use migrations for database updates
 
 ====================== back log ===========================================================
+- desktop notifier
+  - show notifications when: games is played, new record
+  - menu item to open dashboard
+  
 - heatmaps (mtraix with playersxplayers ordered by value)
   - total instances of game X-Y
   - total elo points per game X-Y
