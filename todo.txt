@@ -17,6 +17,12 @@
   - total winning elo point per game X-Y
 - streaks BestOf5, BestOf3, BestOf1
 - stats per hour/part of day (when is a player at his best?)
+- average winning streak
+    - number of games
+    - elo points
+- average losing streak
+- page with all running streaks
+- ranking per player: all oponents (#games, won, lost, percentage, elo point won, elo points lost)
 
 - time #1 => days+hours+minutes
 - courier for numbers in ranking
