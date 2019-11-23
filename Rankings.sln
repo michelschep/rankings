@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.Core", "Rankings.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.Infrastructure", "Rankings.Infrastructure\Rankings.Infrastructure.csproj", "{623C3320-233F-487B-AD56-B30785A132A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.ConsoleApp", "Rankings.ConsoleApp\Rankings.ConsoleApp.csproj", "{01F29641-5931-4A24-A8FF-B965ED5E3674}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.ConsoleApp", "Rankings.ConsoleApp\Rankings.ConsoleApp.csproj", "{01F29641-5931-4A24-A8FF-B965ED5E3674}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.IntegrationTests", "Rankings.IntegrationTests\Rankings.IntegrationTests.csproj", "{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{01F29641-5931-4A24-A8FF-B965ED5E3674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01F29641-5931-4A24-A8FF-B965ED5E3674}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01F29641-5931-4A24-A8FF-B965ED5E3674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

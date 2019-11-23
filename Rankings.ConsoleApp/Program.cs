@@ -12,7 +12,7 @@ namespace Rankings.ConsoleApp
         static void Main()
         {
             var statsService = CreateStatisticsService();
-            var lastPointInTime = statsService.CalculateStats();
+            var lastPointInTime = statsService.CalculateStats(DateTime.MinValue, DateTime.MaxValue);
 
             Console.WriteLine("");
             foreach (var item in lastPointInTime.Value.NewPlayerStats.OrderByDescending(pair => pair.Value.Rating))

@@ -22,7 +22,7 @@ namespace Rankings.Core.Services
             _eloCalculator = new EloCalculator(n, kfactor, withMarginOfVictory);
         }
 
-        public KeyValuePair<DateTime, RankingStats> CalculateStats()
+        public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
         {
             //DateTime currentDate = DateTime.MinValue;
 
@@ -30,7 +30,7 @@ namespace Rankings.Core.Services
 //            var games = new Dictionary<string, int>();
 //            var minutes = new Dictionary<string, double>();
 
-            var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue)).ToList();
+            var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList();
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
             var now = DateTime.Now;
             dateTimes.Add(now);

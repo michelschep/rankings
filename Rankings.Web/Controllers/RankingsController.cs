@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
@@ -39,15 +40,36 @@ namespace Rankings.Web.Controllers
             return View(cacheEntry);
         }
 
+        [HttpGet("/rankings/month/{gametype}/{year}/{month}")]
+        public IActionResult Month(string gameType, int year, int month)
+        {
+            gameType = gameType ?? "tafeltennis";
+            var startDate = new DateTime(2019, 9, 1, 0,0,0);
+            var endDate = new DateTime(2019, 10, 1, 0,0,0 );
+            
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType+":" + year + ":" + month, entry =>
+            {
+                var model = RankingViewModelsFor(gameType, startDate, endDate).ToList();
+                return model;
+            });
+            
+            Response.Headers.Add("Refresh", "60");
+            return View("Index", cacheEntry);
+        }
+
         private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime endDate)
         {
-            var ratings = _statisticsService.Ranking(gameType, DateTime.MinValue, endDate);
+            return RankingViewModelsFor(gameType, DateTime.MinValue, endDate);
+        }
+
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate)
+        { 
+            var ratings = _statisticsService.Ranking(gameType, startDate, endDate);
             var ranking = 1;
             var numberOfGames = gameType == "tafeltennis" ? 7 : 0;
             //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
 
-            var lastPointInTime = _statisticsService.CalculateStats();
-
+            var lastPointInTime = _statisticsService.CalculateStats(startDate, endDate);
 
             var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.Ranking)

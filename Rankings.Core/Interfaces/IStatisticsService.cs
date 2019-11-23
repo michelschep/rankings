@@ -6,6 +6,6 @@ namespace Rankings.Core.Interfaces
 {
     public interface IStatisticsService: IRankingStats
     {
-        KeyValuePair<DateTime, RankingStats> CalculateStats();
+        KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate);
     }
 }
