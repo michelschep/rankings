@@ -94,6 +94,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Details(int id)
         {
+            // TODO get rid of this please....
             ActivateCurrentUser();
 
             var profile = _gamesService.Item(new SpecificProfile(id));
