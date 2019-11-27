@@ -111,7 +111,35 @@
 - player can approve its game
 - player can disapprove its game
 - admin can do both always for all games
-    
+
+=========== general game stats page
+
+* Summary
+  - Rank
+  - Player1
+  - Player2
+  - Total Games
+  - Total Wins Player1
+  - Total wins Player2
+  - Totals Sets Player1
+  - Totals sets Player2
+  - Total elo Won Player 1
+  - Total elo Won Player 2
+ 
+ * Running Winning Streaks
+   - Player-X
+   - Total Games
+   - Total Elo Won
+   - 
+   
+ * Terminated Winning Streaks
+ 
+  * Running Winning Clean Sheets Streaks
+  * Terminated Winning Clean Sheets Streaks (records)
+   
+  * Running X-Y Winning Streaks
+  * Terminated X-Y Winning Streaks (records)
+  
 ======================= done =====================================================
 X points that can be gained per player in ranking or other page
 X unit tests for elo ranking calculation
