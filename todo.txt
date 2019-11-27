@@ -21,14 +21,7 @@
   - total winning elo point per game X-Y
 - streaks BestOf5, BestOf3, BestOf1
 - stats per hour/part of day (when is a player at his best?)
-- average winning streak
-    - number of games
-    - elo points
-- average losing streak
-- page with all running streaks
-- ranking per player: all oponents (#games, won, lost, percentage, elo point won, elo points lost)
 
-- time #1 => days+hours+minutes
 - courier for numbers in ranking
 - add logging
 - show + elo next to game
@@ -38,7 +31,7 @@
 - Remove own account name from matrix (that is confusing)
 - tournament options
 
-- volume streaks 
+- volume streaks (elo score/max elo score)
     - n x elo opponents
     - n x percentage elo ranking
 
@@ -68,38 +61,11 @@
     
 - stats
     - overall
-        - number of days/weeks finishing as number one
-        - number of minutes/hours number one
-        - number of *own* games number one (more own games bacause that means player is challanging his/her own ranking)
-        - list of number ones (total time, total games)
         - player of the month (talent of the month: gained most elo point)
-        - clean sheets (streak)
-        - winning streak
-        - highest elo win
-        - classic games (#>=45 and win%>=40 both players)
-        - most elo points win streak (can also include drwas against higher ranked player)
-        - most elo points lose streak
-        
-    - list of all games
-        - points/game, points/winning games, points/losing games
-        
-    - stat per game X-Y
-        - total sets-X-total sets-Y
-        - total elo-X - total elo-Y
-        - clean sheets (streak)
-        - winning streak
         
     - stats per player
-        - social%
-        - max (goat score)/min elo ever
         - player progress graph with elo score (time x elo, d3)
-        - elo avergae per winning games/losing games
-        - games per player
-        - clean sheets (streak)
-        - winning streak
-        - angst gegner
-        - moving average (4/8 weeks) versus current elo
-        
+                
     - badgets
       - stars (depend on how many weeks/time number 1: 4 weeks, 12 weeks, ...)
       - 1 minute number one
@@ -112,33 +78,125 @@
 - player can disapprove its game
 - admin can do both always for all games
 
-=========== general game stats page
+=========== general stats page
+* Summary (the current ranking page)	
+	- Rank
+	- Player
+	- Elo
+	- Goat
+	- delta vs 4 weeks ago
+	- Mean last 4 weeks (moving average)
+	- win%
+	- setwin%
+	- time number one
+	- number of *own* games number one (more own games bacause that means player is challanging his/her own ranking)
+	- best elo score in a match
+	- best elo score in a streak
+	- %social
+	- avg elo win
+	- avg elo lost
+	- avg elo rank opponent
 
-* Summary
-  - Rank
-  - Player1
-  - Player2
-  - Total Games
-  - Total Wins Player1
-  - Total wins Player2
-  - Totals Sets Player1
-  - Totals sets Player2
-  - Total elo Won Player 1
-  - Total elo Won Player 2
- 
- * Running Winning Streaks
-   - Player-X
-   - Total Games
-   - Total Elo Won
-   - 
+=========== general games stats page ================================
+
+* Summary (table) ordered by total games
+  - idem as in "Elo points ranking (table)"
+  
+ * Running Winning/Losing Streaks (table) AND clean sheets streaks AND only different opponents AND elo streaks
+   - Player-X			Michel
+   - Total Games		7
+   - Total Elo Won		280
+   - Strength			70%
+   - Start Date
+   - Just Before game	link
    
- * Terminated Winning Streaks
- 
-  * Running Winning Clean Sheets Streaks
-  * Terminated Winning Clean Sheets Streaks (records)
+ * Terminated Winning/Losing Streaks (table)  AND clean sheets streaks AND only different opponents AND elo streaks
+   - Player-X			Michel
+   - Total Games		7
+   - Total Elo Won		280
+   - Strength			70%
+   - Start Date
+   - End Date
+   - Just Before game	link
+   - Just After game	link
+     
+================================================================
+X (for example Michel)
+
+Games	100
+Win%	70
+Setw%	68
+
+* Elo points ranking (table)
+- Rank				1
+- Player 			Geale
+- #games			80
+- elo bruto			120
+- elo lost		 	 40
+- elo netto		 	 80
+- elo avg		  	  1
+- link				link to stats page Michel-Geale
+- #won/lost			40-20
+- #setwin/setlost   80-43
+- perc games
+- perc sets		
+- avg winning streak
+- max winning streak
+- avg clean sheets streak
+- # streak killers
+
+
+* all games (table)
+	- Player1 (Michel)
+	- Player2
+	- Registration Date
+	- S1
+	- S2
+	- Elo1 won/lost
+	- Elo2 won/lost
+	- sum won1
+	- sum won2
+	- sum setwon1
+	- sum setwon2
+	- perc won1
+	- perc won2
+	
+============= X-Y ============================================
+* Summary (one record)
+  - idem as in "Elo points ranking (table)"
+  
+* all games (table)
+	- Player1
+	- Player2
+	- Registration Date
+	- S1
+	- S2
+	- Elo1 won/lost
+	- Elo2 won/lost
+	- sum won1
+	- sum won2
+	- sum setwon1
+	- sum setwon2
+	- perc won1
+	- perc won2
+	
+* Running Winning Streaks AND clean sheets
+   - Player-X			Michel
+   - Player-Y			Geale
+   - Total Games		7
+   - Total Elo Won		280
+   - Start Date
+   - Just Before game	link
    
-  * Running X-Y Winning Streaks
-  * Terminated X-Y Winning Streaks (records)
+ * Terminated Winning Streaks AND clean sheets
+   - Player-X			Michel
+   - Player-X			Geale
+   - Total Games		7
+   - Total Elo Won		280
+   - Start Date
+   - End Date
+   - Just Before game	link
+   - Just After game	link
   
 ======================= done =====================================================
 X points that can be gained per player in ranking or other page
