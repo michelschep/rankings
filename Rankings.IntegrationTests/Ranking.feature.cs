@@ -185,12 +185,14 @@ this.FeatureBackground();
                             "Registration Date",
                             "First Player",
                             "Second Player",
-                            "Result"});
+                            "S1",
+                            "S2"});
                 table2.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
-                            "2-1"});
+                            "2",
+                            "1"});
 #line 18
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table2, "When ");
 #line hidden

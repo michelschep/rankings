@@ -132,7 +132,7 @@ namespace Rankings.Web.Controllers
             _gamesService.RegisterGame(game);
 
             _memoryCache.Remove("ranking-" + game.GameType.Code);
-            return RedirectToAction("Index", "Rankings");
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -185,14 +185,14 @@ namespace Rankings.Web.Controllers
             game.Score2 = model.ScoreSecondPlayer;
             _gamesService.Save(game);
             
-            return RedirectToAction("Index", "Rankings");
+            return RedirectToAction("Index");
         }
 
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult Delete(int id)
         {
             _gamesService.DeleteGame(id);
-            return RedirectToAction("Index", "Rankings");
+            return View("Index");
         }
     }
 }
