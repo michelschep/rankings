@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
-using Rankings.Core.Services;
 using Rankings.Core.Specifications;
-using Rankings.Web.Models;
 
 namespace Rankings.Web
 {

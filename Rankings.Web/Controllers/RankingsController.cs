@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
@@ -93,7 +92,7 @@ namespace Rankings.Web.Controllers
                     Goat = (int) r.Value.Goat,
                     TimeNumberOne =
                         Math.Round((new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays), 0,
-                            MidpointRounding.AwayFromZero).ToString()
+                            MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture)
                 });
             return model;
         }
