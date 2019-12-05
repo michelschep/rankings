@@ -151,7 +151,7 @@ namespace Rankings.IntegrationTests
         protected readonly GamesController GamesController;
         protected readonly RankingsController RankingController;
 
-        public StepsBase()
+        protected StepsBase()
         {
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);

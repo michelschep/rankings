@@ -143,7 +143,7 @@ namespace Rankings.Core.Services
 
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                // TODO for tafel tennis a 0-0 is not a valid result. For time related games it is possible
+                // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0
                 if (game.Score1 == 0 && game.Score2 == 0)
                     continue;
