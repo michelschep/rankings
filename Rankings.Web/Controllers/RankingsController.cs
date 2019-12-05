@@ -24,18 +24,19 @@ namespace Rankings.Web.Controllers
 
         [HttpGet("/rankings")]
         [HttpGet("/rankings/{gametype}/{endDateInput}")]
-        public IActionResult Index(string gameType, string endDateInput)
+        public IActionResult Index(string gameType, string endDateInput, int numberOfGames = 7)
         {
             gameType = gameType ?? "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
             {
-                var model = RankingViewModelsFor(gameType, endDate).ToList();
+                var model = RankingViewModelsFor(gameType,  DateTime.MinValue, endDate, numberOfGames).ToList();
                 return model;
             });
             
-            Response.Headers.Add("Refresh", "60");
+            // TODO mock in test
+            //Response.Headers.Add("Refresh", "60");
             return View(cacheEntry);
         }
 
@@ -48,7 +49,7 @@ namespace Rankings.Web.Controllers
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType+":" + year + ":" + month, entry =>
             {
-                var model = RankingViewModelsFor(gameType, startDate, endDate).ToList();
+                var model = RankingViewModelsFor(gameType, startDate, endDate, 0).ToList();
                 return model;
             });
             
@@ -56,16 +57,16 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime endDate)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime endDate, int numberOfGames)
         {
-            return RankingViewModelsFor(gameType, DateTime.MinValue, endDate);
+            return RankingViewModelsFor(gameType, DateTime.MinValue, endDate, numberOfGames);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames)
         { 
             var ratings = _statisticsService.Ranking(gameType, startDate, endDate);
             var ranking = 1;
-            var numberOfGames = gameType == "tafeltennis" ? 7 : 0;
+            // TODO cong=fig number to be able to test
             //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
 
             var lastPointInTime = _statisticsService.CalculateStats(startDate, endDate);
@@ -82,7 +83,7 @@ namespace Rankings.Web.Controllers
                     Points = Math.Round(r.Value.Ranking, 0, MidpointRounding.AwayFromZero)
                         .ToString(CultureInfo.InvariantCulture),
                     NamePlayer = r.Key.DisplayName,
-                    Ranking = (ranking++) + ".",
+                    Ranking = (ranking++).ToString(),
                     History = ToHistory(r),
                     RecordWinningStreak = ToWinningStreak(r),
                     CurrentWinningStreak = ToCurrentWinningStreak(r),
