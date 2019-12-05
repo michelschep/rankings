@@ -57,18 +57,10 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime endDate, int numberOfGames)
-        {
-            return RankingViewModelsFor(gameType, DateTime.MinValue, endDate, numberOfGames);
-        }
-
         private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames)
         { 
             var ratings = _statisticsService.Ranking(gameType, startDate, endDate);
             var ranking = 1;
-            // TODO cong=fig number to be able to test
-            //numberOfGames = User.HasClaim(ClaimTypes.Role, "Admin") ? 0 : numberOfGames;
-
             var lastPointInTime = _statisticsService.CalculateStats(startDate, endDate);
 
             var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)

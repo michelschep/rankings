@@ -16,10 +16,7 @@ namespace Rankings.Core.Services
             _precision = precision;
         }
 
-        public Dictionary<Profile, PlayerStats> DeprecatedRatings
-        {
-            get { return ConvertRatings(_ratings); }
-        }
+        public Dictionary<Profile, PlayerStats> DeprecatedRatings => ConvertRatings(_ratings);
 
         private Dictionary<Profile, PlayerStats> ConvertRatings(Dictionary<Profile, PlayerStats> ratings)
         {

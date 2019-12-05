@@ -65,7 +65,7 @@ namespace Rankings.IntegrationTests
         [Given(@"the current user is (.*) with role (.*)")]
         public void GivenTheCurrentUserIsMichelWithRolePlayer(string userName, string role)
         {
-            IEnumerable<Claim> claims = new List<Claim>()
+            IEnumerable<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, EmailAddressFor(userName)),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
@@ -74,9 +74,9 @@ namespace Rankings.IntegrationTests
             var identity = new ClaimsIdentity(claims);
             var user = new ClaimsPrincipal(identity);
 
-            GamesController.ControllerContext = new ControllerContext()
+            GamesController.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext()
+                HttpContext = new DefaultHttpContext
                 {
                     User = user
                 }
@@ -167,7 +167,7 @@ namespace Rankings.IntegrationTests
             VenuesController = new VenuesController(gamesService);
             GameTypesController = new GameTypesController(gamesService);
             var options = new MemoryCacheOptions();
-            var optionsAccessor = Options.Create<MemoryCacheOptions>(options);
+            var optionsAccessor = Options.Create(options);
             IMemoryCache memoryCache = new MemoryCache(optionsAccessor);
             GamesController = new GamesController(gamesService, authorizationService.Object, memoryCache);
             IStatisticsService rankingService = new StatisticsService(gamesService);
@@ -182,12 +182,5 @@ namespace Rankings.IntegrationTests
         public string SecondPlayer { get; set; }
         public int S1 { get; set; }
         public int S2 { get; set; }
-    }
-
-    public class RankingLine
-    {
-        public int Rank { get; set; }
-        public string Name { get; set; }
-        public int Elo { get; set; }
     }
 }

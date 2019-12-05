@@ -49,7 +49,7 @@ namespace Rankings.Core.Services
                    (2.2m / (winnerEloDiff * 0.001m + 2.2m));
         }
 
-        public decimal CalculateExpectation(decimal ratingPlayer1, decimal ratingPlayer2)
+        private decimal CalculateExpectation(decimal ratingPlayer1, decimal ratingPlayer2)
         {
             return ExpectationForWinningOneSet(ratingPlayer1, ratingPlayer2);
         }
