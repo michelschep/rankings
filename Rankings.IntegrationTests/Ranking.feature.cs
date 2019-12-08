@@ -150,7 +150,7 @@ this.FeatureBackground();
                             "Michel",
                             "1200"});
 #line 13
- testRunner.Then("we have the following ranking:", ((string)(null)), table1, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table1, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -220,7 +220,7 @@ this.FeatureBackground();
                             "Geale",
                             "1183"});
 #line 24
- testRunner.Then("we have the following ranking:", ((string)(null)), table3, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table3, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -296,7 +296,7 @@ this.FeatureBackground();
                             "Michel",
                             "1198"});
 #line 36
- testRunner.Then("we have the following ranking:", ((string)(null)), table5, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table5, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -372,7 +372,7 @@ this.FeatureBackground();
                             "Michel",
                             "1198"});
 #line 48
- testRunner.Then("we have the following ranking:", ((string)(null)), table7, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table7, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

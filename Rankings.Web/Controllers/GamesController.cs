@@ -55,10 +55,11 @@ namespace Rankings.Web.Controllers
         {
             gameType = gameType ?? "tafeltennis";
             var daysBack = gameType == "tafeltennis" ? -7 : -365;
-
+            
             var games = _gamesService
                 .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
-                .OrderByDescending(game => game.RegistrationDate);
+                .OrderByDescending(game => game.RegistrationDate)
+                .ToList();
 
             var model = games.Select(type => new GameViewModel
             {

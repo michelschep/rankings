@@ -27,6 +27,9 @@ namespace Rankings.Core.Services
             var marginOfVicoryMultiplier = _withMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
 
             var outcome1 = (actualResult - expectedOutcome1);
+
+            // TODO next version elo. Less influence margin of victory. And a smaller k factor (25?)
+            //var player1Delta = _k * outcome1 * (decimal)Math.Sqrt(Math.Sqrt((double)marginOfVicoryMultiplier));
             var player1Delta = _k * outcome1 * marginOfVicoryMultiplier;
 
             return player1Delta;

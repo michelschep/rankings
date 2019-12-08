@@ -24,6 +24,36 @@ namespace Rankings.IntegrationTests
     [Binding]
     public class RankingSteps: StepsBase
     {
+        [Given(@"no venues registrated")]
+        public void GivenNoVenuesRegistrated()
+        {
+        }
+        
+        [When(@"venue (.*) is registrated")]
+        public void WhenVenueGroningenIsRegistrated(string nameVenue)
+        {
+            VenuesController.Create(new VenueViewModel
+            {
+                DisplayName = nameVenue,
+                Code = nameVenue
+            });
+        }
+        
+        [Then(@"we have the following venues:")]
+        public void ThenWeHaveTheFollowingVenues(Table table)
+        {
+            var viewResult = VenuesController.Index() as ViewResult;
+            var viewModel = viewResult.Model as IEnumerable<VenueViewModel>;
+            var venues = viewModel.ToList();
+
+            var expectedVenues = table.CreateSet<VenueViewModel>().ToList();
+            // TODO assert expected equals actual
+            venues.Should().BeEquivalentTo(expectedVenues, options => options
+                .WithStrictOrdering()
+                .Including(model => model.DisplayName)
+            );
+        }
+
         [Given(@"a player named (.*)")]
         public void GivenAPlayerNamedNAME(string name)
         {
@@ -124,13 +154,12 @@ namespace Rankings.IntegrationTests
             }
         }
 
-        [Then(@"we have the following ranking:")]
-        public void ThenWeHaveTheFollowingRanking(Table table)
+        [Then(@"we have the following (.*) ranking:")]
+        public void ThenWeHaveTheFollowingRanking(string gameType, Table table)
         {
-            var viewResult = RankingController.Index("tafeltennis", DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), 0) as ViewResult;
+            var viewResult = RankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), 0) as ViewResult;
             var viewModel = viewResult.Model as IEnumerable<RankingViewModel>;
             var ranking = viewModel.ToList();
-
 
             var expectedRanking = table.CreateSet<RankingViewModel>().ToList();
             // TODO assert expected equals actual
