@@ -26,7 +26,9 @@ namespace Rankings.Web.Controllers
         public IActionResult Index()
         {
             var model = _gamesService.List(new AllVenues())
-                .Select(venue => _mapper.Map<Venue, VenueViewModel>(venue)).ToList();
+                .Select(venue => _mapper.Map<Venue, VenueViewModel>(venue))
+                .OrderBy(viewModel => viewModel.DisplayName)
+                .ToList();
 
             return View(model);
         }

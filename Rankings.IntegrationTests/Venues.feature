@@ -12,3 +12,12 @@ Scenario: No venues yet
 	Then we have the following venues:
 		| DisplayName | 
 		| Groningen   | 
+
+Scenario: Multiple venues are shown in correct order
+	Given no venues registrated
+	When venue Groningen is registrated
+	And venue Almere is registrated
+	Then we have the following venues:
+		| DisplayName | 
+		| Almere      | 
+		| Groningen   | 
