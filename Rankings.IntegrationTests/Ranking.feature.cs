@@ -92,7 +92,13 @@ namespace Rankings.IntegrationTests
  testRunner.And("a game type named tafeltennis", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 8
- testRunner.And("the current user is Michel with role player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the current user is Michel with role Admin", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 9
+ testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 10
+ testRunner.And("margin of victory active", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         
@@ -108,7 +114,7 @@ namespace Rankings.IntegrationTests
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("No games played yet", null, ((string[])(null)));
-#line 10
+#line 12
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -131,26 +137,26 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 11
+#line 13
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 12
+#line 14
  testRunner.When("I view the tafeltennis ranking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table6.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1200"});
-                table6.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1200"});
-#line 13
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table6, "Then ");
+#line 15
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table8, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -163,77 +169,7 @@ this.FeatureBackground();
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("First ever game played", null, ((string[])(null)));
-#line 18
-this.ScenarioInitialize(scenarioInfo);
-#line hidden
-            bool isScenarioIgnored = default(bool);
-            bool isFeatureIgnored = default(bool);
-            if ((tagsOfScenario != null))
-            {
-                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
-            }
-            if ((this._featureTags != null))
-            {
-                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
-            }
-            if ((isScenarioIgnored || isFeatureIgnored))
-            {
-                testRunner.SkipScenario();
-            }
-            else
-            {
-                this.ScenarioStart();
-#line 3
-this.FeatureBackground();
-#line hidden
-#line 19
- testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
 #line 20
- testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Registration Date",
-                            "First Player",
-                            "Second Player",
-                            "S1",
-                            "S2"});
-                table7.AddRow(new string[] {
-                            "2019-11-23 16:04",
-                            "Michel",
-                            "Geale",
-                            "2",
-                            "1"});
-#line 21
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table7, "When ");
-#line hidden
-                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Ranking",
-                            "NamePlayer",
-                            "Points"});
-                table8.AddRow(new string[] {
-                            "1",
-                            "Michel",
-                            "1217"});
-                table8.AddRow(new string[] {
-                            "2",
-                            "Geale",
-                            "1183"});
-#line 24
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table8, "Then ");
-#line hidden
-            }
-            this.ScenarioCleanup();
-        }
-        
-        [Xunit.SkippableFactAttribute(DisplayName="Player played two games")]
-        [Xunit.TraitAttribute("FeatureTitle", "Ranking")]
-        [Xunit.TraitAttribute("Description", "Player played two games")]
-        public virtual void PlayerPlayedTwoGames()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Player played two games", null, ((string[])(null)));
-#line 29
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -256,11 +192,8 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 30
+#line 21
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-#line 31
- testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
@@ -274,13 +207,7 @@ this.FeatureBackground();
                             "Geale",
                             "2",
                             "1"});
-                table9.AddRow(new string[] {
-                            "2019-11-23 17:04",
-                            "Michel",
-                            "Geale",
-                            "1",
-                            "2"});
-#line 32
+#line 22
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table9, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
@@ -289,14 +216,87 @@ this.FeatureBackground();
                             "Points"});
                 table10.AddRow(new string[] {
                             "1",
+                            "Michel",
+                            "1217"});
+                table10.AddRow(new string[] {
+                            "2",
+                            "Geale",
+                            "1183"});
+#line 25
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table10, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Player played two games")]
+        [Xunit.TraitAttribute("FeatureTitle", "Ranking")]
+        [Xunit.TraitAttribute("Description", "Player played two games")]
+        public virtual void PlayerPlayedTwoGames()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Player played two games", null, ((string[])(null)));
+#line 30
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+this.FeatureBackground();
+#line hidden
+#line 31
+ testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Registration Date",
+                            "First Player",
+                            "Second Player",
+                            "S1",
+                            "S2"});
+                table11.AddRow(new string[] {
+                            "2019-11-23 16:04",
+                            "Michel",
+                            "Geale",
+                            "2",
+                            "1"});
+                table11.AddRow(new string[] {
+                            "2019-11-23 17:04",
+                            "Michel",
+                            "Geale",
+                            "1",
+                            "2"});
+#line 32
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table11, "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Ranking",
+                            "NamePlayer",
+                            "Points"});
+                table12.AddRow(new string[] {
+                            "1",
                             "Geale",
                             "1202"});
-                table10.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1198"});
 #line 36
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table10, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table12, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -335,44 +335,41 @@ this.FeatureBackground();
 #line 42
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 43
- testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table11.AddRow(new string[] {
+                table13.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
-                table11.AddRow(new string[] {
+                table13.AddRow(new string[] {
                             "2019-11-23 17:04",
                             "Geale",
                             "Michel",
                             "2",
                             "1"});
-#line 44
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table11, "When ");
+#line 43
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table13, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table12.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1202"});
-                table12.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1198"});
-#line 48
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table12, "Then ");
+#line 47
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table14, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

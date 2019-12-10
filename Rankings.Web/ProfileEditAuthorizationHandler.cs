@@ -23,7 +23,7 @@ namespace Rankings.Web
             var user = context.User;
 
             // TODO put roles in list 
-            if (user.IsInRole("Admin"))
+            if (user.IsInRole(Roles.Admin))
                 return true;
 
             if (user.Identity.Name == profile.EmailAddress)

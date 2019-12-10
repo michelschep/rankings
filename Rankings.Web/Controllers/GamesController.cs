@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
@@ -88,25 +91,41 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Create()
         {
-            var nameFirstPlayer = ResolveCurrentUserName();
-
-            var currentPlayer = _gamesService.Item(new SpecificProfile(nameFirstPlayer));
-            var oponentPlayers = _gamesService.List(new Oponents(nameFirstPlayer))
-                .OrderBy(profile => profile.DisplayName)
-                .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
-
+            var nameCurrentUser = ResolveCurrentUserName();
 
             // TODO auto mapper
             return View(new GameViewModel
             {
-                NameFirstPlayer = nameFirstPlayer,
-                Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)},
-                OpponentPlayers = oponentPlayers,
-                GameTypes = _gamesService.List(new AllGameTypes())
-                    .Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues())
-                    .Select(type => new SelectListItem(type.DisplayName, type.Code))
+                NameFirstPlayer = nameCurrentUser,
+                Players = FirstPlayers(nameCurrentUser),
+                OpponentPlayers = OponentPlayers(nameCurrentUser),
+                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
             });
+        }
+
+        private IEnumerable<SelectListItem> OponentPlayers(string nameCurrentUser)
+        {
+            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new Oponents(nameCurrentUser);
+
+            return _gamesService.List(query)
+                .OrderBy(profile => profile.DisplayName)
+                .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
+        }
+
+        private IEnumerable<SelectListItem> FirstPlayers(string nameCurrentUser)
+        {
+            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new SpecificProfile(nameCurrentUser);
+
+            return _gamesService.List(query)
+                .OrderBy(profile => profile.DisplayName)
+                .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
+        }
+
+        private bool IsAdmin()
+        {
+            var isAdmin = User.Claims.Any(claim => claim.Type == ClaimTypes.Role && claim.Value == Roles.Admin);
+            return isAdmin;
         }
 
         private string ResolveCurrentUserName()

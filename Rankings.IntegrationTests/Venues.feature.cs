@@ -113,10 +113,10 @@ this.ScenarioInitialize(scenarioInfo);
 #line 5
  testRunner.When("nothing happens", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
 #line 6
- testRunner.Then("we have the following venues:", ((string)(null)), table13, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table15, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -155,12 +155,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line 11
  testRunner.When("venue Groningen is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
-                table14.AddRow(new string[] {
+                table16.AddRow(new string[] {
                             "Groningen"});
 #line 12
- testRunner.Then("we have the following venues:", ((string)(null)), table14, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table16, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -205,16 +205,16 @@ this.ScenarioInitialize(scenarioInfo);
 #line 20
  testRunner.And("venue Joure is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
-                table15.AddRow(new string[] {
+                table17.AddRow(new string[] {
                             "Almere"});
-                table15.AddRow(new string[] {
+                table17.AddRow(new string[] {
                             "Groningen"});
-                table15.AddRow(new string[] {
+                table17.AddRow(new string[] {
                             "Joure"});
 #line 21
- testRunner.Then("we have the following venues:", ((string)(null)), table15, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table17, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -253,12 +253,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line 29
  testRunner.When("venue Almere is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
-                table16.AddRow(new string[] {
+                table18.AddRow(new string[] {
                             "Almere"});
 #line 30
- testRunner.Then("we have the following venues:", ((string)(null)), table16, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table18, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -297,10 +297,10 @@ this.ScenarioInitialize(scenarioInfo);
 #line 37
  testRunner.When("incorrect venue is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
 #line 38
- testRunner.Then("we have the following venues:", ((string)(null)), table17, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table19, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

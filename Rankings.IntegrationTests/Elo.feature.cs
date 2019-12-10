@@ -98,7 +98,7 @@ namespace Rankings.IntegrationTests
  testRunner.And("a game type named tafeltennis", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 10
- testRunner.And("the current user is Amy with role player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the current user is Amy with role Admin", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 11
  testRunner.And("elo system with k-factor 5 and n is 50 and initial elo is 100", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -308,7 +308,7 @@ this.FeatureBackground();
                             "Amy",
                             "102.5"});
                 table5.AddRow(new string[] {
-                            "3",
+                            "2",
                             "Dirk",
                             "102.5"});
                 table5.AddRow(new string[] {
@@ -321,6 +321,93 @@ this.FeatureBackground();
                             "97.5"});
 #line 41
  testRunner.Then("we have the following tafeltennis ranking with precision 1:", ((string)(null)), table5, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Third round")]
+        [Xunit.TraitAttribute("FeatureTitle", "Elo")]
+        [Xunit.TraitAttribute("Description", "Third round")]
+        public virtual void ThirdRound()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Third round", null, ((string[])(null)));
+#line 48
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+this.FeatureBackground();
+#line hidden
+#line 49
+ testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Registration Date",
+                            "First Player",
+                            "Second Player",
+                            "S1",
+                            "S2"});
+                table6.AddRow(new string[] {
+                            "2019-11-23 16:04",
+                            "Amy",
+                            "Brad",
+                            "1",
+                            "0"});
+                table6.AddRow(new string[] {
+                            "2019-11-23 16:04",
+                            "Dirk",
+                            "Cindy",
+                            "1",
+                            "0"});
+                table6.AddRow(new string[] {
+                            "2019-11-23 16:04",
+                            "Amy",
+                            "Cindy",
+                            "1",
+                            "0"});
+#line 50
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table6, "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Ranking",
+                            "NamePlayer",
+                            "Points"});
+                table7.AddRow(new string[] {
+                            "1",
+                            "Amy",
+                            "104.71"});
+                table7.AddRow(new string[] {
+                            "2",
+                            "Dirk",
+                            "102.50"});
+                table7.AddRow(new string[] {
+                            "3",
+                            "Brad",
+                            "97.50"});
+                table7.AddRow(new string[] {
+                            "4",
+                            "Cindy",
+                            "95.29"});
+#line 55
+ testRunner.Then("we have the following tafeltennis ranking with precision 2:", ((string)(null)), table7, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

@@ -41,9 +41,9 @@ namespace Rankings.Web
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Player",
-                    policy => policy.RequireRole("Admin", "Player"));
+                    policy => policy.RequireRole(Roles.Admin, Roles.Player));
                 options.AddPolicy("AdminPolicy",
-                    policy => policy.RequireRole("Admin"));
+                    policy => policy.RequireRole(Roles.Admin));
                 options.AddPolicy("GameEditPolicy",
                     policy => policy.AddRequirements(new GameEditRequirement()));
                 options.AddPolicy("ProfileEditPolicy",
@@ -60,6 +60,7 @@ namespace Rankings.Web
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
             .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+            services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();

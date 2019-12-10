@@ -24,8 +24,10 @@ namespace Rankings.IntegrationTests
     [Binding]
     public class RankingSteps: StepsBase
     {
-        private int _initialElo;
-        private EloConfiguration _eloConfiguration;
+        private bool _marginOfVictory = false;
+        private int _kfactor = 50;
+        private int _n = 400;
+        private int _initialElo = 1200;
 
         [Given(@"no venues registrated")]
         public void GivenNoVenuesRegistrated()
@@ -154,7 +156,14 @@ namespace Rankings.IntegrationTests
         public void GivenEloSystemWithK_FactorAndNIsAndInitialEloIs(int kfactor, int n, int initialElo)
         {
             _initialElo = initialElo;
-            _eloConfiguration = new EloConfiguration(kfactor, n, false, initialElo);
+            _n = n;
+            _kfactor = kfactor;
+        }
+
+        [Given(@"margin of victory active")]
+        public void GivenMarginOfVictoryActive()
+        {
+            _marginOfVictory = true;
         }
 
         [When(@"the following (.*) games are played in (.*):")]
@@ -186,14 +195,15 @@ namespace Rankings.IntegrationTests
         [Then(@"we have the following (.*) ranking with precision (.*):")]
         public void ThenWeHaveTheFollowingRanking(string gameType, int precision, Table table)
         {
-            var rankingController = CreateRankingController(_eloConfiguration, precision);
-            var viewResult = rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), 0) as ViewResult;
+            var eloConfiguration = new EloConfiguration(_kfactor, _n, _marginOfVictory, _initialElo);
+            var rankingController = CreateRankingController(eloConfiguration, precision);
+            var viewResult = rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision, 0) as ViewResult;
             var viewModel = viewResult.Model as IEnumerable<RankingViewModel>;
             var actualRanking = viewModel.ToList();
 
             var expectedRanking = table.CreateSet<RankingViewModel>().ToList();
-            // TODO assert expected equals actual
-            expectedRanking.Should().BeEquivalentTo(actualRanking, options => options
+            
+            actualRanking.Should().BeEquivalentTo(expectedRanking, options => options
                     .WithStrictOrdering()
                     .Including(model => model.Ranking)
                     .Including(model => model.NamePlayer)
@@ -236,7 +246,7 @@ namespace Rankings.IntegrationTests
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, int precision)
         {
             IStatisticsService rankingService = new StatisticsService(_gamesService, eloConfiguration);
-            return new RankingsController(rankingService, _memoryCache, precision);
+            return new RankingsController(rankingService, _memoryCache);
         }
     }
 

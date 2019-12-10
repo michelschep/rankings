@@ -32,7 +32,7 @@ namespace Rankings.Web
             var user = context.User;
 
             // TODO can we move this to other requirement?
-            if (user.IsInRole("Admin"))
+            if (user.IsInRole(Roles.Admin))
                 return true;
 
             var game = _gamesService.Item(new SpecificGame(viewModel));

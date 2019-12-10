@@ -15,25 +15,23 @@ namespace Rankings.Web.Controllers
     {
         private readonly IStatisticsService _statisticsService;
         private readonly IMemoryCache _memoryCache;
-        private readonly int _precision;
 
-        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache, int precision)
+        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-            _precision = precision;
         }
 
         [HttpGet("/rankings")]
         [HttpGet("/rankings/{gametype}/{endDateInput}")]
-        public IActionResult Index(string gameType, string endDateInput, int numberOfGames = 7)
+        public IActionResult Index(string gameType, string endDateInput, int precision = 0, int numberOfGames = 7)
         {
             gameType = gameType ?? "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
             {
-                var model = RankingViewModelsFor(gameType,  DateTime.MinValue, endDate, numberOfGames).ToList();
+                var model = RankingViewModelsFor(gameType,  DateTime.MinValue, endDate, numberOfGames, precision).ToList();
                 return model;
             });
             
@@ -49,7 +47,7 @@ namespace Rankings.Web.Controllers
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType+":" + year + ":" + month, entry =>
             {
-                var model = RankingViewModelsFor(gameType, startDate, endDate, 0).ToList();
+                var model = RankingViewModelsFor(gameType, startDate, endDate, 0, 2).ToList();
                 return model;
             });
             
@@ -57,23 +55,26 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames, int precision = 0)
         {
             // Determine list of players with elo score
-            var ranking = _statisticsService.RankingNew(gameType, startDate, endDate);
+            var eloScores = _statisticsService.EloNew(gameType, startDate, endDate);
 
             // Fill view model with elo score
             var list = new List<RankingViewModel>();
             var index = 1;
-            foreach (var pair in ranking.OrderBy(pair => pair.Value).ThenBy(pair => pair.Key.DisplayName))
+            foreach (var pair in eloScores.OrderByDescending(pair => pair.Value).ThenBy(pair => pair.Key.DisplayName))
             {
                 list.Add(new RankingViewModel
                 {
                     NamePlayer = pair.Key.DisplayName,
-                    Points = pair.Value,
-                    Ranking = index++
+                    Points = pair.Value.Round(precision),
+                    Ranking = index++ // TODO should not be in controller. Is business logic.
                 });
             }
+
+            // Add ranking
+
 
             return list;
             //return ObsoleteRankingViewModels(gameType, startDate, endDate, numberOfGames);
@@ -95,7 +96,7 @@ namespace Rankings.Web.Controllers
                         .ToString(CultureInfo.InvariantCulture),
                     SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero)
                         .ToString(CultureInfo.InvariantCulture),
-                    Points = Math.Round(r.Value.Ranking, _precision, MidpointRounding.AwayFromZero),
+                    Points = Math.Round(r.Value.Ranking, 0, MidpointRounding.AwayFromZero),
                     NamePlayer = r.Key.DisplayName,
                     Ranking = (ranking++),
                     History = ToHistory(r),

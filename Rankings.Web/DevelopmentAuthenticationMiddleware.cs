@@ -21,7 +21,7 @@ namespace Rankings.Web
             var identity = new GenericIdentity("admin@domain.nl");
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(ClaimTypes.Role, Roles.Admin),
                 new Claim(ClaimTypes.Name, "Name"),
                 new Claim(ClaimTypes.Surname, "Surname")
             };
@@ -31,5 +31,11 @@ namespace Rankings.Web
             
             await this._next(context);
         }
+    }
+
+    public class Roles
+    {
+        public const string Admin = "Admin";
+        public const string Player = "Player";
     }
 }

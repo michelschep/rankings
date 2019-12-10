@@ -51,10 +51,10 @@ namespace Rankings.UnitTests
 
             var ranking = _statisticsService.Ranking("tafeltennis");
 
-            ranking.ForPlayer(amy.EmailAddress).Ranking.Should().Be(104.71m);
-            ranking.ForPlayer(dirk.EmailAddress).Ranking.Should().Be(104.59m);
-            ranking.ForPlayer(brad.EmailAddress).Ranking.Should().Be(97.5m);
-            ranking.ForPlayer(cindy.EmailAddress).Ranking.Should().Be(93.20m);
+            ranking.ForPlayer(amy.EmailAddress).Ranking.Round(2).Should().Be(104.71m);
+            ranking.ForPlayer(dirk.EmailAddress).Ranking.Round(2).Should().Be(104.59m);
+            ranking.ForPlayer(brad.EmailAddress).Ranking.Round(2).Should().Be(97.5m);
+            ranking.ForPlayer(cindy.EmailAddress).Ranking.Round(2).Should().Be(93.20m);
         }
 
         private Game CreateGame(Profile playerOne, Profile playerTwo, int score1, int score2)
