@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Rankings.Infrastructure.Data.InMemory
 {
@@ -10,6 +11,7 @@ namespace Rankings.Infrastructure.Data.InMemory
             optionsBuilder.UseInMemoryDatabase(connectionString);
 
             var rankingContext = new RankingContext(optionsBuilder.Options);
+            rankingContext.Database.EnsureDeleted();
             rankingContext.Database.EnsureCreated();
 
             return rankingContext;

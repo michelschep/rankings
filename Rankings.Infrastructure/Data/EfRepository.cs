@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using Rankings.Core.SharedKernel;
 
 namespace Rankings.Infrastructure.Data
 {
-    public class EfRepository: IRepository
+    public class EfRepository: IRepository, IDisposable
     {
         private readonly DbContext _dbContext;
 
@@ -54,6 +55,11 @@ namespace Rankings.Infrastructure.Data
         private IQueryable<T> ApplySpecification<T>(ISpecification<T> spec) where T : BaseEntity
         {
             return EfSpecificationEvaluator<T, int>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
+        }
+
+        public void Dispose()
+        {
+            _dbContext?.Dispose();
         }
     }
 }

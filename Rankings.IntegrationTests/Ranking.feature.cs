@@ -143,20 +143,20 @@ this.FeatureBackground();
 #line 14
  testRunner.When("I view the tafeltennis ranking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table8.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1200"});
-                table8.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1200"});
 #line 15
- testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table8, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table10, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -195,35 +195,35 @@ this.FeatureBackground();
 #line 21
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table9.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
 #line 22
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table9, "When ");
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table11, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table10.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "1",
                             "Michel",
                             "1217"});
-                table10.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "2",
                             "Geale",
                             "1183"});
 #line 25
- testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table10, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table12, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -262,41 +262,41 @@ this.FeatureBackground();
 #line 31
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table11.AddRow(new string[] {
+                table13.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
-                table11.AddRow(new string[] {
+                table13.AddRow(new string[] {
                             "2019-11-23 17:04",
                             "Michel",
                             "Geale",
                             "1",
                             "2"});
 #line 32
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table11, "When ");
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table13, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table12.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1202"});
-                table12.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1198"});
 #line 36
- testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table12, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table14, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -335,41 +335,41 @@ this.FeatureBackground();
 #line 42
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table13.AddRow(new string[] {
+                table15.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
-                table13.AddRow(new string[] {
+                table15.AddRow(new string[] {
                             "2019-11-23 17:04",
                             "Geale",
                             "Michel",
                             "2",
                             "1"});
 #line 43
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table13, "When ");
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table15, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table14.AddRow(new string[] {
+                table16.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1202"});
-                table14.AddRow(new string[] {
+                table16.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1198"});
 #line 47
- testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table14, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table16, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

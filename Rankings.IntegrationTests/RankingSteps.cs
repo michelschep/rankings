@@ -176,8 +176,13 @@ namespace Rankings.IntegrationTests
 
             foreach (var game in list)
             {
-                var firstPlayer = viewModel.Players.First(item => item.Text == game.FirstPlayer);
-                var secondPlayer = viewModel.OpponentPlayers.First(item => item.Text == game.SecondPlayer);
+                var firstPlayer = viewModel.Players.FirstOrDefault(item => item.Text == game.FirstPlayer);
+                if (firstPlayer == null)
+                    throw new Exception($"Unknown player {game.FirstPlayer}");
+
+                var secondPlayer = viewModel.OpponentPlayers.FirstOrDefault(item => item.Text == game.SecondPlayer);
+                if (secondPlayer == null)
+                    throw new Exception($"Unknown player {game.SecondPlayer}");
 
                 var model = new GameViewModel
                 {
