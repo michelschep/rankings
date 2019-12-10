@@ -73,8 +73,14 @@ namespace Rankings.Web.Controllers
                 });
             }
 
-            // Add ranking
-
+            // Add dummy data
+            foreach (var rankingViewModel in list)
+            {
+                rankingViewModel.History = new List<char>();
+                rankingViewModel.SetWinPercentage = "?";
+                rankingViewModel.WinPercentage = "?";
+                rankingViewModel.TimeNumberOne = "?";
+            }
 
             return list;
             //return ObsoleteRankingViewModels(gameType, startDate, endDate, numberOfGames);
