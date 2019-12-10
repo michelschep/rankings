@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
@@ -41,6 +42,10 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(VenueViewModel model)
         {
+            if (!ModelState.IsValid) {
+                return View(model);
+            }
+
             _gamesService.CreateVenue(new Venue
             {
                 Code = model.Code,
@@ -76,6 +81,13 @@ namespace Rankings.Web.Controllers
                 cfg.CreateMap<Venue, VenueViewModel>();
                 cfg.CreateMap<VenueViewModel, Venue>();
             }).CreateMapper();
+        }
+    }
+    
+    public class VenueValidator : AbstractValidator<VenueViewModel> {
+        public VenueValidator() {
+            RuleFor(x => x.Code).Matches(@"^[a-z]+$").Length(5, 15);
+            RuleFor(x => x.DisplayName).Length(5, 15);
         }
     }
 }

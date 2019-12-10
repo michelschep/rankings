@@ -15,11 +15,13 @@ namespace Rankings.Web.Controllers
     {
         private readonly IStatisticsService _statisticsService;
         private readonly IMemoryCache _memoryCache;
+        private readonly int _precision;
 
-        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache)
+        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache, int precision)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _precision = precision;
         }
 
         [HttpGet("/rankings")]
@@ -35,8 +37,6 @@ namespace Rankings.Web.Controllers
                 return model;
             });
             
-            // TODO mock in test
-            //Response.Headers.Add("Refresh", "60");
             return View(cacheEntry);
         }
 
@@ -58,7 +58,30 @@ namespace Rankings.Web.Controllers
         }
 
         private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames)
-        { 
+        {
+            // Determine list of players with elo score
+            var ranking = _statisticsService.RankingNew(gameType, startDate, endDate);
+
+            // Fill view model with elo score
+            var list = new List<RankingViewModel>();
+            var index = 1;
+            foreach (var pair in ranking.OrderBy(pair => pair.Value).ThenBy(pair => pair.Key.DisplayName))
+            {
+                list.Add(new RankingViewModel
+                {
+                    NamePlayer = pair.Key.DisplayName,
+                    Points = pair.Value,
+                    Ranking = index++
+                });
+            }
+
+            return list;
+            //return ObsoleteRankingViewModels(gameType, startDate, endDate, numberOfGames);
+        }
+
+        [Obsolete("This one will be replaced by better mechnism")]
+        private IEnumerable<RankingViewModel> ObsoleteRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int numberOfGames)
+        {
             var ratings = _statisticsService.Ranking(gameType, startDate, endDate);
             var ranking = 1;
             var lastPointInTime = _statisticsService.CalculateStats(startDate, endDate);
@@ -72,10 +95,9 @@ namespace Rankings.Web.Controllers
                         .ToString(CultureInfo.InvariantCulture),
                     SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero)
                         .ToString(CultureInfo.InvariantCulture),
-                    Points = Math.Round(r.Value.Ranking, 0, MidpointRounding.AwayFromZero)
-                        .ToString(CultureInfo.InvariantCulture),
+                    Points = Math.Round(r.Value.Ranking, _precision, MidpointRounding.AwayFromZero),
                     NamePlayer = r.Key.DisplayName,
-                    Ranking = (ranking++).ToString(),
+                    Ranking = (ranking++),
                     History = ToHistory(r),
                     RecordWinningStreak = ToWinningStreak(r),
                     CurrentWinningStreak = ToCurrentWinningStreak(r),

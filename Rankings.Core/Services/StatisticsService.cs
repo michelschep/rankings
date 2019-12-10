@@ -7,34 +7,41 @@ using Rankings.Core.Specifications;
 
 namespace Rankings.Core.Services
 {
+    public class EloConfiguration
+    {
+        public EloConfiguration(int kfactor, int n, bool withMarginOfVictory, int initialElo)
+        {
+            Kfactor = kfactor;
+            N = n;
+            WithMarginOfVictory = withMarginOfVictory;
+            InitialElo = initialElo;
+        }
+
+        public int Kfactor { get; }
+        public int N { get; }
+        public bool WithMarginOfVictory { get; }
+        public int InitialElo { get; }
+    }
+
     public class StatisticsService : IStatisticsService
     {
         private readonly IGamesService _gamesService;
+        private readonly EloConfiguration _eloConfiguration;
         private readonly EloCalculator _eloCalculator;
-        private readonly decimal _initalElo;
-        private readonly int _precision;
 
-        public StatisticsService(IGamesService gamesService, decimal initalElo = 1200, int kfactor = 50, int n = 400, bool withMarginOfVictory = true, int precision = 0)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
-            _initalElo = initalElo;
-            _precision = precision;
-            _eloCalculator = new EloCalculator(n, kfactor, withMarginOfVictory);
+            _eloConfiguration = eloConfiguration;
+            _eloCalculator = new EloCalculator(eloConfiguration);
         }
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
         {
-            //DateTime currentDate = DateTime.MinValue;
-
-//            var days = new Dictionary<string, int>();
-//            var games = new Dictionary<string, int>();
-//            var minutes = new Dictionary<string, double>();
-
             var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList();
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
             var now = DateTime.Now;
             dateTimes.Add(now);
-            //DateTime previousGame = allGames.First().RegistrationDate;
 
             var history = new Dictionary<DateTime, RankingStats>();
             foreach (var game in allGames)
@@ -70,7 +77,7 @@ namespace Rankings.Core.Services
             foreach (var pointInTime in history)
             {
                 // Init data player stats
-                InitStats(previousPointInTimeDate, pointInTime, previousPointInTimeRankingStats);
+                InitStats(previousPointInTimeDate, pointInTime, previousPointInTimeRankingStats, _eloConfiguration.InitialElo);
 
                 // game stats
                 CalculateGameStats(pointInTime.Value, previousPointInTimeRankingStats);
@@ -118,6 +125,19 @@ namespace Rankings.Core.Services
             return Ranking(gameType, DateTime.MinValue, endDate);
         }
 
+        public Dictionary<Profile, decimal> RankingNew(string gameType, DateTime startDate, DateTime endDate)
+        {
+            var allPlayers = _gamesService.List<Profile>(new AllProfiles());
+
+            var ranking = new Dictionary<Profile, decimal>();
+            foreach (var player in allPlayers)
+            {
+                ranking.Add(player, _eloConfiguration.InitialElo);
+            }
+
+            return ranking;
+        }
+
         public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
             var gamesSpecification = new GamesForPeriodSpecification(gameType, startDate, endDate);
@@ -132,7 +152,7 @@ namespace Rankings.Core.Services
                     NumberOfSetWins = 0,
                     NumberOfSets = 0,
                     NumberOfWins = 0,
-                    Ranking = _initalElo,
+                    Ranking = _eloConfiguration.InitialElo,
                     History = "",
                     CurrentEloSeries = 0,
                     BestEloSeries = 0,
@@ -225,7 +245,7 @@ namespace Rankings.Core.Services
 
             }
 
-            return new Ranking(ratings, _precision);
+            return new Ranking(ratings);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
@@ -234,7 +254,8 @@ namespace Rankings.Core.Services
         }
 
         private void InitStats(DateTime? previousPointInTimeDate,
-            KeyValuePair<DateTime, RankingStats> pointInTime, RankingStats previousPointInTimeRankingStats)
+            KeyValuePair<DateTime, RankingStats> pointInTime, RankingStats previousPointInTimeRankingStats,
+            int initialElo)
         {
             var deprecatedRatingsKeys = Ranking("tafeltennis").DeprecatedRatings.Keys;
             foreach (var profile in deprecatedRatingsKeys)

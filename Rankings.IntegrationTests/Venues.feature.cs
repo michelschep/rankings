@@ -80,13 +80,13 @@ namespace Rankings.IntegrationTests
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="First venue is added")]
+        [Xunit.SkippableFactAttribute(DisplayName="No venues")]
         [Xunit.TraitAttribute("FeatureTitle", "Venues")]
-        [Xunit.TraitAttribute("Description", "First venue is added")]
-        public virtual void FirstVenueIsAdded()
+        [Xunit.TraitAttribute("Description", "No venues")]
+        public virtual void NoVenues()
         {
             string[] tagsOfScenario = ((string[])(null));
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("First venue is added", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("No venues", null, ((string[])(null)));
 #line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -113,22 +113,22 @@ this.ScenarioInitialize(scenarioInfo);
 #line 5
  testRunner.When("nothing happens", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
 #line 6
- testRunner.Then("we have the following venues:", ((string)(null)), table8, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table13, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="No venues yet")]
+        [Xunit.SkippableFactAttribute(DisplayName="First ever venue is registered")]
         [Xunit.TraitAttribute("FeatureTitle", "Venues")]
-        [Xunit.TraitAttribute("Description", "No venues yet")]
-        public virtual void NoVenuesYet()
+        [Xunit.TraitAttribute("Description", "First ever venue is registered")]
+        public virtual void FirstEverVenueIsRegistered()
         {
             string[] tagsOfScenario = ((string[])(null));
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("No venues yet", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("First ever venue is registered", null, ((string[])(null)));
 #line 9
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -155,12 +155,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line 11
  testRunner.When("venue Groningen is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
                             "DisplayName"});
-                table9.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "Groningen"});
 #line 12
- testRunner.Then("we have the following venues:", ((string)(null)), table9, "Then ");
+ testRunner.Then("we have the following venues:", ((string)(null)), table14, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -202,14 +202,105 @@ this.ScenarioInitialize(scenarioInfo);
 #line 19
  testRunner.And("venue Almere is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
-                            "DisplayName"});
-                table10.AddRow(new string[] {
-                            "Almere"});
-                table10.AddRow(new string[] {
-                            "Groningen"});
 #line 20
- testRunner.Then("we have the following venues:", ((string)(null)), table10, "Then ");
+ testRunner.And("venue Joure is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+                            "DisplayName"});
+                table15.AddRow(new string[] {
+                            "Almere"});
+                table15.AddRow(new string[] {
+                            "Groningen"});
+                table15.AddRow(new string[] {
+                            "Joure"});
+#line 21
+ testRunner.Then("we have the following venues:", ((string)(null)), table15, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Cannot register venue with name whih is already used")]
+        [Xunit.TraitAttribute("FeatureTitle", "Venues")]
+        [Xunit.TraitAttribute("Description", "Cannot register venue with name whih is already used")]
+        public virtual void CannotRegisterVenueWithNameWhihIsAlreadyUsed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cannot register venue with name whih is already used", null, ((string[])(null)));
+#line 27
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 28
+ testRunner.Given("venue Almere exists", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 29
+ testRunner.When("venue Almere is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
+                            "DisplayName"});
+                table16.AddRow(new string[] {
+                            "Almere"});
+#line 30
+ testRunner.Then("we have the following venues:", ((string)(null)), table16, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="User cannot register invalid venue")]
+        [Xunit.TraitAttribute("FeatureTitle", "Venues")]
+        [Xunit.TraitAttribute("Description", "User cannot register invalid venue")]
+        public virtual void UserCannotRegisterInvalidVenue()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User cannot register invalid venue", null, ((string[])(null)));
+#line 35
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 36
+ testRunner.Given("no venues registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 37
+ testRunner.When("incorrect venue is registrated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
+                            "DisplayName"});
+#line 38
+ testRunner.Then("we have the following venues:", ((string)(null)), table17, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

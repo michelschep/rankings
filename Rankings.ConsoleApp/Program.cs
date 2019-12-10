@@ -48,7 +48,7 @@ namespace Rankings.ConsoleApp
 
             var repository = repositoryFactory.Create(database);
             var rankingService = new GamesService(repository);
-            var statsService = new StatisticsService(rankingService);
+            var statsService = new StatisticsService(rankingService, new EloConfiguration(50, 400, true, 1200));
             return statsService;
         }
     }

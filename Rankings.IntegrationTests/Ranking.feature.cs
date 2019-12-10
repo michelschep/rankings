@@ -135,22 +135,22 @@ this.FeatureBackground();
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 12
- testRunner.When("nothing happens", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I view the tafeltennis ranking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table1.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1200"});
-                table1.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1200"});
 #line 13
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table1, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table6, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -190,37 +190,37 @@ this.FeatureBackground();
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 20
- testRunner.And("elo system with k-factor 50 and n is 400", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table2.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
 #line 21
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table2, "When ");
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table7, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table3.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "1",
                             "Michel",
                             "1217"});
-                table3.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "2",
                             "Geale",
                             "1183"});
 #line 24
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table3, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table8, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -260,43 +260,43 @@ this.FeatureBackground();
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 31
- testRunner.And("elo system with k-factor 50 and n is 400", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table4.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
-                table4.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "2019-11-23 17:04",
                             "Michel",
                             "Geale",
                             "1",
                             "2"});
 #line 32
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table4, "When ");
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table9, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table5.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1202"});
-                table5.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1198"});
 #line 36
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table5, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table10, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -336,43 +336,43 @@ this.FeatureBackground();
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 43
- testRunner.And("elo system with k-factor 50 and n is 400", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("elo system with k-factor 50 and n is 400 and initial elo is 1200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
                             "Registration Date",
                             "First Player",
                             "Second Player",
                             "S1",
                             "S2"});
-                table6.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "2019-11-23 16:04",
                             "Michel",
                             "Geale",
                             "2",
                             "1"});
-                table6.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "2019-11-23 17:04",
                             "Geale",
                             "Michel",
                             "2",
                             "1"});
 #line 44
- testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table6, "When ");
+ testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table11, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
                             "Points"});
-                table7.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "1",
                             "Geale",
                             "1202"});
-                table7.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "2",
                             "Michel",
                             "1198"});
 #line 48
- testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table7, "Then ");
+ testRunner.Then("we have the following tafeltennis ranking:", ((string)(null)), table12, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

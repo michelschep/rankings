@@ -6,13 +6,13 @@ namespace Rankings.Web.Models
     public class RankingViewModel
     {
         [Display(Name = "")]
-        public string Ranking { get; set; }
+        public int Ranking { get; set; }
 
         [Display(Name = "Player")]
         public string NamePlayer { get; set; }
 
         [Display(Name = "Elo")]
-        public string Points { get; set; }
+        public decimal Points { get; set; }
 
         [Display(Name = "Win%")]
         public string WinPercentage { get; set; }

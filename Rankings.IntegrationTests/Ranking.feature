@@ -9,7 +9,7 @@ Background:
 
 Scenario: No games played yet
 	Given no games played
-	When nothing happens
+	When I view the tafeltennis ranking
 	Then we have the following tafeltennis ranking:
 		| Ranking | NamePlayer | Points |
 		| 1       | Geale      | 1200   |
@@ -17,7 +17,7 @@ Scenario: No games played yet
 
 Scenario: First ever game played
 	Given no games played
-	And elo system with k-factor 50 and n is 400
+	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	When the following tafeltennis games are played in Amsterdam:
 		| Registration Date | First Player | Second Player | S1 | S2 |
 		| 2019-11-23 16:04  | Michel       | Geale         | 2  | 1  |
@@ -28,7 +28,7 @@ Scenario: First ever game played
 
 Scenario: Player played two games
 	Given no games played
-	And elo system with k-factor 50 and n is 400
+	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	When the following tafeltennis games are played in Amsterdam:
 		| Registration Date | First Player | Second Player | S1 | S2 |
 		| 2019-11-23 16:04  | Michel       | Geale         | 2  | 1  |
@@ -40,7 +40,7 @@ Scenario: Player played two games
 
 Scenario: Two games played between the same players but registered by different players 
 	Given no games played
-	And elo system with k-factor 50 and n is 400
+	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	When the following tafeltennis games are played in Amsterdam:
 		| Registration Date | First Player | Second Player | S1 | S2 |
 		| 2019-11-23 16:04  | Michel       | Geale         | 2  | 1  |

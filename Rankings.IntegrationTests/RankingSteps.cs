@@ -24,11 +24,24 @@ namespace Rankings.IntegrationTests
     [Binding]
     public class RankingSteps: StepsBase
     {
+        private int _initialElo;
+        private EloConfiguration _eloConfiguration;
+
         [Given(@"no venues registrated")]
         public void GivenNoVenuesRegistrated()
         {
         }
         
+        [Given(@"venue (.*) exists")]
+        public void GivenVenueAlmereExists(string nameVenue)
+        {
+            VenuesController.Create(new VenueViewModel
+            {
+                DisplayName = nameVenue,
+                Code = nameVenue
+            });
+        }
+
         [When(@"venue (.*) is registrated")]
         public void WhenVenueGroningenIsRegistrated(string nameVenue)
         {
@@ -54,6 +67,13 @@ namespace Rankings.IntegrationTests
             );
         }
 
+        [When(@"incorrect venue is registrated")]
+        public void WhenIncorrectVenueIsRegistrated()
+        {
+            VenuesController.ModelState.AddModelError("key", "venue view model is not valid");
+            VenuesController.Create(new VenueViewModel());
+        }
+
         [Given(@"a player named (.*)")]
         public void GivenAPlayerNamedNAME(string name)
         {
@@ -62,6 +82,7 @@ namespace Rankings.IntegrationTests
                 EmailAddress = EmailAddressFor(name),
                 DisplayName = name
             };
+
             ProfilesController.Create(model);
         }
 
@@ -123,9 +144,17 @@ namespace Rankings.IntegrationTests
         {
         }
 
-        [Given(@"elo system with k-factor (.*) and n is (.*)")]
-        public void GivenEloSystemWithK_FactorAndNIs(int kfactor, int n)
+        [When(@"I view the (.*) ranking")]
+        public void WhenIViewTheTafeltennisRanking(string gameType)
         {
+        }
+
+
+        [Given(@"elo system with k-factor (.*) and n is (.*) and initial elo is (.*)")]
+        public void GivenEloSystemWithK_FactorAndNIsAndInitialEloIs(int kfactor, int n, int initialElo)
+        {
+            _initialElo = initialElo;
+            _eloConfiguration = new EloConfiguration(kfactor, n, false, initialElo);
         }
 
         [When(@"the following (.*) games are played in (.*):")]
@@ -154,16 +183,17 @@ namespace Rankings.IntegrationTests
             }
         }
 
-        [Then(@"we have the following (.*) ranking:")]
-        public void ThenWeHaveTheFollowingRanking(string gameType, Table table)
+        [Then(@"we have the following (.*) ranking with precision (.*):")]
+        public void ThenWeHaveTheFollowingRanking(string gameType, int precision, Table table)
         {
-            var viewResult = RankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), 0) as ViewResult;
+            var rankingController = CreateRankingController(_eloConfiguration, precision);
+            var viewResult = rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), 0) as ViewResult;
             var viewModel = viewResult.Model as IEnumerable<RankingViewModel>;
-            var ranking = viewModel.ToList();
+            var actualRanking = viewModel.ToList();
 
             var expectedRanking = table.CreateSet<RankingViewModel>().ToList();
             // TODO assert expected equals actual
-            ranking.Should().BeEquivalentTo(expectedRanking, options => options
+            expectedRanking.Should().BeEquivalentTo(actualRanking, options => options
                     .WithStrictOrdering()
                     .Including(model => model.Ranking)
                     .Including(model => model.NamePlayer)
@@ -178,29 +208,35 @@ namespace Rankings.IntegrationTests
         protected readonly VenuesController VenuesController;
         protected readonly GameTypesController GameTypesController;
         protected readonly GamesController GamesController;
-        protected readonly RankingsController RankingController;
+        private readonly GamesService _gamesService;
+        private readonly IMemoryCache _memoryCache;
 
         protected StepsBase()
         {
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
-            var gamesService = new GamesService(repository);
+            _gamesService = new GamesService(repository);
+            var options = new MemoryCacheOptions();
+            var optionsAccessor = Options.Create(options);
+            _memoryCache = new MemoryCache(optionsAccessor);
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             var authorizationService = new Mock<IAuthorizationService>();
             authorizationService.Setup(foo => foo.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<Object>(), "ProfileEditPolicy"))
                 .ReturnsAsync(AuthorizationResult.Success());
 
-            ProfilesController = new ProfilesController(httpContextAccessor.Object, gamesService, authorizationService.Object);
-            VenuesController = new VenuesController(gamesService);
-            GameTypesController = new GameTypesController(gamesService);
-            var options = new MemoryCacheOptions();
-            var optionsAccessor = Options.Create(options);
-            IMemoryCache memoryCache = new MemoryCache(optionsAccessor);
-            GamesController = new GamesController(gamesService, authorizationService.Object, memoryCache);
-            IStatisticsService rankingService = new StatisticsService(gamesService);
-            RankingController = new RankingsController(rankingService, memoryCache);
+            ProfilesController = new ProfilesController(httpContextAccessor.Object, _gamesService, authorizationService.Object);
+            VenuesController = new VenuesController(_gamesService);
+            GameTypesController = new GameTypesController(_gamesService);
+           
+            GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache);
+        }
+
+        protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, int precision)
+        {
+            IStatisticsService rankingService = new StatisticsService(_gamesService, eloConfiguration);
+            return new RankingsController(rankingService, _memoryCache, precision);
         }
     }
 

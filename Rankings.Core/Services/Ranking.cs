@@ -8,12 +8,10 @@ namespace Rankings.Core.Services
     public class Ranking
     {
         private readonly Dictionary<Profile, PlayerStats> _ratings;
-        private readonly int _precision;
 
-        public Ranking(Dictionary<Profile, PlayerStats> ratings, int precision)
+        public Ranking(Dictionary<Profile, PlayerStats> ratings)
         {
             _ratings = ratings ?? throw new ArgumentNullException(nameof(ratings));
-            _precision = precision;
         }
 
         public Dictionary<Profile, PlayerStats> DeprecatedRatings => ConvertRatings(_ratings);
@@ -23,7 +21,7 @@ namespace Rankings.Core.Services
             var convertedRatings = new Dictionary<Profile, PlayerStats>();
             foreach (var stats in ratings)
             {
-                convertedRatings.Add(stats.Key, ConvertStats(stats.Value, _precision));
+                convertedRatings.Add(stats.Key, ConvertStats(stats.Value));
             }
 
             return convertedRatings;
@@ -32,7 +30,7 @@ namespace Rankings.Core.Services
         public PlayerStats ForPlayer(string emailAddress)
         {
             return _ratings.Where(pair => string.Equals(pair.Key.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase))
-                .Select(pair => ConvertStats(pair.Value, _precision))
+                .Select(pair => ConvertStats(pair.Value))
                 .Single();
         }
 
@@ -41,12 +39,12 @@ namespace Rankings.Core.Services
             return _ratings.Values.Select(ConvertStats);
         }
 
-        private static PlayerStats ConvertStats(PlayerStats stats, int precision)
+        private static PlayerStats ConvertStats(PlayerStats stats)
         {
             // TODO get rid of or at least with mapper
             return new PlayerStats
             {
-                Ranking = Math.Round(stats.Ranking, precision, MidpointRounding.AwayFromZero),
+                Ranking = stats.Ranking,
                 NumberOfSets = stats.NumberOfSets,
                 History = stats.History,
                 NumberOfSetWins = stats.NumberOfSetWins,
@@ -57,7 +55,7 @@ namespace Rankings.Core.Services
                 SetWinPercentage = Math.Round((100m*stats.NumberOfSetWins/(stats.NumberOfSets+0.001m)), 2, MidpointRounding.AwayFromZero),
                 BestEloSeries = stats.BestEloSeries,
                 CurrentEloSeries = stats.CurrentEloSeries,
-                Goat =  Math.Round(stats.Goat, precision, MidpointRounding.AwayFromZero),
+                Goat =  stats.Goat,
                 TimeNumberOne = stats.TimeNumberOne
             };
         }

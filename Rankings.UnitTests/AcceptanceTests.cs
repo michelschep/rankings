@@ -23,7 +23,8 @@ namespace Rankings.UnitTests
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository);
-            _statisticsService = new StatisticsService(_gamesService, 100, 5, 50, false, 2);
+            var eloConfiguration = new EloConfiguration(5, 50, false, 100);
+            _statisticsService = new StatisticsService(_gamesService, eloConfiguration);
             _venue = new Venue {Code = "almere", DisplayName = "Almere Arena"};
             _gamesService.CreateVenue(_venue);
             _gameType = new GameType {Code = "tafeltennis", DisplayName = "Tafeltennis"};

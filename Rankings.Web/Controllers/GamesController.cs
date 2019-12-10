@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,10 +25,12 @@ namespace Rankings.Web.Controllers
         // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
-        public GamesController(IGamesService gamesService, IAuthorizationService authorizationService, IMemoryCache memoryCache)
+        public GamesController(IGamesService gamesService, IAuthorizationService authorizationService,
+            IMemoryCache memoryCache)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
-            _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
+            _authorizationService =
+                authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
@@ -55,7 +58,7 @@ namespace Rankings.Web.Controllers
         {
             gameType = gameType ?? "tafeltennis";
             var daysBack = gameType == "tafeltennis" ? -7 : -365;
-            
+
             var games = _gamesService
                 .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate)
@@ -85,21 +88,37 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Create()
         {
-            var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
-            var oponentPlayers = _gamesService.List(new Oponents(User.Identity.Name))
+            var nameFirstPlayer = ResolveCurrentUserName();
+
+            var currentPlayer = _gamesService.Item(new SpecificProfile(nameFirstPlayer));
+            var oponentPlayers = _gamesService.List(new Oponents(nameFirstPlayer))
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
-           
+
             // TODO auto mapper
             return View(new GameViewModel
             {
-                NameFirstPlayer = User.Identity.Name,
-                Players = new[] { new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) },
+                NameFirstPlayer = nameFirstPlayer,
+                Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)},
                 OpponentPlayers = oponentPlayers,
-                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
+                GameTypes = _gamesService.List(new AllGameTypes())
+                    .Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.List(new AllVenues())
+                    .Select(type => new SelectListItem(type.DisplayName, type.Code))
             });
+        }
+
+        private string ResolveCurrentUserName()
+        {
+            try
+            {
+                return User.Identity.Name;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Cannot resolve current user name", ex);
+            }
         }
 
         [HttpPost]
@@ -113,8 +132,10 @@ namespace Rankings.Web.Controllers
                     .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
                 model.OpponentPlayers = oponentPlayers;
-                model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
-                model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.GameTypes = _gamesService.List(new AllGameTypes())
+                    .Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesService.List(new AllVenues())
+                    .Select(type => new SelectListItem(type.DisplayName, type.Code));
                 model.Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)};
                 return View(model);
             }
@@ -143,7 +164,7 @@ namespace Rankings.Web.Controllers
             {
                 return RedirectToAction("Index", "Rankings");
             }
-            
+
             var game = _gamesService.Item(new SpecificGame(id));
             // TODO use auto mapper
             var viewModel = new GameViewModel
@@ -151,8 +172,10 @@ namespace Rankings.Web.Controllers
                 Players = _gamesService.List(new AllProfiles())
                     .OrderBy(profile => profile.DisplayName)
                     .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
-                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                GameTypes = _gamesService.List(new AllGameTypes())
+                    .Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.List(new AllVenues())
+                    .Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
                 RegistrationDate = game.RegistrationDate.ToString(CultureInfo.InvariantCulture),
@@ -185,7 +208,7 @@ namespace Rankings.Web.Controllers
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
             _gamesService.Save(game);
-            
+
             return RedirectToAction("Index");
         }
 

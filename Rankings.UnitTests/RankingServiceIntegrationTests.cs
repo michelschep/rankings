@@ -22,7 +22,7 @@ namespace Rankings.UnitTests
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository);
-            _statisticsService = new StatisticsService(_gamesService);
+            _statisticsService = new StatisticsService(_gamesService, new EloConfiguration(50, 400, true, 1200));
         }
 
         [Fact]
@@ -145,8 +145,8 @@ namespace Rankings.UnitTests
             var ranking = _statisticsService.Ranking("tafeltennis");
 
             // Assert
-            ranking.ForPlayer("one@domain.nl").Ranking.Should().Be(expectedElo1);
-            ranking.ForPlayer("two@domain.nl").Ranking.Should().Be(expectedElo2);
+            ranking.ForPlayer("one@domain.nl").Ranking.Should().BeApproximately(expectedElo1, 0);
+            ranking.ForPlayer("two@domain.nl").Ranking.Should().BeApproximately(expectedElo2, 0);
         }
 
         private Game CreateTafeltennisGame(string player1, string player2, int score1, int score2)

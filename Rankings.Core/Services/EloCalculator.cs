@@ -4,10 +4,18 @@ namespace Rankings.Core.Services
 {
     public class EloCalculator
     {
+        private readonly EloConfiguration _eloConfiguration;
+        
         private static decimal _n = 400;
         private static decimal _k = 50; 
         private readonly bool _withMarginOfVictory;
 
+        public EloCalculator(EloConfiguration eloConfiguration): this(eloConfiguration.N, eloConfiguration.Kfactor, eloConfiguration.WithMarginOfVictory)
+        {
+            _eloConfiguration = eloConfiguration;
+        }
+
+        [Obsolete]
         public EloCalculator(decimal n, decimal kfactor, bool withMarginOfVictory = true)
         {
             _n = n;

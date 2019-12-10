@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ardalis.Specification;
+using FluentValidation;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.SharedKernel;
@@ -64,6 +65,10 @@ namespace Rankings.Core.Services
 
         public void CreateVenue(Venue venue)
         {
+            if (Item(new NamedVenue(venue.DisplayName)) != null)
+            {
+                return;
+            }
             _repository.Add(venue);
         }
 
@@ -114,5 +119,4 @@ namespace Rankings.Core.Services
             return !List(new Profiles(displayName)).ToList().Any();
         }
     }
-
 }
