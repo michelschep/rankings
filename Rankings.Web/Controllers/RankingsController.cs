@@ -31,7 +31,7 @@ namespace Rankings.Web.Controllers
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
             {
-                var model = RankingViewModelsFor(gameType,  DateTime.MinValue, endDate, numberOfGames, precision).ToList();
+                var model = RankingViewModelsFor(gameType,  DateTime.MinValue, endDate, numberOfGames, 3).ToList();
                 return model;
             });
             
@@ -57,7 +57,13 @@ namespace Rankings.Web.Controllers
 
         private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames, int precision = 0)
         {
-            // Determine list of players with elo score
+            //return NewRankingViewModels(gameType, startDate, endDate, precision);
+            return ObsoleteRankingViewModels(gameType, startDate, endDate, numberOfGames);
+        }
+
+        private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
+        {
+// Determine list of players with elo score
             var eloScores = _statisticsService.EloNew(gameType, startDate, endDate);
 
             // Fill view model with elo score
@@ -83,7 +89,6 @@ namespace Rankings.Web.Controllers
             }
 
             return list;
-            //return ObsoleteRankingViewModels(gameType, startDate, endDate, numberOfGames);
         }
 
         [Obsolete("This one will be replaced by better mechnism")]

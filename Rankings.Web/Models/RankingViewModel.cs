@@ -12,6 +12,7 @@ namespace Rankings.Web.Models
         public string NamePlayer { get; set; }
 
         [Display(Name = "Elo")]
+        [DisplayFormat(DataFormatString = "{0:0}")]
         public decimal Points { get; set; }
 
         [Display(Name = "Win%")]
