@@ -89,6 +89,7 @@ namespace Rankings.Web.Controllers
             return registrationDate.AddHours(correction).ToString("yyyy/MM/dd H:mm");
         }
 
+        [HttpGet("/games/create")]
         public IActionResult Create()
         {
             var nameCurrentUser = ResolveCurrentUserName();
