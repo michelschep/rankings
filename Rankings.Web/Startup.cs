@@ -59,7 +59,7 @@ namespace Rankings.Web
                         .Build();
                     options.Filters.Add(new AuthorizeFilter(policy));
                 })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
             .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200));
