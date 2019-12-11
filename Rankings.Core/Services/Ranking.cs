@@ -49,7 +49,7 @@ namespace Rankings.Core.Services
             // TODO get rid of or at least with mapper
             return new PlayerStats
             {
-                Ranking = Math.Round(stats.Ranking, precision, MidpointRounding.AwayFromZero),
+                Ranking = stats.Ranking,
                 NumberOfSets = stats.NumberOfSets,
                 History = stats.History,
                 NumberOfSetWins = stats.NumberOfSetWins,
