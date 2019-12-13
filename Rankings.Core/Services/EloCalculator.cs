@@ -39,13 +39,13 @@ namespace Rankings.Core.Services
                 ? ratingPlayer1 - ratingPlayer2
                 : ratingPlayer2 - ratingPlayer1;
 
-            var marginOfVicoryMultiplier = _withMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
+            var marginOfVictoryMultiplier = _withMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
 
             var outcome1 = (actualResult - expectedOutcome1);
 
             // TODO next version elo. Less influence margin of victory. And a smaller k factor (25?)
-            //var player1Delta = _k * outcome1 * (decimal)Math.Sqrt(Math.Sqrt((double)marginOfVicoryMultiplier));
-            var player1Delta = _k * outcome1 * marginOfVicoryMultiplier;
+            //var player1Delta = _k * outcome1 * (decimal)Math.Sqrt(Math.Sqrt((double)marginOfVictoryMultiplier));
+            var player1Delta = _k * outcome1 * marginOfVictoryMultiplier;
 
             return player1Delta;
         }

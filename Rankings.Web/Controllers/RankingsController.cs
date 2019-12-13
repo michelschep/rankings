@@ -26,7 +26,7 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings/{gametype}/{endDateInput}")]
         public IActionResult Index(string gameType, string endDateInput, int precision = 0, int numberOfGames = 7)
         {
-            gameType = gameType ?? "tafeltennis";
+            gameType ??= "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
@@ -41,7 +41,7 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings/month/{gametype}/{year}/{month}")]
         public IActionResult Month(string gameType, int year, int month)
         {
-            gameType = gameType ?? "tafeltennis";
+            gameType ??= "tafeltennis";
             var startDate = new DateTime(2019, 9, 1, 0,0,0);
             var endDate = new DateTime(2019, 10, 1, 0,0,0 );
             

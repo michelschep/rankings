@@ -59,7 +59,7 @@ namespace Rankings.Web.Controllers
 
         private List<GameViewModel> CreateGameSummaryViewModels(string gameType)
         {
-            gameType = gameType ?? "tafeltennis";
+            gameType ??= "tafeltennis";
             var daysBack = gameType == "tafeltennis" ? -7 : -365;
 
             var games = _gamesService

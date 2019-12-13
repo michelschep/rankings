@@ -58,7 +58,7 @@ namespace Rankings.IntegrationTests
         public void ThenWeHaveTheFollowingVenues(Table table)
         {
             var viewResult = VenuesController.Index() as ViewResult;
-            var viewModel = viewResult.Model as IEnumerable<VenueViewModel>;
+            var viewModel = viewResult?.Model as IEnumerable<VenueViewModel>;
             var venues = viewModel.ToList();
 
             var expectedVenues = table.CreateSet<VenueViewModel>().ToList();
