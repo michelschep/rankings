@@ -29,7 +29,7 @@ namespace Rankings.Core.Services
             _logger.LogInformation($"Calculate ELO new");
 
             // All players should be in the ranking. Not restrictions (not yet :-))
-            var allPlayers = _gamesService.List<Profile>(new AllProfiles());
+            var allPlayers = _gamesService.List(new AllProfiles());
 
             // All players have an initial elo score
             var ranking = new Dictionary<Profile, decimal>();
