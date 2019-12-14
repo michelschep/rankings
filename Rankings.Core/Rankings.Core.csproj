@@ -9,4 +9,8 @@
     <PackageReference Include="FluentValidation" Version="8.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\NewCalculating\" />
+  </ItemGroup>
+
 </Project>

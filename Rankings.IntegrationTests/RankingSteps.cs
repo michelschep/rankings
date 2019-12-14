@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Rankings.Web.Controllers;
@@ -327,7 +328,7 @@ namespace Rankings.IntegrationTests
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             var authorizationService = new Mock<IAuthorizationService>();
-            authorizationService.Setup(foo => foo.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<Object>(), "ProfileEditPolicy"))
+            authorizationService.Setup(foo => foo.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), "ProfileEditPolicy"))
                 .ReturnsAsync(AuthorizationResult.Success());
 
             ProfilesController = new ProfilesController(httpContextAccessor.Object, _gamesService, authorizationService.Object);
@@ -339,9 +340,9 @@ namespace Rankings.IntegrationTests
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, int precision)
         {
-            var logger1 = _factory.CreateLogger<StatisticsService>();
+            var logger1 = _factory.CreateLogger<NewStatisticsService>();
             var logger2 = _factory.CreateLogger<EloCalculator>();
-            IStatisticsService rankingService = new StatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
+            IStatisticsService rankingService = new NewStatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
 
             return new RankingsController(rankingService, _memoryCache);
         }

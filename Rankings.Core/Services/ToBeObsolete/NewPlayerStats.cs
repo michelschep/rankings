@@ -1,7 +1,9 @@
-﻿using Rankings.Core.Entities;
+﻿using System;
+using Rankings.Core.Entities;
 
-namespace Rankings.Core.Services
+namespace Rankings.Core.Services.To
 {
+    [Obsolete("Well, you still need this. We want to get rid of it!")]
     public class NewPlayerStats
     {
         public Profile Profile { get; set; }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Rankings.Core.Entities;
 
-namespace Rankings.Core.Services
+namespace Rankings.Core.Services.ToBeObsolete
 {
+    [Obsolete("Well, you still need this. We want to get rid of it!")]
     public class Ranking
     {
         private readonly Dictionary<Profile, PlayerStats> _ratings;

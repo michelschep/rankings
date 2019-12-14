@@ -4,26 +4,12 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Services.To;
 using Rankings.Core.Specifications;
 
-namespace Rankings.Core.Services
+namespace Rankings.Core.Services.ToBeObsolete
 {
-    public class EloConfiguration
-    {
-        public EloConfiguration(int kfactor, int n, bool withMarginOfVictory, int initialElo)
-        {
-            Kfactor = kfactor;
-            N = n;
-            WithMarginOfVictory = withMarginOfVictory;
-            InitialElo = initialElo;
-        }
-
-        public int Kfactor { get; }
-        public int N { get; }
-        public bool WithMarginOfVictory { get; }
-        public int InitialElo { get; }
-    }
-
+    [Obsolete("Well, you still need this. We want to get rid of it!")]
     public class StatisticsService : IStatisticsService
     {
         private readonly IGamesService _gamesService;
@@ -128,52 +114,7 @@ namespace Rankings.Core.Services
 
         public Ranking Ranking(string gameType, DateTime endDate)
         {
-            return Ranking(gameType, DateTime.MinValue, endDate);
-        }
-
-        public Dictionary<Profile, decimal> EloNew(string gameType, DateTime startDate, DateTime endDate)
-        {
-            _logger.LogInformation($"Calculate ELO new");
-
-            // All players should be in the ranking. Not restrictions (not yet :-))
-            var allPlayers = _gamesService.List<Profile>(new AllProfiles());
-
-            // All players have an initial elo score
-            var ranking = new Dictionary<Profile, decimal>();
-            foreach (var player in allPlayers)
-            {
-                ranking.Add(player, _eloConfiguration.InitialElo);
-            }
-
-            // Now calculate current elo score based on all games played
-            var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
-            foreach (var game in games.OrderBy(game => game.RegistrationDate))
-            {
-                _logger.LogInformation($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
-
-                // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
-                // For now ignore a 0-0
-                if (game.Score1 == 0 && game.Score2 == 0)
-                    continue;
-
-                // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
-                // It should not be possible to enter these games.
-                if (game.Player1.EmailAddress == game.Player2.EmailAddress)
-                    continue;
-
-                var oldRatingPlayer1 = ranking[game.Player1];
-                var oldRatingPlayer2 = ranking[game.Player2];
-
-                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1, oldRatingPlayer2, game.Score1, game.Score2);
-
-                ranking[game.Player1] = oldRatingPlayer1 + player1Delta;
-                ranking[game.Player2] = oldRatingPlayer2 - player1Delta;
-
-                _logger.LogInformation($"p1 {oldRatingPlayer1}+{player1Delta} = {ranking[game.Player1]}");
-                _logger.LogInformation($"p2 {oldRatingPlayer2}+{-1*player1Delta} = {ranking[game.Player2]}");
-            }
-
-            return ranking;
+            return Ranking(gameType, startDate: DateTime.MinValue, endDate);
         }
 
         public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
@@ -290,10 +231,13 @@ namespace Rankings.Core.Services
             return _eloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
         }
 
-        private void InitStats(DateTime? previousPointInTimeDate,
-            KeyValuePair<DateTime, RankingStats> pointInTime, RankingStats previousPointInTimeRankingStats,
-            int initialElo)
+        public Dictionary<Profile, decimal> EloStats(string gameType, DateTime startDate, DateTime endDate)
         {
+            throw new NotImplementedException();
+        }
+
+        private void InitStats(DateTime? previousPointInTimeDate,
+            KeyValuePair<DateTime, RankingStats> pointInTime, RankingStats previousPointInTimeRankingStats, int initialElo) {
             var deprecatedRatingsKeys = Ranking("tafeltennis").DeprecatedRatings.Keys;
             foreach (var profile in deprecatedRatingsKeys)
             {

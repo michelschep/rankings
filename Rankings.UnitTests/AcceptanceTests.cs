@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Rankings.Core.Entities;
 using Rankings.Core.Services;
+using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Core.Specifications;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;

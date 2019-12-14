@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -64,7 +65,7 @@ namespace Rankings.Web.Controllers
         private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
         {
             // Determine list of players with elo score
-            var eloScores = _statisticsService.EloNew(gameType, startDate, endDate);
+            var eloScores = _statisticsService.EloStats(gameType, startDate, endDate);
 
             // Fill view model with elo score
             var list = new List<RankingViewModel>();

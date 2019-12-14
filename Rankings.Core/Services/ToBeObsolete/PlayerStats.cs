@@ -1,5 +1,8 @@
-﻿namespace Rankings.Core.Services
+﻿using System;
+
+namespace Rankings.Core.Services.ToBeObsolete
 {
+    [Obsolete("Well, you still need this. We want to get rid of it!")]
     public class PlayerStats
     {
         public decimal Ranking { get; set; }
