@@ -15,16 +15,10 @@ namespace Rankings.Core.Services
         private readonly EloConfiguration _eloConfiguration;
         private readonly ILogger<EloCalculator> _logger;
 
-        public EloCalculator(EloConfiguration eloConfiguration, ILogger<EloCalculator> logger): this(eloConfiguration.N, eloConfiguration.Kfactor, eloConfiguration.WithMarginOfVictory)
+        public EloCalculator(EloConfiguration eloConfiguration, ILogger<EloCalculator> logger)
         {
             _eloConfiguration = eloConfiguration;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        [Obsolete]
-        public EloCalculator(int n, int kfactor, bool withMarginOfVictory = true)
-        {
-            _eloConfiguration = new EloConfiguration(kfactor, n, withMarginOfVictory, 0); // initial elo does not belong to settings
         }
 
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)

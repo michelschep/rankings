@@ -27,7 +27,9 @@ namespace Rankings.UnitTests
         public void TestMargin(decimal elo1, decimal elo2, int score1, int score2, decimal expectedMultiplier)
         {
             var diff = score1 > score2 ? elo1 - elo2 : elo2 - elo1;
-            var actualMultiplier = new EloCalculator(400, 50).MarginOfVictoryMultiplier(score1, score2, diff);
+            var config = new EloConfiguration(50, 400, true, 1200);
+
+            var actualMultiplier = new EloCalculator(config, new Mock<ILogger<EloCalculator>>().Object).MarginOfVictoryMultiplier(score1, score2, diff);
 
             actualMultiplier.Should().BeApproximately(expectedMultiplier, 0.001m);
         }
