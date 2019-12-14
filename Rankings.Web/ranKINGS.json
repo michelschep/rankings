@@ -1,0 +1,22 @@
+2019-12-13 15:31:50.853 +01:00 [INF] User profile is available. Using 'C:\Users\Heisenberg\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2019-12-13 15:31:55.621 +01:00 [INF] Request starting HTTP/2 GET https://localhost:5001/  
+2019-12-13 15:31:55.913 +01:00 [INF] Route matched with {action = "Index", controller = "Home", area = "", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Rankings.Web.Controllers.HomeController (Rankings.Web).
+2019-12-13 15:31:57.406 +01:00 [INF] Authorization was successful.
+2019-12-13 15:31:57.578 +01:00 [INF] Executing action method Rankings.Web.Controllers.HomeController.Index (Rankings.Web) - Validation state: "Valid"
+2019-12-13 15:31:57.605 +01:00 [INF] Executed action method Rankings.Web.Controllers.HomeController.Index (Rankings.Web), returned result Microsoft.AspNetCore.Mvc.ViewResult in 1.5789ms.
+2019-12-13 15:31:57.635 +01:00 [INF] Executing ViewResult, running view Index.
+2019-12-13 15:31:57.817 +01:00 [INF] Authorization was successful.
+2019-12-13 15:31:57.880 +01:00 [INF] Executed ViewResult - view Index executed in 246.6654ms.
+2019-12-13 15:31:57.889 +01:00 [INF] Executed action Rankings.Web.Controllers.HomeController.Index (Rankings.Web) in 1967.621ms
+2019-12-13 15:31:57.904 +01:00 [INF] Request finished in 2289.4672ms 200 text/html; charset=utf-8
+2019-12-13 15:36:36.652 +01:00 [INF] User profile is available. Using 'C:\Users\Heisenberg\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2019-12-13 15:36:41.094 +01:00 [INF] Request starting HTTP/2 GET https://localhost:5001/  
+2019-12-13 15:36:41.408 +01:00 [INF] Route matched with {action = "Index", controller = "Home", area = "", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Rankings.Web.Controllers.HomeController (Rankings.Web).
+2019-12-13 15:36:42.339 +01:00 [INF] Authorization was successful.
+2019-12-13 15:36:42.501 +01:00 [INF] Executing action method Rankings.Web.Controllers.HomeController.Index (Rankings.Web) - Validation state: "Valid"
+2019-12-13 15:36:42.524 +01:00 [INF] Executed action method Rankings.Web.Controllers.HomeController.Index (Rankings.Web), returned result Microsoft.AspNetCore.Mvc.ViewResult in 1.2897ms.
+2019-12-13 15:36:42.539 +01:00 [INF] Executing ViewResult, running view Index.
+2019-12-13 15:36:42.620 +01:00 [INF] Authorization was successful.
+2019-12-13 15:36:42.644 +01:00 [INF] Executed ViewResult - view Index executed in 107.8478ms.
+2019-12-13 15:36:42.648 +01:00 [INF] Executed action Rankings.Web.Controllers.HomeController.Index (Rankings.Web) in 1233.9812ms
+2019-12-13 15:36:42.653 +01:00 [INF] Request finished in 1565.9798ms 200 text/html; charset=utf-8

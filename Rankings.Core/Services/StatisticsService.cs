@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
@@ -27,17 +28,20 @@ namespace Rankings.Core.Services
     {
         private readonly IGamesService _gamesService;
         private readonly EloConfiguration _eloConfiguration;
+        private readonly ILogger<StatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<StatisticsService> logger, EloCalculator eloCalculator)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
-            _eloCalculator = new EloCalculator(eloConfiguration);
+            _eloCalculator = eloCalculator ?? throw new ArgumentNullException(nameof(eloCalculator));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
         {
+            _logger.LogInformation($"Calculate stats for {startDate} - {endDate}");
             var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList();
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
             var now = DateTime.Now;
@@ -46,6 +50,8 @@ namespace Rankings.Core.Services
             var history = new Dictionary<DateTime, RankingStats>();
             foreach (var game in allGames)
             {
+                _logger.LogInformation($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
+
                 if (!history.ContainsKey(game.RegistrationDate))
                     history.Add(game.RegistrationDate, new RankingStats());
 
@@ -127,6 +133,8 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, decimal> EloNew(string gameType, DateTime startDate, DateTime endDate)
         {
+            _logger.LogInformation($"Calculate ELO new");
+
             // All players should be in the ranking. Not restrictions (not yet :-))
             var allPlayers = _gamesService.List<Profile>(new AllProfiles());
 
@@ -141,6 +149,8 @@ namespace Rankings.Core.Services
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
+                _logger.LogInformation($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
+
                 // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0
                 if (game.Score1 == 0 && game.Score2 == 0)
@@ -158,6 +168,9 @@ namespace Rankings.Core.Services
 
                 ranking[game.Player1] = oldRatingPlayer1 + player1Delta;
                 ranking[game.Player2] = oldRatingPlayer2 - player1Delta;
+
+                _logger.LogInformation($"p1 {oldRatingPlayer1}+{player1Delta} = {ranking[game.Player1]}");
+                _logger.LogInformation($"p2 {oldRatingPlayer2}+{-1*player1Delta} = {ranking[game.Player2]}");
             }
 
             return ranking;

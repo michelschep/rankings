@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace Rankings.Core.Services
 {
@@ -12,26 +13,24 @@ namespace Rankings.Core.Services
     public class EloCalculator
     {
         private readonly EloConfiguration _eloConfiguration;
-        
-        private static decimal _n = 400;
-        private static decimal _k = 50; 
-        private readonly bool _withMarginOfVictory;
+        private readonly ILogger<EloCalculator> _logger;
 
-        public EloCalculator(EloConfiguration eloConfiguration): this(eloConfiguration.N, eloConfiguration.Kfactor, eloConfiguration.WithMarginOfVictory)
+        public EloCalculator(EloConfiguration eloConfiguration, ILogger<EloCalculator> logger): this(eloConfiguration.N, eloConfiguration.Kfactor, eloConfiguration.WithMarginOfVictory)
         {
             _eloConfiguration = eloConfiguration;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [Obsolete]
-        public EloCalculator(decimal n, decimal kfactor, bool withMarginOfVictory = true)
+        public EloCalculator(int n, int kfactor, bool withMarginOfVictory = true)
         {
-            _n = n;
-            _k = kfactor;
-            _withMarginOfVictory = withMarginOfVictory;
+            _eloConfiguration = new EloConfiguration(kfactor, n, withMarginOfVictory, 0); // initial elo does not belong to settings
         }
 
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
         {
+            _logger.LogInformation($"CalculateDeltaPlayer n={_eloConfiguration.N}, k={_eloConfiguration.Kfactor} margin={_eloConfiguration.WithMarginOfVictory}");
+
             var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
             decimal actualResult = ActualResult(gameScore1, gameScore2);
 
@@ -39,13 +38,13 @@ namespace Rankings.Core.Services
                 ? ratingPlayer1 - ratingPlayer2
                 : ratingPlayer2 - ratingPlayer1;
 
-            var marginOfVictoryMultiplier = _withMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
+            var marginOfVictoryMultiplier = _eloConfiguration.WithMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
 
             var outcome1 = (actualResult - expectedOutcome1);
 
             // TODO next version elo. Less influence margin of victory. And a smaller k factor (25?)
             //var player1Delta = _k * outcome1 * (decimal)Math.Sqrt(Math.Sqrt((double)marginOfVictoryMultiplier));
-            var player1Delta = _k * outcome1 * marginOfVictoryMultiplier;
+            var player1Delta = _eloConfiguration.Kfactor * outcome1 * marginOfVictoryMultiplier;
 
             return player1Delta;
         }
@@ -74,7 +73,7 @@ namespace Rankings.Core.Services
 
         private decimal ExpectationForWinningOneSet(decimal ratingPlayer1, decimal ratingPlayer2)
         {
-            decimal exponent = (ratingPlayer2 - ratingPlayer1) / _n;
+            decimal exponent = (ratingPlayer2 - ratingPlayer1) / _eloConfiguration.N;
             decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
 
             return expected;

@@ -103,6 +103,9 @@ namespace Rankings.IntegrationTests
 #line 11
  testRunner.And("elo system with k-factor 5 and n is 50 and initial elo is 100", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
+#line 12
+ testRunner.And("margin of victory is not active", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
         }
         
         void System.IDisposable.Dispose()
@@ -117,7 +120,7 @@ namespace Rankings.IntegrationTests
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("At the start of the ranking", null, ((string[])(null)));
-#line 13
+#line 14
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -140,7 +143,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 14
+#line 15
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -163,7 +166,7 @@ this.FeatureBackground();
                             "4",
                             "Dirk",
                             "100.0"});
-#line 15
+#line 16
  testRunner.Then("we have the following tafeltennis ranking with precision 1:", ((string)(null)), table1, "Then ");
 #line hidden
             }

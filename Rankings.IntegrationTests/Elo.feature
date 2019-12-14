@@ -9,6 +9,7 @@ Background:
 	And a game type named tafeltennis
 	And the current user is Amy with role Admin
 	And elo system with k-factor 5 and n is 50 and initial elo is 100
+	And margin of victory is not active
 
 Scenario: At the start of the ranking
 	Given no games played
@@ -19,7 +20,6 @@ Scenario: At the start of the ranking
 		| 3       | Cindy      | 100.0  |
 		| 4       | Dirk       | 100.0  |
 		
-
 Scenario: First round
 	Given no games played
 	When the following tafeltennis games are played in Amsterdam:

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Rankings.Core.Interfaces;
@@ -16,24 +20,66 @@ using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Rankings.Web.Controllers;
 using Rankings.Web.Models;
+using Serilog;
+using Serilog.Events;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using Xunit;
+using Xunit.Abstractions;
+using ILogger = Serilog.ILogger;
 
 namespace Rankings.IntegrationTests
 {
-    [Binding]
-    public class RankingSteps: StepsBase
+    public class RankingFeatureContext
     {
-        private bool _marginOfVictory = false;
-        private int _kfactor = 50;
-        private int _n = 400;
-        private int _initialElo = 1200;
+        public bool? MarginOfVictory { get; set; }
+        public int? Kfactor { get; set; }
+        public int? N { get; set; }
+        public int? InitialElo { get; set; }
+
+        public RankingFeatureContext()
+        {
+        }
+    }
+
+    [Binding]
+    public class RankingSteps : StepsBase
+    {
+        private readonly RankingFeatureContext _featureContext;
+
+        public RankingSteps(RankingFeatureContext featureContext, ITestOutputHelper output) : base(output)
+        {
+            StackTrace stackTrace = new StackTrace();
+            output.WriteLine("Feature: " + stackTrace.ToString());
+            _featureContext = featureContext;
+        }
+
+        public static string NameOfCallingClass()
+        {
+            string fullName;
+            Type declaringType;
+            int skipFrames = 2;
+            do
+            {
+                MethodBase method = new StackFrame(skipFrames, false).GetMethod();
+                declaringType = method.DeclaringType;
+                if (declaringType == null)
+                {
+                    return method.Name;
+                }
+                skipFrames++;
+                fullName = declaringType.FullName;
+            }
+            while (declaringType.Module.Name.Equals("mscorlib.dll", StringComparison.OrdinalIgnoreCase));
+
+            return fullName;
+        }
 
         [Given(@"no venues registrated")]
         public void GivenNoVenuesRegistrated()
         {
         }
-        
+
         [Given(@"venue (.*) exists")]
         public void GivenVenueAlmereExists(string nameVenue)
         {
@@ -53,7 +99,7 @@ namespace Rankings.IntegrationTests
                 Code = nameVenue
             });
         }
-        
+
         [Then(@"we have the following venues:")]
         public void ThenWeHaveTheFollowingVenues(Table table)
         {
@@ -79,6 +125,7 @@ namespace Rankings.IntegrationTests
         [Given(@"a player named (.*)")]
         public void GivenAPlayerNamedNAME(string name)
         {
+            Output.Information($"Create Player {name}");
             var model = new ProfileViewModel
             {
                 EmailAddress = EmailAddressFor(name),
@@ -155,15 +202,37 @@ namespace Rankings.IntegrationTests
         [Given(@"elo system with k-factor (.*) and n is (.*) and initial elo is (.*)")]
         public void GivenEloSystemWithK_FactorAndNIsAndInitialEloIs(int kfactor, int n, int initialElo)
         {
-            _initialElo = initialElo;
-            _n = n;
-            _kfactor = kfactor;
+            Output.Information($"Set k ={kfactor}, n={n}, and initial elo = {initialElo}");
+
+            var context = ResolveRankingFeatureContext();
+
+            if (context.Kfactor.HasValue)
+                throw new Exception("Value cannot be known yet");
+
+            context.InitialElo = initialElo;
+            context.N = n;
+            context.Kfactor = kfactor;
+        }
+
+        private RankingFeatureContext ResolveRankingFeatureContext()
+        {
+            // if (!ScenarioContext.Current.ContainsKey("context"))
+            //     ScenarioContext.Current.Add("context", new RankingFeatureContext());
+
+            //return (RankingFeatureContext) _featureContext.StepContext["context"];
+            return _featureContext;
         }
 
         [Given(@"margin of victory active")]
         public void GivenMarginOfVictoryActive()
         {
-            _marginOfVictory = true;
+            ResolveRankingFeatureContext().MarginOfVictory = true;
+        }
+
+        [Given(@"margin of victory is not active")]
+        public void GivenMarginOfVictoryIsNotActive()
+        {
+            ResolveRankingFeatureContext().MarginOfVictory = false;
         }
 
         [When(@"the following (.*) games are played in (.*):")]
@@ -200,14 +269,19 @@ namespace Rankings.IntegrationTests
         [Then(@"we have the following (.*) ranking with precision (.*):")]
         public void ThenWeHaveTheFollowingRanking(string gameType, int precision, Table table)
         {
-            var eloConfiguration = new EloConfiguration(_kfactor, _n, _marginOfVictory, _initialElo);
+            var context = ResolveRankingFeatureContext();
+            if (!context.Kfactor.HasValue || !context.N.HasValue || !context.MarginOfVictory.HasValue || !context.InitialElo.HasValue)
+                throw new Exception("Calculator config missing");
+            
+            Output.Information($"Calculate ranking with k={context.Kfactor} n={context.N}");
+            var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value);
             var rankingController = CreateRankingController(eloConfiguration, precision);
             var viewResult = rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision, 0) as ViewResult;
             var viewModel = viewResult.Model as IEnumerable<RankingViewModel>;
             var actualRanking = viewModel.ToList();
 
             var expectedRanking = table.CreateSet<RankingViewModel>().ToList();
-            
+
             actualRanking.Should().BeEquivalentTo(expectedRanking, options => options
                     .WithStrictOrdering()
                     .Including(model => model.Ranking)
@@ -225,9 +299,24 @@ namespace Rankings.IntegrationTests
         protected readonly GamesController GamesController;
         private readonly GamesService _gamesService;
         private readonly IMemoryCache _memoryCache;
+        private readonly ILoggerFactory _factory;
+        protected readonly ILogger Output;
 
-        protected StepsBase()
+        protected StepsBase(ITestOutputHelper output)
         {
+            // Pass the ITestOutputHelper object to the TestOutput sink
+            Output = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.TestOutput(output, LogEventLevel.Verbose)
+                .CreateLogger()
+                .ForContext<StepsBase>();
+
+            var serviceProvider = new ServiceCollection()
+                .AddLogging(builder => builder.AddSerilog(Output))
+                .BuildServiceProvider();
+            _factory = serviceProvider.GetService<ILoggerFactory>();
+            var logger = _factory.CreateLogger<GamesController>();
+
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
@@ -244,13 +333,16 @@ namespace Rankings.IntegrationTests
             ProfilesController = new ProfilesController(httpContextAccessor.Object, _gamesService, authorizationService.Object);
             VenuesController = new VenuesController(_gamesService);
             GameTypesController = new GameTypesController(_gamesService);
-           
-            GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache);
+
+            GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache, logger);
         }
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, int precision)
         {
-            IStatisticsService rankingService = new StatisticsService(_gamesService, eloConfiguration);
+            var logger1 = _factory.CreateLogger<StatisticsService>();
+            var logger2 = _factory.CreateLogger<EloCalculator>();
+            IStatisticsService rankingService = new StatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
+
             return new RankingsController(rankingService, _memoryCache);
         }
     }

@@ -5,12 +5,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ardalis.Specification;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
@@ -24,25 +23,27 @@ namespace Rankings.Web.Controllers
         private readonly IAuthorizationService _authorizationService;
 
         private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<GamesController> _logger;
 
         // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
         public GamesController(IGamesService gamesService, IAuthorizationService authorizationService,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache, ILogger<GamesController> logger)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
-            _authorizationService =
-                authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
+            _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("/games")]
         [HttpGet("/games/{gametype}")]
         public IActionResult Index(string gameType)
         {
+            _logger.LogInformation("Get index page games");
+
             var model = CreateGameSummaryViewModels(gameType);
-            Response.Headers.Add("Refresh", "30");
 
             return View(model);
         }
@@ -144,6 +145,8 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(GameViewModel model)
         {
+            _logger.LogInformation("Create Game");
+
             if (!ModelState.IsValid)
             {
                 var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));

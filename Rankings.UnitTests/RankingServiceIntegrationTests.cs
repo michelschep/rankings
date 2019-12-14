@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
@@ -22,7 +24,11 @@ namespace Rankings.UnitTests
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository);
-            _statisticsService = new StatisticsService(_gamesService, new EloConfiguration(50, 400, true, 1200));
+            var logger1 = (new Mock<ILogger<StatisticsService>>()).Object;
+            var logger2 = (new Mock<ILogger<EloCalculator>>()).Object;
+
+            var eloConfiguration = new EloConfiguration(50, 400, true, 1200);
+            _statisticsService = new StatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
         }
 
         [Fact]

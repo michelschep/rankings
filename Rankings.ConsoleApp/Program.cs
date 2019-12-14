@@ -57,7 +57,8 @@ namespace Rankings.ConsoleApp
         {
             var rankingService = CreateGamesService();
 
-            var statsService = new StatisticsService(rankingService, new EloConfiguration(50, 400, true, 1200));
+            EloConfiguration eloConfiguration = new EloConfiguration(50, 400, true, 1200);
+            var statsService = new StatisticsService(rankingService, eloConfiguration, null, new EloCalculator(eloConfiguration, null));
             return statsService;
         }
 

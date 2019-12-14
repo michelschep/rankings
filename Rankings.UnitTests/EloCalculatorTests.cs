@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Rankings.Core.Services;
 using Xunit;
 
@@ -50,7 +52,9 @@ namespace Rankings.UnitTests
         [InlineData(1300, 1200, 3, 2, 11.932)]
         public void CalculateDeltaPlayerTests(decimal eloPlayerOne, decimal eloPlayerTwo, int scorePlayerOne, int scorePlayerTwo, decimal expectedDelta)
         {
-            var actualDelta = new EloCalculator(400, 50).CalculateDeltaPlayer(eloPlayerOne, eloPlayerTwo, scorePlayerOne, scorePlayerTwo);
+            var logger = new Mock<ILogger<EloCalculator>>().Object;
+            EloConfiguration config = new EloConfiguration(50, 400, true, 1200);
+            var actualDelta = new EloCalculator(config, logger).CalculateDeltaPlayer(eloPlayerOne, eloPlayerTwo, scorePlayerOne, scorePlayerTwo);
 
             actualDelta.Should().BeApproximately(expectedDelta, 0.001m);
         }
