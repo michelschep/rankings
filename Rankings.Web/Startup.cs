@@ -64,11 +64,13 @@ namespace Rankings.Web
             .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
             .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+            // TODO retrieve from app settings/or admin settings page/object
             services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();
-            services.AddSingleton<IStatisticsService, StatisticsService>();
+            services.AddSingleton<EloCalculator, EloCalculator>();
+            services.AddSingleton<IStatisticsService, NewStatisticsService>();
             services.AddSingleton<IGamesService, GamesService>((ctx) =>
             {
                 var connectionFactory = new SqLiteDatabaseConnectionFactory();

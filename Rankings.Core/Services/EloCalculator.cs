@@ -16,7 +16,7 @@ namespace Rankings.Core.Services
 
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
         {
-            _logger.LogInformation($"CalculateDeltaPlayer n={_eloConfiguration.N}, k={_eloConfiguration.Kfactor} margin={_eloConfiguration.WithMarginOfVictory}");
+            //_logger.LogInformation($"CalculateDeltaPlayer n={_eloConfiguration.N}, k={_eloConfiguration.Kfactor} margin={_eloConfiguration.WithMarginOfVictory}");
 
             var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
             decimal actualResult = ActualResult(gameScore1, gameScore2);

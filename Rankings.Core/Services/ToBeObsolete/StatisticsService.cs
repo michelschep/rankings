@@ -27,7 +27,8 @@ namespace Rankings.Core.Services.ToBeObsolete
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
         {
-            _logger.LogInformation($"Calculate stats for {startDate} - {endDate}");
+            _logger.LogInformation($"Calculate stats for: {startDate} - {endDate}");
+
             var allGames = _gamesService.List(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList();
             var dateTimes = allGames.Select(g => g.RegistrationDate).ToList();
             var now = DateTime.Now;
@@ -36,7 +37,7 @@ namespace Rankings.Core.Services.ToBeObsolete
             var history = new Dictionary<DateTime, RankingStats>();
             foreach (var game in allGames)
             {
-                _logger.LogInformation($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
+                //_logger.LogInformation($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
 
                 if (!history.ContainsKey(game.RegistrationDate))
                     history.Add(game.RegistrationDate, new RankingStats());
@@ -68,6 +69,8 @@ namespace Rankings.Core.Services.ToBeObsolete
 
             foreach (var pointInTime in history)
             {
+                _logger.LogInformation($"Calculate stats point in time {pointInTime.Key}");
+
                 // Init data player stats
                 InitStats(previousPointInTimeDate, pointInTime, previousPointInTimeRankingStats, _eloConfiguration.InitialElo);
 
@@ -119,6 +122,8 @@ namespace Rankings.Core.Services.ToBeObsolete
 
         public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
+            _logger.LogInformation($"Calculate Ranking: {startDate} - {endDate}");
+
             var gamesSpecification = new GamesForPeriodSpecification(gameType, startDate, endDate);
             var games = _gamesService.List(gamesSpecification).ToList();
 
