@@ -215,7 +215,7 @@ namespace Rankings.IntegrationTests
             if (!context.Kfactor.HasValue || !context.N.HasValue || !context.MarginOfVictory.HasValue || !context.InitialElo.HasValue)
                 throw new Exception("Calculator config missing");
             
-            Output.Information($"Calculate ranking with k={context.Kfactor} n={context.N}");
+            Output.Information($"***** Calculate ranking with k={context.Kfactor} n={context.N}");
             var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value);
             var rankingController = CreateRankingController(eloConfiguration, precision);
             var viewResult = rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision, 0) as ViewResult;
@@ -229,6 +229,7 @@ namespace Rankings.IntegrationTests
                     .Including(model => model.Ranking)
                     .Including(model => model.NamePlayer)
                     .Including(model => model.Points)
+                    .Including(model => model.WinPercentage)
                 );
         }
     }

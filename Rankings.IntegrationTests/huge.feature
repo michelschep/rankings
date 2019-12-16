@@ -415,27 +415,27 @@ Scenario: Really many games
 		| 2019-12-09 12:10  | Michel       | Tarik         | 2  | 1  |
 		| 2019-12-10 11:55  | Johannes     | Hans          | 3  | 1  |
 	Then we have the following tafeltennis ranking with precision 0:
-		| Ranking | NamePlayer | Points |
-		| 1       | Johannes   | 1782   |
-		| 2       | Irma       | 1493   |
-		| 3       | Hans       | 1493   |
-		| 4       | Michel     | 1368   |
-		| 5       | Bertus     | 1362   |
-		| 6       | Remco      | 1299   |
-		| 7       | Harro      | 1265   |
-		| 8       | Geale      | 1259   |
-		| 9       | Yassine    | 1195   |
-		| 10      | Mulder     | 1184   |
-		| 11      | Vink       | 1183   |
-		| 12      | Arnold1    | 1182   |
-		| 13      | Arjen      | 1177   |
-		| 14      | Driek      | 1149   |
-		| 15      | Ricky      | 1115   |
-		| 16      | Eduard     | 1107   |
-		| 17      | Jeroen     | 1090   |
-		| 18      | Matthias   | 1073   |
-		| 19      | Enrico     | 1022   |
-		| 20      | Tarik      | 988    |
-		| 21      | Eltjo      | 971    |
-		| 22      | Arnold2    | 968    |
-		| 23      | Tjardo     | 875    |
+		| Ranking | NamePlayer | Points | WinPercentage |
+		| 1       | Johannes   | 1782   | 94  |
+		| 2       | Irma       | 1493   | 67  |
+		| 3       | Hans       | 1493   | 78  |
+		| 4       | Michel     | 1368   | 55  |
+		| 5       | Bertus     | 1362   | 63  |
+		| 6       | Remco      | 1299   | 62  |
+		| 7       | Harro      | 1265   | 58  |
+		| 8       | Geale      | 1259   | 48  |
+		| 9       | Yassine    | 1195   | 1   |
+		| 10      | Mulder     | 1184   | 0   |
+		| 11      | Vink       | 1183   | 0   |
+		| 12      | Arnold1    | 1182   | 48  |
+		| 13      | Arjen      | 1177   | 29  |
+		| 14      | Driek      | 1149   | 0   |
+		| 15      | Ricky      | 1115   | 28  |
+		| 16      | Eduard     | 1107   | 48  |
+		| 17      | Jeroen     | 1090   | 20  |
+		| 18      | Matthias   | 1073   | 23  |
+		| 19      | Enrico     | 1022   | 11  |
+		| 20      | Tarik      | 988    | 14  |
+		| 21      | Eltjo      | 971    | 18  |
+		| 22      | Arnold2    | 968    | 12  |
+		| 23      | Tjardo     | 875    | 0   |

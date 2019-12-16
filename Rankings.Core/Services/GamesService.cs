@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ardalis.Specification;
-using FluentValidation;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.SharedKernel;

@@ -145,8 +145,6 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(GameViewModel model)
         {
-            _logger.LogInformation("Create Game");
-
             if (!ModelState.IsValid)
             {
                 var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));

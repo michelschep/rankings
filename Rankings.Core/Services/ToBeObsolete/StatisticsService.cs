@@ -69,7 +69,7 @@ namespace Rankings.Core.Services.ToBeObsolete
 
             foreach (var pointInTime in history)
             {
-                _logger.LogInformation($"Calculate stats point in time {pointInTime.Key}");
+                _logger.LogTrace($"Calculate stats point in time {pointInTime.Key}");
 
                 // Init data player stats
                 InitStats(previousPointInTimeDate, pointInTime, previousPointInTimeRankingStats, _eloConfiguration.InitialElo);
@@ -122,7 +122,7 @@ namespace Rankings.Core.Services.ToBeObsolete
 
         public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
-            _logger.LogInformation($"Calculate Ranking: {startDate} - {endDate}");
+            _logger.LogTrace($"Calculate Ranking: {startDate} - {endDate}");
 
             var gamesSpecification = new GamesForPeriodSpecification(gameType, startDate, endDate);
             var games = _gamesService.List(gamesSpecification).ToList();

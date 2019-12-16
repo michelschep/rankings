@@ -2495,99 +2495,123 @@ this.FeatureBackground();
                 TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ranking",
                             "NamePlayer",
-                            "Points"});
+                            "Points",
+                            "WinPercentage"});
                 table9.AddRow(new string[] {
                             "1",
                             "Johannes",
-                            "1782"});
+                            "1782",
+                            "94"});
                 table9.AddRow(new string[] {
                             "2",
                             "Irma",
-                            "1493"});
+                            "1493",
+                            "67"});
                 table9.AddRow(new string[] {
                             "3",
                             "Hans",
-                            "1493"});
+                            "1493",
+                            "78"});
                 table9.AddRow(new string[] {
                             "4",
                             "Michel",
-                            "1368"});
+                            "1368",
+                            "55"});
                 table9.AddRow(new string[] {
                             "5",
                             "Bertus",
-                            "1362"});
+                            "1362",
+                            "63"});
                 table9.AddRow(new string[] {
                             "6",
                             "Remco",
-                            "1299"});
+                            "1299",
+                            "62"});
                 table9.AddRow(new string[] {
                             "7",
                             "Harro",
-                            "1265"});
+                            "1265",
+                            "58"});
                 table9.AddRow(new string[] {
                             "8",
                             "Geale",
-                            "1259"});
+                            "1259",
+                            "48"});
                 table9.AddRow(new string[] {
                             "9",
                             "Yassine",
-                            "1195"});
+                            "1195",
+                            "1"});
                 table9.AddRow(new string[] {
                             "10",
                             "Mulder",
-                            "1184"});
+                            "1184",
+                            "0"});
                 table9.AddRow(new string[] {
                             "11",
                             "Vink",
-                            "1183"});
+                            "1183",
+                            "0"});
                 table9.AddRow(new string[] {
                             "12",
                             "Arnold1",
-                            "1182"});
+                            "1182",
+                            "48"});
                 table9.AddRow(new string[] {
                             "13",
                             "Arjen",
-                            "1177"});
+                            "1177",
+                            "29"});
                 table9.AddRow(new string[] {
                             "14",
                             "Driek",
-                            "1149"});
+                            "1149",
+                            "0"});
                 table9.AddRow(new string[] {
                             "15",
                             "Ricky",
-                            "1115"});
+                            "1115",
+                            "28"});
                 table9.AddRow(new string[] {
                             "16",
                             "Eduard",
-                            "1107"});
+                            "1107",
+                            "48"});
                 table9.AddRow(new string[] {
                             "17",
                             "Jeroen",
-                            "1090"});
+                            "1090",
+                            "20"});
                 table9.AddRow(new string[] {
                             "18",
                             "Matthias",
-                            "1073"});
+                            "1073",
+                            "23"});
                 table9.AddRow(new string[] {
                             "19",
                             "Enrico",
-                            "1022"});
+                            "1022",
+                            "11"});
                 table9.AddRow(new string[] {
                             "20",
                             "Tarik",
-                            "988"});
+                            "988",
+                            "14"});
                 table9.AddRow(new string[] {
                             "21",
                             "Eltjo",
-                            "971"});
+                            "971",
+                            "18"});
                 table9.AddRow(new string[] {
                             "22",
                             "Arnold2",
-                            "968"});
+                            "968",
+                            "12"});
                 table9.AddRow(new string[] {
                             "23",
                             "Tjardo",
-                            "875"});
+                            "875",
+                            "0"});
 #line 417
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table9, "Then ");
 #line hidden

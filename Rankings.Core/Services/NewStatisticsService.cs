@@ -42,7 +42,7 @@ namespace Rankings.Core.Services
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                _logger.LogInformation($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
+                //_logger.LogTrace($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
 
                 // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0
@@ -62,8 +62,8 @@ namespace Rankings.Core.Services
                 ranking[game.Player1] = oldRatingPlayer1 + player1Delta;
                 ranking[game.Player2] = oldRatingPlayer2 - player1Delta;
 
-                _logger.LogInformation($"p1 {oldRatingPlayer1}+{player1Delta} = {ranking[game.Player1]}");
-                _logger.LogInformation($"p2 {oldRatingPlayer2}+{-1*player1Delta} = {ranking[game.Player2]}");
+                //_logger.LogTrace($"p1 {oldRatingPlayer1}+{player1Delta} = {ranking[game.Player1]}");
+                //_logger.LogTrace($"p2 {oldRatingPlayer2}+{-1*player1Delta} = {ranking[game.Player2]}");
             }
 
             return ranking;
