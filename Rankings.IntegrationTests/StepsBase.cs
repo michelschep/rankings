@@ -13,7 +13,6 @@ using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Rankings.Web.Controllers;
 using Serilog;
-using Serilog.Events;
 using Xunit.Abstractions;
 using ILogger = Serilog.ILogger;
 

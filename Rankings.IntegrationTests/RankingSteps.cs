@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
