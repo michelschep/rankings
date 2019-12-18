@@ -14,10 +14,10 @@ namespace Rankings.Core.Services.ToBeObsolete
     {
         private readonly IGamesService _gamesService;
         private readonly EloConfiguration _eloConfiguration;
-        private readonly ILogger<StatisticsService> _logger;
+        private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<StatisticsService> logger, EloCalculator eloCalculator)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;

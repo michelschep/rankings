@@ -59,7 +59,6 @@ namespace Rankings.Web.Controllers
         private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames, int precision = 0)
         {
             return NewRankingViewModels(gameType, startDate, endDate, precision);
-            //return ObsoleteRankingViewModels(gameType, startDate, endDate, numberOfGames);
         }
 
         private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
@@ -80,13 +79,17 @@ namespace Rankings.Web.Controllers
                 });
             }
 
+            var oldRankingViewModel = ObsoleteRankingViewModels(gameType, startDate, endDate, 7).ToList();
+            
             // Add dummy data
             foreach (var rankingViewModel in list)
             {
+                var oldLine = oldRankingViewModel.Single(model => model.NamePlayer == rankingViewModel.NamePlayer);
+
                 rankingViewModel.History = new List<char>();
-                rankingViewModel.SetWinPercentage = "?";
-                rankingViewModel.WinPercentage = "?";
-                rankingViewModel.TimeNumberOne = "?";
+                rankingViewModel.SetWinPercentage = oldLine.SetWinPercentage;
+                rankingViewModel.WinPercentage = oldLine.WinPercentage;
+                rankingViewModel.TimeNumberOne = oldLine.TimeNumberOne;
             }
 
             return list;

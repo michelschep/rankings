@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Rankings.Web.Controllers;
@@ -66,9 +67,11 @@ namespace Rankings.IntegrationTests
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, int precision)
         {
-            var logger1 = _factory.CreateLogger<NewStatisticsService>();
+            var logger1 = _factory.CreateLogger<IStatisticsService>();
             var logger2 = _factory.CreateLogger<EloCalculator>();
-            IStatisticsService rankingService = new NewStatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
+            var eloCalculator = new EloCalculator(eloConfiguration, logger2);
+            IStatisticsService oldRankingStatisticsService = new StatisticsService(_gamesService, eloConfiguration, logger1, eloCalculator);
+            IStatisticsService rankingService = new NewStatisticsService(_gamesService, eloConfiguration, logger1, eloCalculator, oldRankingStatisticsService);
 
             return new RankingsController(rankingService, _memoryCache);
         }

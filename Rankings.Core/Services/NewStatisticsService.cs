@@ -13,14 +13,18 @@ namespace Rankings.Core.Services
     {
         private readonly IGamesService _gamesService;
         private readonly EloConfiguration _eloConfiguration;
-        private readonly ILogger<NewStatisticsService> _logger;
+        private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
+        private readonly IStatisticsService _oldRankingStatisticsService;
 
-        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<NewStatisticsService> logger, EloCalculator eloCalculator)
+        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration,
+            ILogger<IStatisticsService> logger, EloCalculator eloCalculator,
+            IStatisticsService oldRankingStatisticsService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
             _eloCalculator = eloCalculator ?? throw new ArgumentNullException(nameof(eloCalculator));
+            _oldRankingStatisticsService = oldRankingStatisticsService;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -71,22 +75,22 @@ namespace Rankings.Core.Services
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            return _oldRankingStatisticsService.CalculateStats(startDate, endDate);
         }
 
         public Ranking Ranking(string gameType)
         {
-            throw new NotImplementedException();
+            return _oldRankingStatisticsService.Ranking(gameType);
         }
 
         public Ranking Ranking(string gameType, DateTime endDate)
         {
-            throw new NotImplementedException();
+            return _oldRankingStatisticsService.Ranking(gameType, endDate);
         }
 
         public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            return Ranking(gameType, startDate, endDate);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
