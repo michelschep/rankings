@@ -55,7 +55,7 @@ namespace Rankings.IntegrationTests
         public void ThenWeHaveTheFollowingVenues(Table table)
         {
             var viewResult = (ViewResult) VenuesController.Index();
-            var viewModel = viewResult.Model as IEnumerable<VenueViewModel>;
+            var viewModel = (IEnumerable<VenueViewModel>) viewResult.Model;
             var venues = viewModel.ToList();
 
             var expectedVenues = table.CreateSet<VenueViewModel>().ToList();
@@ -218,8 +218,8 @@ namespace Rankings.IntegrationTests
             Output.Information($"***** Calculate ranking with k={context.Kfactor} n={context.N}");
             var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value);
             var rankingController = CreateRankingController(eloConfiguration, precision);
-            var viewResult = rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision, 0) as ViewResult;
-            var viewModel = viewResult.Model as IEnumerable<RankingViewModel>;
+            var viewResult = (ViewResult) rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision, 0);
+            var viewModel = (IEnumerable<RankingViewModel>) viewResult.Model;
             var actualRanking = viewModel.ToList();
 
             var expectedRanking = table.CreateSet<RankingViewModel>().ToList();
