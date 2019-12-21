@@ -5,6 +5,7 @@ namespace Rankings.Web.Models
     public class VenueViewModel
     {
         [Display(Name = "Id")]
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public int Id { get; set; }
 
         [Display(Name = "Code")]
