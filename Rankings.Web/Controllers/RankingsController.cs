@@ -29,13 +29,14 @@ namespace Rankings.Web.Controllers
         {
             gameType ??= "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
-            
-            var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
+
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType, entry =>
             {
-                var model = RankingViewModelsFor(gameType,  DateTime.MinValue, endDate, numberOfGames, precision).ToList();
+                var model = RankingViewModelsFor(gameType, DateTime.MinValue, endDate, numberOfGames, precision)
+                    .ToList();
                 return model;
             });
-            
+
             return View(cacheEntry);
         }
 
@@ -43,25 +44,27 @@ namespace Rankings.Web.Controllers
         public IActionResult Month(string gameType, int year, int month)
         {
             gameType ??= "tafeltennis";
-            var startDate = new DateTime(2019, 9, 1, 0,0,0);
-            var endDate = new DateTime(2019, 10, 1, 0,0,0 );
-            
-            var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType+":" + year + ":" + month, entry =>
+            var startDate = new DateTime(2019, 9, 1, 0, 0, 0);
+            var endDate = new DateTime(2019, 10, 1, 0, 0, 0);
+
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + ":" + year + ":" + month, entry =>
             {
                 var model = RankingViewModelsFor(gameType, startDate, endDate, 0, 2).ToList();
                 return model;
             });
-            
+
             Response.Headers.Add("Refresh", "60");
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int numberOfGames, int precision = 0)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate,
+            DateTime endDate, int numberOfGames, int precision = 0)
         {
             return NewRankingViewModels(gameType, startDate, endDate, precision);
         }
 
-        private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
+        private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate,
+            DateTime endDate, int precision)
         {
             // Determine list of players with elo score
             var eloScores = _statisticsService.EloStats(gameType, startDate, endDate);
@@ -79,24 +82,36 @@ namespace Rankings.Web.Controllers
                 });
             }
 
-            var oldRankingViewModel = ObsoleteRankingViewModels(gameType, startDate, endDate, 7).ToList();
-            
-            // Add dummy data
-            foreach (var rankingViewModel in list)
+            try
             {
-                var oldLine = oldRankingViewModel.Single(model => model.NamePlayer == rankingViewModel.NamePlayer);
+                var oldRankingViewModel = ObsoleteRankingViewModels(gameType, startDate, endDate, 7).ToList();
+                foreach (var rankingViewModel in list)
+                {
+                    var oldLine = oldRankingViewModel.Single(model => model.NamePlayer == rankingViewModel.NamePlayer);
 
-                rankingViewModel.History = new List<char>();
-                rankingViewModel.SetWinPercentage = oldLine.SetWinPercentage;
-                rankingViewModel.WinPercentage = oldLine.WinPercentage;
-                rankingViewModel.TimeNumberOne = oldLine.TimeNumberOne;
+                    rankingViewModel.History = new List<char>();
+                    rankingViewModel.SetWinPercentage = oldLine.SetWinPercentage;
+                    rankingViewModel.WinPercentage = oldLine.WinPercentage;
+                    rankingViewModel.TimeNumberOne = oldLine.TimeNumberOne;
+                }
+            }
+            catch
+            {
+                foreach (var rankingViewModel in list)
+                {
+                    rankingViewModel.History = new List<char>();
+                    rankingViewModel.SetWinPercentage = "?";
+                    rankingViewModel.WinPercentage = "?";
+                    rankingViewModel.TimeNumberOne = "?";
+                }
             }
 
             return list;
         }
 
         [Obsolete("This one will be replaced by better mechnism")]
-        private IEnumerable<RankingViewModel> ObsoleteRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int numberOfGames)
+        private IEnumerable<RankingViewModel> ObsoleteRankingViewModels(string gameType, DateTime startDate,
+            DateTime endDate, int numberOfGames)
         {
             var ratings = _statisticsService.Ranking(gameType, startDate, endDate);
             var ranking = 1;
@@ -122,7 +137,9 @@ namespace Rankings.Web.Controllers
                     SkalpStreak = (int) r.Value.SkalpStreak,
                     Goat = (int) r.Value.Goat,
                     TimeNumberOne =
-                        Math.Round((new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays), 0,
+                        Math.Round(
+                            (new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays),
+                            0,
                             MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture)
                 });
             return model;

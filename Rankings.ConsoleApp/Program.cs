@@ -19,7 +19,7 @@ namespace Rankings.ConsoleApp
             var index = 1;
             foreach (var item in ranking.DeprecatedRatings.OrderByDescending(pair => pair.Value.Ranking).ThenBy(pair => pair.Key.DisplayName))
             {
-                Console.WriteLine($"|{index++}|{item.Key.DisplayName}|{item.Value.Ranking.Round(0)}|");
+                Console.WriteLine($"|{index++}|{item.Key.DisplayName}|{item.Value.Ranking.Round()}|");
             }
 //            foreach (var item in lastPointInTime.Value.NewPlayerStats.OrderByDescending(pair => pair.Value.Rating))
 //            {

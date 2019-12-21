@@ -90,7 +90,7 @@ namespace Rankings.Core.Services
 
         public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
-            return Ranking(gameType, startDate, endDate);
+            return _oldRankingStatisticsService.Ranking(gameType, startDate, endDate);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
