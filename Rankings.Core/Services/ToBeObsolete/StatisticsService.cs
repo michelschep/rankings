@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
+// ReSharper disable All
 
 namespace Rankings.Core.Services.ToBeObsolete
 {

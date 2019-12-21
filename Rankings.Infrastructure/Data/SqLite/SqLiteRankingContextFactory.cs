@@ -8,7 +8,7 @@ namespace Rankings.Infrastructure.Data.SqLite
     {
         private readonly ISqLiteConnectionFactory _connectionFactory;
 
-         public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
+        private static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
         {
             builder
                 .AddFilter((category, level) =>
@@ -28,7 +28,7 @@ namespace Rankings.Infrastructure.Data.SqLite
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
             optionsBuilder.UseSqlite(connection);
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            
+
             var rankingContext = new RankingContext(optionsBuilder.Options);
             rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
 
