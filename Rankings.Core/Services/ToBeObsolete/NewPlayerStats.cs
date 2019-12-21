@@ -1,11 +1,12 @@
 ﻿using System;
 using Rankings.Core.Entities;
 
-namespace Rankings.Core.Services.To
+namespace Rankings.Core.Services.ToBeObsolete
 {
     [Obsolete("Well, you still need this. We want to get rid of it!")]
     public class NewPlayerStats
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public Profile Profile { get; set; }
         public int Rating { get; set; }
         public int TimeNumberOne { get; set; }

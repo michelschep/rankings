@@ -15,11 +15,11 @@ namespace Rankings.Core.Services
         private readonly EloConfiguration _eloConfiguration;
         private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
-        private readonly IStatisticsService _oldRankingStatisticsService;
+        private readonly StatisticsService _oldRankingStatisticsService;
 
         public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration,
             ILogger<IStatisticsService> logger, EloCalculator eloCalculator,
-            IStatisticsService oldRankingStatisticsService)
+            StatisticsService oldRankingStatisticsService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;

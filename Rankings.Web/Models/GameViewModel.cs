@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Rankings.Web.Models
 {
+    // TODO setter needed?
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class GameViewModel: IValidatableObject
     {
         public int Id { get; set; }

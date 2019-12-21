@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -15,6 +16,7 @@ using Xunit.Abstractions;
 namespace Rankings.IntegrationTests
 {
     [Binding]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class RankingSteps : StepsBase
     {
         private readonly RankingFeatureContext _featureContext;
@@ -52,8 +54,8 @@ namespace Rankings.IntegrationTests
         [Then(@"we have the following venues:")]
         public void ThenWeHaveTheFollowingVenues(Table table)
         {
-            var viewResult = VenuesController.Index() as ViewResult;
-            var viewModel = viewResult?.Model as IEnumerable<VenueViewModel>;
+            var viewResult = (ViewResult) VenuesController.Index();
+            var viewModel = viewResult.Model as IEnumerable<VenueViewModel>;
             var venues = viewModel.ToList();
 
             var expectedVenues = table.CreateSet<VenueViewModel>().ToList();

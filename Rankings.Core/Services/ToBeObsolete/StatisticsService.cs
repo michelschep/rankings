@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
-using Rankings.Core.Services.To;
 using Rankings.Core.Specifications;
 
 namespace Rankings.Core.Services.ToBeObsolete

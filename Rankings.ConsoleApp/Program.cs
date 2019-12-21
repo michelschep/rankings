@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using Rankings.Core.Entities;
 using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
-using Rankings.Core.Specifications;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.SqLite;
 
@@ -58,7 +56,7 @@ namespace Rankings.ConsoleApp
         {
             var rankingService = CreateGamesService();
 
-            EloConfiguration eloConfiguration = new EloConfiguration(50, 400, true, 1200);
+            var eloConfiguration = new EloConfiguration(50, 400, true, 1200);
             var statsService = new StatisticsService(rankingService, eloConfiguration, null, new EloCalculator(eloConfiguration, null));
             return statsService;
         }

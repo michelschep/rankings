@@ -4,41 +4,6 @@ namespace Rankings.Core.Services
 {
     public static class NewEloCalculator
     {
-        public static decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
-        {
-            var K = 50;
-            decimal actualResult = ActualResult(gameScore1, gameScore2);
-            var expectation = CalculateExpectationForBestOf(ratingPlayer1, ratingPlayer2, gameScore1+gameScore2);
-            //var expectation = CalculateExpectation2(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
-            var marginOfVictoryMultiplier = 1;//MarginOfVictoryMultiplier(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
-
-            var high = Math.Max(gameScore1, gameScore2);
-
-            return (K + 5*(2*high-1)) * (actualResult - expectation) * marginOfVictoryMultiplier;
-        }
-
-        private static int ActualResult(int gameScore1, int gameScore2)
-        {
-            return gameScore1 > gameScore2 ? 1 : 0;
-        }
-
-        public static decimal CalculateExpectationForBestOf(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
-        {
-            return ExpectationOneSet(oldRatingPlayer1, oldRatingPlayer2);
-        }
-
-        public static decimal MarginOfVictoryMultiplier(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
-        {
-            var winnerEloDiff = gameScore1 > gameScore2
-                ? ratingPlayer1 - ratingPlayer2
-                : ratingPlayer2 - ratingPlayer1;
-
-            var log = (decimal) Math.Log(Math.Abs(gameScore1 - gameScore2) + 1);
-            var eloDiff = (2.2m / (winnerEloDiff * 0.001m + 2.2m));
-
-            return log * eloDiff;
-        }
-
         public static decimal ExpectationOneSet(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
         {
             decimal n = 400;

@@ -70,7 +70,7 @@ namespace Rankings.IntegrationTests
             var logger1 = _factory.CreateLogger<IStatisticsService>();
             var logger2 = _factory.CreateLogger<EloCalculator>();
             var eloCalculator = new EloCalculator(eloConfiguration, logger2);
-            IStatisticsService oldRankingStatisticsService = new StatisticsService(_gamesService, eloConfiguration, logger1, eloCalculator);
+            var oldRankingStatisticsService = new StatisticsService(_gamesService, eloConfiguration, logger1, eloCalculator);
             IStatisticsService rankingService = new NewStatisticsService(_gamesService, eloConfiguration, logger1, eloCalculator, oldRankingStatisticsService);
 
             return new RankingsController(rankingService, _memoryCache);
