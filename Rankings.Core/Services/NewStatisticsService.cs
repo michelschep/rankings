@@ -30,7 +30,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, decimal> EloStats(string gameType, DateTime startDate, DateTime endDate)
         {
-            _logger.LogInformation($"Calculate ELO new");
+            _logger.LogInformation("Calculate ELO new");
 
             // All players should be in the ranking. Not restrictions (not yet :-))
             var allPlayers = _gamesService.List(new AllProfiles());

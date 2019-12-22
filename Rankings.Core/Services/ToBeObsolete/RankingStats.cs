@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Rankings.Core.Entities;
-using Rankings.Core.Services.ToBeObsolete;
 
-namespace Rankings.Core.Services
+namespace Rankings.Core.Services.ToBeObsolete
 {
     public class RankingStats
     {

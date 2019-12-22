@@ -234,6 +234,8 @@ namespace Rankings.IntegrationTests
         }
     }
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class TestGame
     {
         public DateTime RegistrationDate { get; set; }

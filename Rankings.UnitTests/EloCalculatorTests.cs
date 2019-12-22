@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Rankings.Core.Services;
+using Rankings.Core.Services.ToBeObsolete;
 using Xunit;
 
 namespace Rankings.UnitTests
