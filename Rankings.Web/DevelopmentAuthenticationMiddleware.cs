@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -13,9 +14,10 @@ namespace Rankings.Web
 
         public DevelopmentAuthenticationMiddleware(RequestDelegate next)
         {
-            this._next = next ?? throw new ArgumentNullException(nameof (next));
+            _next = next ?? throw new ArgumentNullException(nameof (next));
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public async Task Invoke(HttpContext context)
         {
             var identity = new GenericIdentity("admin@domain.nl");
@@ -29,7 +31,7 @@ namespace Rankings.Web
             
             context.User = new ClaimsPrincipal(identity);
             
-            await this._next(context);
+            await _next(context);
         }
     }
 

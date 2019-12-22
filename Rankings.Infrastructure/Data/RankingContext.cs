@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Rankings.Core.Entities;
 
 namespace Rankings.Infrastructure.Data
@@ -11,9 +12,10 @@ namespace Rankings.Infrastructure.Data
             Database.EnsureCreated();
         }
 
-        public DbSet<Profile> Profiles { get; set; }
-        public DbSet<GameType> GameTypes { get; set; }
-        public DbSet<Game> Games { get; set; }
-        public DbSet<Venue> Venues { get; set; }
+        // EF needs these properties!
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Profile> Profiles { get; set; }
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<GameType> GameTypes { get; set; }
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Game> Games { get; set; }
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Venue> Venues { get; set; }
     }
 }

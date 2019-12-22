@@ -65,7 +65,7 @@ namespace Rankings.IntegrationTests
             GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache, logger);
         }
 
-        protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, int precision)
+        protected RankingsController CreateRankingController(EloConfiguration eloConfiguration)
         {
             var logger1 = _factory.CreateLogger<IStatisticsService>();
             var logger2 = _factory.CreateLogger<EloCalculator>();
