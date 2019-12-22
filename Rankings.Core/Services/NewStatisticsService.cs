@@ -15,16 +15,16 @@ namespace Rankings.Core.Services
         private readonly EloConfiguration _eloConfiguration;
         private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
-        private readonly StatisticsService _oldRankingStatisticsService;
+        private readonly OldStatisticsService _oldRankingOldStatisticsService;
 
         public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration,
             ILogger<IStatisticsService> logger, EloCalculator eloCalculator,
-            StatisticsService oldRankingStatisticsService)
+            OldStatisticsService oldRankingOldStatisticsService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
             _eloCalculator = eloCalculator ?? throw new ArgumentNullException(nameof(eloCalculator));
-            _oldRankingStatisticsService = oldRankingStatisticsService;
+            _oldRankingOldStatisticsService = oldRankingOldStatisticsService;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -75,22 +75,12 @@ namespace Rankings.Core.Services
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
         {
-            return _oldRankingStatisticsService.CalculateStats(startDate, endDate);
+            return _oldRankingOldStatisticsService.CalculateStats(startDate, endDate);
         }
 
-        public Ranking Ranking(string gameType)
+        public ObsoleteRanking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
-            return _oldRankingStatisticsService.Ranking(gameType);
-        }
-
-        public Ranking Ranking(string gameType, DateTime endDate)
-        {
-            return _oldRankingStatisticsService.Ranking(gameType, endDate);
-        }
-
-        public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
-        {
-            return _oldRankingStatisticsService.Ranking(gameType, startDate, endDate);
+            return _oldRankingOldStatisticsService.Ranking(gameType, startDate, endDate);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)

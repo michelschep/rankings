@@ -5,21 +5,20 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Core.Services.ToBeObsolete
 {
-    [Obsolete("Well, you still need this. We want to get rid of it!")]
-    public class Ranking
+    public class ObsoleteRanking
     {
-        private readonly Dictionary<Profile, PlayerStats> _ratings;
+        private readonly Dictionary<Profile, ObsoletePlayerStats> _ratings;
 
-        public Ranking(Dictionary<Profile, PlayerStats> ratings)
+        public ObsoleteRanking(Dictionary<Profile, ObsoletePlayerStats> ratings)
         {
             _ratings = ratings ?? throw new ArgumentNullException(nameof(ratings));
         }
 
-        public Dictionary<Profile, PlayerStats> DeprecatedRatings => ConvertRatings(_ratings);
+        public Dictionary<Profile, ObsoletePlayerStats> DeprecatedRatings => ConvertRatings(_ratings);
 
-        private Dictionary<Profile, PlayerStats> ConvertRatings(Dictionary<Profile, PlayerStats> ratings)
+        private Dictionary<Profile, ObsoletePlayerStats> ConvertRatings(Dictionary<Profile, ObsoletePlayerStats> ratings)
         {
-            var convertedRatings = new Dictionary<Profile, PlayerStats>();
+            var convertedRatings = new Dictionary<Profile, ObsoletePlayerStats>();
             foreach (var stats in ratings)
             {
                 convertedRatings.Add(stats.Key, ConvertStats(stats.Value));
@@ -28,22 +27,22 @@ namespace Rankings.Core.Services.ToBeObsolete
             return convertedRatings;
         }
 
-        public PlayerStats ForPlayer(string emailAddress)
+        public ObsoletePlayerStats ForPlayer(string emailAddress)
         {
             return _ratings.Where(pair => string.Equals(pair.Key.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase))
                 .Select(pair => ConvertStats(pair.Value))
                 .Single();
         }
 
-        public IEnumerable<PlayerStats> PlayerStats()
+        public IEnumerable<ObsoletePlayerStats> PlayerStats()
         {
             return _ratings.Values.Select(ConvertStats);
         }
 
-        private static PlayerStats ConvertStats(PlayerStats stats)
+        private static ObsoletePlayerStats ConvertStats(ObsoletePlayerStats stats)
         {
             // TODO get rid of or at least with mapper
-            return new PlayerStats
+            return new ObsoletePlayerStats
             {
                 Ranking = stats.Ranking,
                 NumberOfSets = stats.NumberOfSets,

@@ -70,7 +70,7 @@ namespace Rankings.Web
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();
             services.AddSingleton<EloCalculator, EloCalculator>();
             services.AddSingleton<IStatisticsService, NewStatisticsService>();
-            services.AddSingleton<StatisticsService, StatisticsService>();
+            services.AddSingleton<OldStatisticsService, OldStatisticsService>();
             services.AddSingleton<IGamesService, GamesService>((ctx) =>
             {
                 var connectionFactory = new SqLiteDatabaseConnectionFactory();

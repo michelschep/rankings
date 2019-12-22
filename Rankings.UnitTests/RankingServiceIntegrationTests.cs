@@ -25,17 +25,17 @@ namespace Rankings.UnitTests
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository);
-            var logger1 = (new Mock<ILogger<StatisticsService>>()).Object;
+            var logger1 = (new Mock<ILogger<OldStatisticsService>>()).Object;
             var logger2 = (new Mock<ILogger<EloCalculator>>()).Object;
 
             var eloConfiguration = new EloConfiguration(50, 400, true, 1200);
-            _statisticsService = new StatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
+            _statisticsService = new OldStatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
         }
 
         [Fact]
         public void WhenNoGamesTheRankingIsEmpty()
         {
-            var ranking = _statisticsService.Ranking("tafeltennis");
+            var ranking = _statisticsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
 
             Assert.True(!ranking.PlayerStats().Any());
         }
@@ -147,7 +147,7 @@ namespace Rankings.UnitTests
 
             // Act
             _gamesService.RegisterGame(CreateTafeltennisGame("One", "Two", score1, score2));
-            var ranking = _statisticsService.Ranking("tafeltennis");
+            var ranking = _statisticsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
 
             // Assert
             ranking.ForPlayer("one@domain.nl").Ranking.Round().Should().BeApproximately(expectedElo1, 0);

@@ -52,12 +52,12 @@ namespace Rankings.ConsoleApp
             Console.ReadLine();
         }
 
-        private static StatisticsService CreateStatisticsService()
+        private static OldStatisticsService CreateStatisticsService()
         {
             var rankingService = CreateGamesService();
 
             var eloConfiguration = new EloConfiguration(50, 400, true, 1200);
-            var statsService = new StatisticsService(rankingService, eloConfiguration, null, new EloCalculator(eloConfiguration, null));
+            var statsService = new OldStatisticsService(rankingService, eloConfiguration, null, new EloCalculator(eloConfiguration, null));
             return statsService;
         }
 

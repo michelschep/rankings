@@ -16,7 +16,7 @@ namespace Rankings.UnitTests
     public class AcceptanceTests
     {
         private readonly GamesService _gamesService;
-        private readonly StatisticsService _statisticsService;
+        private readonly OldStatisticsService _oldStatisticsService;
         private readonly Venue _venue;
         private readonly GameType _gameType;
 
@@ -27,9 +27,9 @@ namespace Rankings.UnitTests
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository);
             var eloConfiguration = new EloConfiguration(5, 50, false, 100);
-            var logger1 = (new Mock<ILogger<StatisticsService>>()).Object;
+            var logger1 = (new Mock<ILogger<OldStatisticsService>>()).Object;
             var logger2 = (new Mock<ILogger<EloCalculator>>()).Object;
-            _statisticsService = new StatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
+            _oldStatisticsService = new OldStatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));
             _venue = new Venue {Code = "almere", DisplayName = "Almere Arena"};
             _gamesService.CreateVenue(_venue);
             _gameType = new GameType {Code = "tafeltennis", DisplayName = "Tafeltennis"};
@@ -54,7 +54,7 @@ namespace Rankings.UnitTests
             _gamesService.RegisterGame(CreateGame(amy, cindy, 1, 0));
             _gamesService.RegisterGame(CreateGame(dirk, cindy, 1, 0));
 
-            var ranking = _statisticsService.Ranking("tafeltennis");
+            var ranking = _oldStatisticsService.Ranking("tafeltennis");
 
             ranking.ForPlayer(amy.EmailAddress).Ranking.Round(2).Should().Be(104.71m);
             ranking.ForPlayer(dirk.EmailAddress).Ranking.Round(2).Should().Be(104.59m);

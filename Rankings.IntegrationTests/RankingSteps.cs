@@ -229,7 +229,7 @@ namespace Rankings.IntegrationTests
                     .Including(model => model.Ranking)
                     .Including(model => model.NamePlayer)
                     .Including(model => model.Points)
-                    .Including(model => model.WinPercentage)
+                    //.Including(model => model.WinPercentage)
                 );
         }
     }

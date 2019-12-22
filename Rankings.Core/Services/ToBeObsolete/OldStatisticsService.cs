@@ -9,15 +9,14 @@ using Rankings.Core.Specifications;
 
 namespace Rankings.Core.Services.ToBeObsolete
 {
-    [Obsolete("Well, you still need this. We want to get rid of it!")]
-    public class StatisticsService : IStatisticsService
+    public class OldStatisticsService : IStatisticsService
     {
         private readonly IGamesService _gamesService;
         private readonly EloConfiguration _eloConfiguration;
         private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator)
+        public OldStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
@@ -56,10 +55,10 @@ namespace Rankings.Core.Services.ToBeObsolete
             foreach (var pointInTime in history)
             {
                 var ranking = Ranking("tafeltennis", pointInTime.Key);
-                pointInTime.Value.Ranking = ranking;
+                pointInTime.Value.ObsoleteRanking = ranking;
 
                 // Create stats for all players
-                pointInTime.Value.NewPlayerStats = new Dictionary<Profile, NewPlayerStats>();
+                pointInTime.Value.NewPlayerStats = new Dictionary<Profile, ObsoleteNewPlayerStats>();
             }
 
             //Profile previousNumberOneProfile = null;
@@ -78,7 +77,7 @@ namespace Rankings.Core.Services.ToBeObsolete
                 CalculateGameStats(pointInTime.Value, previousPointInTimeRankingStats);
 
                 // Who is number one?
-                var ranking = pointInTime.Value.Ranking.DeprecatedRatings.OrderByDescending(pair => pair.Value.Ranking).ToList();
+                var ranking = pointInTime.Value.ObsoleteRanking.DeprecatedRatings.OrderByDescending(pair => pair.Value.Ranking).ToList();
                 foreach (var item in ranking)
                 {
                     var player = pointInTime.Value.NewPlayerStats[item.Key];
@@ -110,27 +109,27 @@ namespace Rankings.Core.Services.ToBeObsolete
 
         }
 
-        public Ranking Ranking(string gameType)
+        public ObsoleteRanking Ranking(string gameType)
         {
             return Ranking(gameType, DateTime.MinValue, DateTime.MaxValue);
         }
 
-        public Ranking Ranking(string gameType, DateTime endDate)
+        public ObsoleteRanking Ranking(string gameType, DateTime endDate)
         {
             return Ranking(gameType, startDate: DateTime.MinValue, endDate);
         }
 
-        public Ranking Ranking(string gameType, DateTime startDate, DateTime endDate)
+        public ObsoleteRanking Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
             _logger.LogTrace($"Calculate Ranking: {startDate} - {endDate}");
 
             var gamesSpecification = new GamesForPeriodSpecification(gameType, startDate, endDate);
             var games = _gamesService.List(gamesSpecification).ToList();
 
-            var ratings = new Dictionary<Profile, PlayerStats>();
+            var ratings = new Dictionary<Profile, ObsoletePlayerStats>();
             foreach (var profile in games.SelectMany(game => new List<Profile> { game.Player1, game.Player2 }).Distinct())
             {
-                ratings.Add(profile, new PlayerStats
+                ratings.Add(profile, new ObsoletePlayerStats
                 {
                     NumberOfGames = 0,
                     NumberOfSetWins = 0,
@@ -228,7 +227,7 @@ namespace Rankings.Core.Services.ToBeObsolete
 
             }
 
-            return new Ranking(ratings);
+            return new ObsoleteRanking(ratings);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
@@ -248,7 +247,7 @@ namespace Rankings.Core.Services.ToBeObsolete
             {
                 if (previousPointInTimeDate == null)
                 {
-                    pointInTime.Value.NewPlayerStats.Add(profile, new NewPlayerStats
+                    pointInTime.Value.NewPlayerStats.Add(profile, new ObsoleteNewPlayerStats
                     {
                         Profile = profile,
                         Rating = 0,
@@ -268,7 +267,7 @@ namespace Rankings.Core.Services.ToBeObsolete
                 else
                 {
                     var previousStats = previousPointInTimeRankingStats.NewPlayerStats[profile];
-                    pointInTime.Value.NewPlayerStats.Add(profile, new NewPlayerStats
+                    pointInTime.Value.NewPlayerStats.Add(profile, new ObsoleteNewPlayerStats
                     {
                         Profile = profile,
                         Rating = previousStats.Rating,

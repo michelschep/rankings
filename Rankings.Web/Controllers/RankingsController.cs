@@ -145,17 +145,17 @@ namespace Rankings.Web.Controllers
             return model;
         }
 
-        private int ToWinningStreak(in KeyValuePair<Profile, PlayerStats> r)
+        private int ToWinningStreak(in KeyValuePair<Profile, ObsoletePlayerStats> r)
         {
             return r.Value.History.Split('L').Select(s => s.Length).Max();
         }
 
-        private int ToCurrentWinningStreak(in KeyValuePair<Profile, PlayerStats> r)
+        private int ToCurrentWinningStreak(in KeyValuePair<Profile, ObsoletePlayerStats> r)
         {
             return r.Value.History.Split('L').Select(s => s.Length).Last();
         }
 
-        private static List<char> ToHistory(KeyValuePair<Profile, PlayerStats> r)
+        private static List<char> ToHistory(KeyValuePair<Profile, ObsoletePlayerStats> r)
         {
             var chars = r.Value.History.ToCharArray().Reverse().ToList();
             return chars.Take(7).Reverse().ToList();
