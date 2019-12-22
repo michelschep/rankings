@@ -1,5 +1,6 @@
 ﻿namespace Rankings.IntegrationTests
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class RankingFeatureContext
     {
         public bool? MarginOfVictory { get; set; }
