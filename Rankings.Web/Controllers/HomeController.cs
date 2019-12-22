@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
-using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Web.Models;
 
