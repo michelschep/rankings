@@ -33,7 +33,7 @@ namespace Rankings.Web
         }
     }
 
-    public class Roles
+    public static class Roles
     {
         public const string Admin = "Admin";
         public const string Player = "Player";
