@@ -182,8 +182,8 @@ namespace Rankings.IntegrationTests
         {
             var list = table.CreateSet<TestGame>();
 
-            var viewResult = GamesController.Create() as ViewResult;
-            var viewModel = viewResult.Model as GameViewModel;
+            var viewResult = (ViewResult) GamesController.Create();
+            var viewModel = (GameViewModel) viewResult.Model;
 
             foreach (var game in list)
             {
@@ -218,7 +218,7 @@ namespace Rankings.IntegrationTests
             Output.Information($"***** Calculate ranking with k={context.Kfactor} n={context.N}");
             var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value);
             var rankingController = CreateRankingController(eloConfiguration, precision);
-            var viewResult = (ViewResult) rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision, 0);
+            var viewResult = (ViewResult) rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision);
             var viewModel = (IEnumerable<RankingViewModel>) viewResult.Model;
             var actualRanking = viewModel.ToList();
 

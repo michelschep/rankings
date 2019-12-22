@@ -25,14 +25,14 @@ namespace Rankings.Web.Controllers
 
         [HttpGet("/rankings")]
         [HttpGet("/rankings/{gametype}/{endDateInput}")]
-        public IActionResult Index(string gameType, string endDateInput, int precision = 0, int numberOfGames = 7)
+        public IActionResult Index(string gameType, string endDateInput, int precision = 0)
         {
             gameType ??= "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
 
             var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType, entry =>
             {
-                var model = RankingViewModelsFor(gameType, DateTime.MinValue, endDate, numberOfGames, precision)
+                var model = RankingViewModelsFor(gameType, DateTime.MinValue, endDate, precision)
                     .ToList();
                 return model;
             });
@@ -49,7 +49,7 @@ namespace Rankings.Web.Controllers
 
             var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + ":" + year + ":" + month, entry =>
             {
-                var model = RankingViewModelsFor(gameType, startDate, endDate, 0, 2).ToList();
+                var model = RankingViewModelsFor(gameType, startDate, endDate,  2).ToList();
                 return model;
             });
 
@@ -57,8 +57,7 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate,
-            DateTime endDate, int numberOfGames, int precision = 0)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int precision = 0)
         {
             return NewRankingViewModels(gameType, startDate, endDate, precision);
         }
