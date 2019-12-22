@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Rankings.Web.Models
 {
     public class ProfileViewModel
     {
         [Display(Name = "Id")]
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public int Id { get; set; }
 
         [Display(Name = "Email Address")]

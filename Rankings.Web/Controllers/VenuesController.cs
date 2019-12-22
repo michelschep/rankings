@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
@@ -84,10 +83,10 @@ namespace Rankings.Web.Controllers
         }
     }
     
-    public class VenueValidator : AbstractValidator<VenueViewModel> {
-        public VenueValidator() {
-            RuleFor(x => x.Code).Matches(@"^[a-z]+$").Length(5, 15);
-            RuleFor(x => x.DisplayName).Length(5, 15);
-        }
-    }
+    //public class VenueValidator : AbstractValidator<VenueViewModel> {
+    //    public VenueValidator() {
+    //        RuleFor(x => x.Code).Matches(@"^[a-z]+$").Length(5, 15);
+    //        RuleFor(x => x.DisplayName).Length(5, 15);
+    //    }
+    //}
 }
