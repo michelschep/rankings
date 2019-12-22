@@ -18,7 +18,5 @@ namespace Rankings.Core.Entities
         public int Score2 { get; set; }
 
         public Venue Venue { get; set; }
-
-        public string Comments { get; set; }
     }
 }
