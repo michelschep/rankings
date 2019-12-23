@@ -13,42 +13,36 @@ namespace Rankings.ConsoleApp
         static void Main()
         {
             var statsService = CreateStatisticsService();
-            //var lastPointInTime = statsService.CalculateStats(DateTime.MinValue, DateTime.MaxValue);
 
-            var ranking = statsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
-            var index = 1;
-            foreach (var item in ranking.DeprecatedRatings.OrderByDescending(pair => pair.Value.Ranking).ThenBy(pair => pair.Key.DisplayName))
-            {
-                Console.WriteLine($"|{index++}|{item.Key.DisplayName}|{item.Value.Ranking.Round()}|");
-            }
-//            foreach (var item in lastPointInTime.Value.NewPlayerStats.OrderByDescending(pair => pair.Value.Rating))
-//            {
-//                var playerStats = item.Value;
-//                var timespan = new TimeSpan(0, playerStats.TimeNumberOne, 0);
-//                //var meanEloWon = (int)(playerStats.EloWonOpponent / (playerStats.Won + 0.00001m));
-//                //var meanEloLost = (int)(playerStats.EloLostOpponent / (playerStats.Lost + 0.00001m));
-//                //var meanEloTotal = (int)((playerStats.EloLostOpponent + playerStats.EloWonOpponent) /
-//                //                         (playerStats.NumberOfGames + 0.00001m));
-//                // {100*playerStats.NumberOfCleanSheets/playerStats.NumberOfGames, 5}
-//                Console.WriteLine($"\t{item.Key.DisplayName,-20} {playerStats.Rating,5} {playerStats.WonStreakRecord,3} {playerStats.WonStreak,3} {playerStats.GoatRating,5}  {timespan,15} ");
-//                //Console.WriteLine($"\t{item.Key.DisplayName, -20} {playerStats.Rating, 5} {playerStats.WonStreakRecord, 3} {playerStats.WonStreak, 3} {playerStats.GoatRating, 5} {meanEloTotal, 5} {meanEloWon, 5} {meanEloLost, 5} {timespan, 15} ");
-//            }
+            // show current ranking
 
-            var rankingService = CreateGamesService();
-//
-//            foreach (var r in rankingService.List<Game>(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue)))
-//            {
-//                var rd = String.Format("{0:yyyy-MM-dd HH:mm}", r.RegistrationDate);
-//                var p1 = String.Format("{0, -10}", r.Player1.DisplayName);
-//                var p2 = String.Format("{0, -10}", r.Player2.DisplayName);
-//                Console.WriteLine("| {0} | {1} | {2} | {3} | {4} |"
-//                    , rd
-//                    , p1
-//                    , p2
-//                    , r.Score1
-//                    , r.Score2
-//                    );
-//            }
+            // show previous ranking
+
+            // show current goat score
+
+            // Show current win%
+
+            // Show current streak player
+
+            // Show best streak player
+
+            // Show average winning streak player
+
+            // Show average winning streak all players
+
+            // Show ranking best streaks
+
+            // Show all current running streaks
+
+            // Show games X-Y
+
+            // Show summary games X-Y
+
+            // Show summaries games
+
+            // Show social ranking
+
+
             Console.ReadLine();
         }
 

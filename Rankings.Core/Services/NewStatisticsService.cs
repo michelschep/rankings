@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Core.Specifications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rankings.Core.Services
 {
     public class NewStatisticsService : IStatisticsService
     {
-        private readonly IGamesService _gamesService;
-        private readonly EloConfiguration _eloConfiguration;
-        private readonly ILogger<IStatisticsService> _logger;
-        private readonly EloCalculator _eloCalculator;
-        private readonly OldStatisticsService _oldRankingOldStatisticsService;
+        private readonly IGamesService _gamesService;//todo
+        private readonly EloConfiguration _eloConfiguration;//todo
+        private readonly ILogger<IStatisticsService> _logger;//todo
+        private readonly EloCalculator _eloCalculator;//todo
+        private readonly OldStatisticsService _oldRankingOldStatisticsService;//todo
 
         public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration,
             ILogger<IStatisticsService> logger, EloCalculator eloCalculator,
