@@ -32,11 +32,6 @@ namespace Rankings.Web
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    //logging.AddConsole();
-                    //logging.AddDebug();
-                })
                 .UseStartup<Startup>();
     }
 }
