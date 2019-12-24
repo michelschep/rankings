@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="1.2.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.0" />
   </ItemGroup>
 
   <ItemGroup>
