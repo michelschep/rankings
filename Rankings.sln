@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.ConsoleApp", "Rankings.ConsoleApp\Rankings.ConsoleApp.csproj", "{01F29641-5931-4A24-A8FF-B965ED5E3674}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankings.IntegrationTests", "Rankings.IntegrationTests\Rankings.IntegrationTests.csproj", "{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.IntegrationTests", "Rankings.IntegrationTests\Rankings.IntegrationTests.csproj", "{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

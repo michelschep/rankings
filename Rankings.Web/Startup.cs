@@ -52,9 +52,7 @@ namespace Rankings.Web
                     policy => policy.AddRequirements(new ProfileEditRequirement()));
             });
 
-            services.AddControllersWithViews();
-
-            services.AddMvc(options =>
+            services.AddControllersWithViews(options =>
                 {
                     options.EnableEndpointRouting = false; // TODO new in .net core 3
                     var policy = new AuthorizationPolicyBuilder()
@@ -62,7 +60,6 @@ namespace Rankings.Web
                         .Build();
                     options.Filters.Add(new AuthorizeFilter(policy));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             // TODO retrieve from app settings/or admin settings page/object
@@ -113,7 +110,6 @@ namespace Rankings.Web
                 app.UseAuthentication();
             }
 
-            // TODO check why this is now needed in 3.1
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
