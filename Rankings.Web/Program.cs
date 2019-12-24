@@ -18,7 +18,7 @@ namespace Rankings.Web
 
             try
             {
-                CreateWebHostBuilder(args).Build().Run();
+                CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -30,7 +30,7 @@ namespace Rankings.Web
             }
         }
 
-        private static IHostBuilder CreateWebHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog() 
                 .ConfigureWebHostDefaults(webBuilder =>
