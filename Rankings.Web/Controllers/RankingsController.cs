@@ -70,14 +70,13 @@ namespace Rankings.Web.Controllers
 
             // Fill view model with elo score
             var list = new List<RankingViewModel>();
-            var index = 1;
-            foreach (var pair in eloScores.OrderByDescending(pair => pair.Value).ThenBy(pair => pair.Key.DisplayName))
+            foreach (var pair in eloScores)
             {
                 list.Add(new RankingViewModel
                 {
                     NamePlayer = pair.Key.DisplayName,
-                    Points = pair.Value.Round(precision),
-                    Ranking = index++ // TODO should not be in controller. Is business logic.
+                    Points = pair.Value.EloScore.Round(precision),
+                    Ranking = pair.Value.Ranking 
                 });
             }
 

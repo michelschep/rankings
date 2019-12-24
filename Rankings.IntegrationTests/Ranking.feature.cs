@@ -19,7 +19,7 @@ namespace Rankings.IntegrationTests
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.1.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class RankingFeature : Xunit.IClassFixture<RankingFeature.FixtureData>, System.IDisposable
+    public partial class RankingFeature : object, Xunit.IClassFixture<RankingFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;

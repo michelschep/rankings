@@ -27,7 +27,7 @@ namespace Rankings.Infrastructure.Data.SqLite
             var connection = _connectionFactory.CreateSqliteConnection(connectionString);
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
             optionsBuilder.UseSqlite(connection);
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+//            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
 
             var rankingContext = new RankingContext(optionsBuilder.Options);
             rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??

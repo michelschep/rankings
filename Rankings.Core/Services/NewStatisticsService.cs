@@ -28,7 +28,7 @@ namespace Rankings.Core.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Dictionary<Profile, decimal> EloStats(string gameType, DateTime startDate, DateTime endDate)
+        public IDictionary<Profile, EloStatsPlayer> EloStats(string gameType, DateTime startDate, DateTime endDate)
         {
             _logger.LogInformation("Calculate ELO new");
 
@@ -36,10 +36,14 @@ namespace Rankings.Core.Services
             var allPlayers = _gamesService.List(new AllProfiles());
 
             // All players have an initial elo score
-            var ranking = new Dictionary<Profile, decimal>();
+            var ranking = new Dictionary<Profile, EloStatsPlayer>();
             foreach (var player in allPlayers)
             {
-                ranking.Add(player, _eloConfiguration.InitialElo);
+                ranking.Add(player, new EloStatsPlayer
+                {
+                    EloScore = _eloConfiguration.InitialElo,
+                    NumberOfGames = 0
+                });
             }
 
             // Now calculate current elo score based on all games played
@@ -61,16 +65,27 @@ namespace Rankings.Core.Services
                 var oldRatingPlayer1 = ranking[game.Player1];
                 var oldRatingPlayer2 = ranking[game.Player2];
 
-                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1, oldRatingPlayer2, game.Score1, game.Score2);
+                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.EloScore, oldRatingPlayer2.EloScore, game.Score1, game.Score2);
 
-                ranking[game.Player1] = oldRatingPlayer1 + player1Delta;
-                ranking[game.Player2] = oldRatingPlayer2 - player1Delta;
+                ranking[game.Player1].EloScore = oldRatingPlayer1.EloScore + player1Delta;
+                ranking[game.Player2].EloScore = oldRatingPlayer2.EloScore - player1Delta;
 
+                ranking[game.Player1].NumberOfGames += 1;
+                ranking[game.Player2].NumberOfGames += 1;
                 //_logger.LogTrace($"p1 {oldRatingPlayer1}+{player1Delta} = {ranking[game.Player1]}");
                 //_logger.LogTrace($"p2 {oldRatingPlayer2}+{-1*player1Delta} = {ranking[game.Player2]}");
             }
 
-            return ranking;
+            var orderByDescending = ranking.Where(pair=>pair.Value.NumberOfGames>=7).OrderByDescending(pair => pair.Value.EloScore);
+            var orderedRanking = new Dictionary<Profile, EloStatsPlayer>(orderByDescending);
+
+            var index = 1;
+            foreach (var item in orderedRanking.Values)
+            {
+                item.Ranking = index++;
+            }
+
+            return orderedRanking;
         }
 
         public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
@@ -87,5 +102,12 @@ namespace Rankings.Core.Services
         {
             return _eloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
         }
+    }
+
+    public class EloStatsPlayer
+    {
+        public decimal EloScore { get; set; }
+        public int Ranking { get; set; }
+        public int NumberOfGames { get; set; }
     }
 }
