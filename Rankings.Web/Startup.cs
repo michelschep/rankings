@@ -52,6 +52,8 @@ namespace Rankings.Web
                     policy => policy.AddRequirements(new ProfileEditRequirement()));
             });
 
+            services.AddControllersWithViews();
+
             services.AddMvc(options =>
                 {
                     options.EnableEndpointRouting = false; // TODO new in .net core 3
@@ -60,8 +62,8 @@ namespace Rankings.Web
                         .Build();
                     options.Filters.Add(new AuthorizeFilter(policy));
                 })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-            .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             // TODO retrieve from app settings/or admin settings page/object
             services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200));
@@ -100,8 +102,8 @@ namespace Rankings.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
+            app.UseRouting();
             if (env.IsDevelopment())
             {
                 app.UseMiddleware(typeof(DevelopmentAuthenticationMiddleware));
@@ -110,12 +112,15 @@ namespace Rankings.Web
             {
                 app.UseAuthentication();
             }
-            
-            app.UseMvc(routes =>
+
+            // TODO check why this is now needed in 3.1
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
