@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.SqLite;
+using Serilog;
 
 namespace Rankings.Web
 {
@@ -72,7 +74,7 @@ namespace Rankings.Web
             services.AddSingleton<IGamesService, GamesService>((ctx) =>
             {
                 var connectionFactory = new SqLiteDatabaseConnectionFactory();
-                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory);
+                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, ctx.GetService<ILoggerFactory>());
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
                 // TODO what if setting is null or empty
                 var repository = repositoryFactory.Create(Configuration["Database"]);
@@ -85,6 +87,8 @@ namespace Rankings.Web
         // ReSharper disable once UnusedMember.Global
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSerilogRequestLogging();
+
             if (env.IsDevelopment() || env.IsEnvironment("Test"))
             {
                 app.UseDeveloperExceptionPage();

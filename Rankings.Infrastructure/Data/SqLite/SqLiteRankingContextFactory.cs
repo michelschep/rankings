@@ -7,19 +7,21 @@ namespace Rankings.Infrastructure.Data.SqLite
     public class SqLiteRankingContextFactory : IRankingContextFactory
     {
         private readonly ISqLiteConnectionFactory _connectionFactory;
+        private readonly ILoggerFactory _loggerFactory;
 
-        private static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
-        {
-            builder
-                .AddFilter((category, level) =>
-                    category == DbLoggerCategory.Database.Command.Name
-                    && level == LogLevel.Information)
-                .AddConsole();
-        });
+        //private static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
+        //{
+        //    builder
+        //        .AddFilter((category, level) =>
+        //            category == DbLoggerCategory.Database.Command.Name
+        //            && level == LogLevel.Information)
+        //        .AddConsole();
+        //});
 
-        public SqLiteRankingContextFactory(ISqLiteConnectionFactory connectionFactory)
+        public SqLiteRankingContextFactory(ISqLiteConnectionFactory connectionFactory, ILoggerFactory loggerFactory)
         {
             _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
         public RankingContext Create(string connectionString)
@@ -27,7 +29,7 @@ namespace Rankings.Infrastructure.Data.SqLite
             var connection = _connectionFactory.CreateSqliteConnection(connectionString);
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
             optionsBuilder.UseSqlite(connection);
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            optionsBuilder.UseLoggerFactory(_loggerFactory);
 
             var rankingContext = new RankingContext(optionsBuilder.Options);
             rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??

@@ -66,7 +66,7 @@ namespace Rankings.Web.Controllers
             DateTime endDate, int precision)
         {
             // Determine list of players with elo score
-            var eloScores = _statisticsService.EloStats(gameType, startDate, endDate);
+            var eloScores = _statisticsService.TheNewRanking(gameType, startDate, endDate);
 
             // Fill view model with elo score
             var list = new List<RankingViewModel>();

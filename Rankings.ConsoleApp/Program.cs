@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
@@ -12,105 +11,145 @@ using Serilog;
 
 namespace Rankings.ConsoleApp
 {
-    class Program
+    public static class GameExtenstions
     {
-        static void Main()
+        public static bool WithPlayer(this EloGame eloGame, string player)
         {
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.File(@".\ranKINGS.json", shared: true)
-                .CreateLogger();
+            return eloGame.Game.Player1.EmailAddress.ToLower() == player.ToLower() ||
+                   eloGame.Game.Player2.EmailAddress.ToLower() == player.ToLower();
+        }
 
-            var services = new ServiceCollection();
-            services.AddLogging(configure => configure.AddSerilog());
+        public static bool WithWinner(this EloGame eloGame, string player)
+        {
+            return
+                (eloGame.Game.Player1.EmailAddress.ToLower() == player.ToLower() &&
+                 eloGame.Game.Score1 > eloGame.Game.Score2)
+                || (eloGame.Game.Player2.EmailAddress.ToLower() == player.ToLower() &&
+                    eloGame.Game.Score2 > eloGame.Game.Score1);
+        }
 
-            var statsService = CreateStatisticsService();
-
-            // show current ranking
-            var ranking = statsService.EloStats(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
-            foreach (var item in ranking)
+        class Program
+        {
+            static void Main()
             {
-                Console.WriteLine($"{item.Value.Ranking, 2}. {item.Key.DisplayName, -20} {item.Value.EloScore.Round(), 4}");
+                var statsService = CreateStatisticsService();
+
+                // show current ranking
+                var ranking = statsService.TheNewRanking(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
+                foreach (var item in ranking)
+                {
+                    Console.WriteLine(
+                        $"{item.Value.Ranking,2}. {item.Key.DisplayName,-20} {item.Value.NumberOfGames,3} {item.Value.EloScore.Round(),4}");
+                }
+
+                // Show games one player
+                var games = statsService.EloGames(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
+                foreach (var eloGame in games.OrderBy(game => Math.Abs(game.Player1Delta)))
+                {
+                    Console.WriteLine(
+                        $"{eloGame.Game.Player1.DisplayName}-{eloGame.Game.Player2.DisplayName} ==> {eloGame.Player1Delta.Round()}:{eloGame.Player2Delta.Round()}");
+                }
+
+                Console.WriteLine("=====");
+
+                var jflamelingVitasNl = "jflameling@vitas.nl";
+                var gpostmaVitasNl = "mschep@vitas.nl";
+                var games2 = games
+                    .Where((game, i) => game.WithPlayer(jflamelingVitasNl) && game.WithPlayer(gpostmaVitasNl))
+                    .ToList();
+                foreach (var eloGame in games2.OrderBy(game => Math.Abs(game.Player1Delta)))
+                {
+                    Console.WriteLine(
+                        $"{eloGame.Game.Player1.DisplayName}-{eloGame.Game.Player2.DisplayName} ==> {eloGame.Player1Delta.Round()}:{eloGame.Player2Delta.Round()}");
+                }
+
+                var winst = games2.Where(g => g.WithWinner(jflamelingVitasNl)).Sum(g => Math.Abs(g.Player1Delta));
+                var verlies = games2.Where(g => g.WithWinner(gpostmaVitasNl)).Sum(g => Math.Abs(g.Player1Delta));
+
+                Console.WriteLine($"{winst}-{verlies}");
+
+                // show previous ranking
+
+                // show current goat score
+                //var goatScores = statsService.GoatScores(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
+
+                // Show current win%
+
+                // Show current streak player
+
+                // Show best streak player
+
+                // Show average winning streak player
+
+                // Show average winning streak all players
+
+                // Show ranking best streaks
+
+                // Show all current running streaks
+
+                // Show games X-Y
+
+                // Show summary games X-Y
+
+                // Show summaries games
+
+                // Show social ranking
+
+
+                Console.ReadLine();
             }
 
-            // show previous ranking
+            private static NewStatisticsService CreateStatisticsService()
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .WriteTo.File(@".\ranKINGS.json", shared: true)
+                    .CreateLogger();
 
-            // show current goat score
+                var services = new ServiceCollection();
 
-            // Show current win%
+                services.AddLogging(configure => configure.AddSerilog());
+                var provider = services.BuildServiceProvider();
 
-            // Show current streak player
+                var rankingService = CreateGamesService(provider);
 
-            // Show best streak player
+                var eloConfiguration = new EloConfiguration(50, 400, true, 1200);
+                var oldStatsService = new OldStatisticsService(rankingService, eloConfiguration,
+                    provider.GetService<ILogger<OldStatisticsService>>(),
+                    new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()));
 
-            // Show average winning streak player
+                return new NewStatisticsService(rankingService, eloConfiguration,
+                    provider.GetService<ILogger<NewStatisticsService>>(),
+                    new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()),
+                    oldStatsService);
+            }
 
-            // Show average winning streak all players
+            private static GamesService CreateGamesService(ServiceProvider provider)
+            {
+                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            // Show ranking best streaks
+                IConfiguration config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", true, true)
+                    .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                    .Build();
 
-            // Show all current running streaks
+                var database = config["Database"];
 
-            // Show games X-Y
+                Console.WriteLine(database);
 
-            // Show summary games X-Y
-
-            // Show summaries games
-
-            // Show social ranking
-
-
-            Console.ReadLine();
+                var connectionFactory = new SqLiteDatabaseConnectionFactory();
+                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetService<ILoggerFactory>());
+                var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
+                var repository = repositoryFactory.Create(database);
+                var gamesService = new GamesService(repository);
+                return gamesService;
+            }
         }
 
-        private static NewStatisticsService CreateStatisticsService()
+        public class GameTypes
         {
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.File(@".\ranKINGS.json", shared: true)
-                .CreateLogger();
-
-            var services = new ServiceCollection();
-            services.AddLogging(configure => configure.AddSerilog());
-            var provider = services.BuildServiceProvider();
-
-            var rankingService = CreateGamesService();
-
-            var eloConfiguration = new EloConfiguration(50, 400, true, 1200);
-            var oldStatsService = new OldStatisticsService(rankingService, eloConfiguration, provider.GetService<ILogger<OldStatisticsService>>(),
-                new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()));
-
-            return new NewStatisticsService(rankingService, eloConfiguration,
-                provider.GetService<ILogger<NewStatisticsService>>(), new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()),
-                oldStatsService);
+            public static string Tafeltennis = "tafeltennis";
         }
-
-        private static GamesService CreateGamesService()
-        {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
-                .Build();
-
-            var database = config["Database"];
-
-            Console.WriteLine(database);
-
-            var connectionFactory = new SqLiteDatabaseConnectionFactory();
-            var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory);
-            var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
-            var repository = repositoryFactory.Create(database);
-            var gamesService = new GamesService(repository);
-            return gamesService;
-        }
-    }
-
-    public class GameTypes
-    {
-        public static string Tafeltennis = "tafeltennis";
     }
 }

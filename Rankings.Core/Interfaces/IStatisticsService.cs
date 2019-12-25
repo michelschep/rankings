@@ -15,6 +15,6 @@ namespace Rankings.Core.Interfaces
         ObsoleteRanking Ranking(string gameType, DateTime startDate, DateTime endDate);
 
         decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2);
-        IDictionary<Profile, EloStatsPlayer> EloStats(string gameType, DateTime startDate, DateTime endDate);
+        IDictionary<Profile, EloStatsPlayer> TheNewRanking(string gameType, DateTime startDate, DateTime endDate);
     }
 }

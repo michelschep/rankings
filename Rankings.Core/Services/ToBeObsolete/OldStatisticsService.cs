@@ -235,7 +235,7 @@ namespace Rankings.Core.Services.ToBeObsolete
             return _eloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
         }
 
-        IDictionary<Profile, EloStatsPlayer> IStatisticsService.EloStats(string gameType, DateTime startDate, DateTime endDate)
+        IDictionary<Profile, EloStatsPlayer> IStatisticsService.TheNewRanking(string gameType, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }
