@@ -75,36 +75,6 @@ namespace Rankings.Core.Services
             }
 
             return eloStatsPlayers;
-
-            // Now calculate current elo score based on all games played
-            var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
-            foreach (var game in games.OrderBy(game => game.RegistrationDate))
-            {
-                // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
-                // For now ignore a 0-0
-                if (game.Score1 == 0 && game.Score2 == 0)
-                    continue;
-
-                // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
-                // It should not be possible to enter these games.
-                if (game.Player1.EmailAddress == game.Player2.EmailAddress)
-                    continue;
-
-                var oldRatingPlayer1 = eloStatsPlayers[game.Player1];
-                var oldRatingPlayer2 = eloStatsPlayers[game.Player2];
-
-                var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.EloScore, oldRatingPlayer2.EloScore,
-                    game.Score1,
-                    game.Score2);
-
-                eloStatsPlayers[game.Player1].EloScore = oldRatingPlayer1.EloScore + player1Delta;
-                eloStatsPlayers[game.Player2].EloScore = oldRatingPlayer2.EloScore - player1Delta;
-
-                eloStatsPlayers[game.Player1].NumberOfGames += 1;
-                eloStatsPlayers[game.Player2].NumberOfGames += 1;
-            }
-
-            return eloStatsPlayers;
         }
 
 
