@@ -22,33 +22,29 @@ namespace Rankings.ConsoleApp
         public static bool WithWinner(this EloGame eloGame, string player)
         {
             return
-                (eloGame.Game.Player1.EmailAddress.ToLower() == player.ToLower() &&
-                 eloGame.Game.Score1 > eloGame.Game.Score2)
-                || (eloGame.Game.Player2.EmailAddress.ToLower() == player.ToLower() &&
-                    eloGame.Game.Score2 > eloGame.Game.Score1);
+                eloGame.Game.Player1.EmailAddress.ToLower() == player.ToLower() &&
+                eloGame.Game.Score1 > eloGame.Game.Score2
+                || eloGame.Game.Player2.EmailAddress.ToLower() == player.ToLower() &&
+                eloGame.Game.Score2 > eloGame.Game.Score1;
         }
 
-        class Program
+        private class Program
         {
-            static void Main()
+            private static void Main()
             {
                 var statsService = CreateStatisticsService();
 
                 // show current ranking
                 var ranking = statsService.TheNewRanking(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
                 foreach (var item in ranking)
-                {
                     Console.WriteLine(
                         $"{item.Value.Ranking,2}. {item.Key.DisplayName,-20} {item.Value.NumberOfGames,3} {item.Value.EloScore.Round(),4}");
-                }
 
                 // Show games one player
                 var games = statsService.EloGames(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
                 foreach (var eloGame in games.OrderBy(game => Math.Abs(game.Player1Delta)))
-                {
                     Console.WriteLine(
                         $"{eloGame.Game.Player1.DisplayName}-{eloGame.Game.Player2.DisplayName} ==> {eloGame.Player1Delta.Round()}:{eloGame.Player2Delta.Round()}");
-                }
 
                 Console.WriteLine("=====");
 
@@ -58,10 +54,8 @@ namespace Rankings.ConsoleApp
                     .Where((game, i) => game.WithPlayer(jflamelingVitasNl) && game.WithPlayer(gpostmaVitasNl))
                     .ToList();
                 foreach (var eloGame in games2.OrderBy(game => Math.Abs(game.Player1Delta)))
-                {
                     Console.WriteLine(
                         $"{eloGame.Game.Player1.DisplayName}-{eloGame.Game.Player2.DisplayName} ==> {eloGame.Player1Delta.Round()}:{eloGame.Player2Delta.Round()}");
-                }
 
                 var winst = games2.Where(g => g.WithWinner(jflamelingVitasNl)).Sum(g => Math.Abs(g.Player1Delta));
                 var verlies = games2.Where(g => g.WithWinner(gpostmaVitasNl)).Sum(g => Math.Abs(g.Player1Delta));
@@ -142,8 +136,8 @@ namespace Rankings.ConsoleApp
                 var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetService<ILoggerFactory>());
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
                 var repository = repositoryFactory.Create(database);
-                var gamesService = new GamesService(repository);
-                return gamesService;
+                
+                return new GamesService(repository);
             }
         }
 

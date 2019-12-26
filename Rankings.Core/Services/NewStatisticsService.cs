@@ -53,23 +53,33 @@ namespace Rankings.Core.Services
             throw new NotImplementedException();
         }
 
-        private Dictionary<Profile, EloStatsPlayer> EloStatsPlayers(string gameType, DateTime startDate,
-            DateTime endDate)
+        private Dictionary<Profile, EloStatsPlayer> EloStatsPlayers(string gameType, DateTime startDate, DateTime endDate)
         {
-            // All players should be in the ranking. Not restrictions (not yet :-))
+            var eloGames = EloGames(gameType, startDate, endDate);
             var allPlayers = _gamesService.List(new AllProfiles()).ToList();
 
             // All players have an initial elo score
-            var ranking = allPlayers
+            var eloStatsPlayers = allPlayers
                 .ToDictionary(player => player,
                     player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0});
+
+            foreach (var eloGame in eloGames)
+            {
+                var player1 = eloStatsPlayers[eloGame.Game.Player1];
+                var player2 = eloStatsPlayers[eloGame.Game.Player2];
+
+                player1.EloScore += eloGame.Player1Delta;
+                player1.NumberOfGames += 1;
+                player2.EloScore += eloGame.Player2Delta;
+                player2.NumberOfGames += 1;
+            }
+
+            return eloStatsPlayers;
 
             // Now calculate current elo score based on all games played
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                //_logger.LogTrace($"Game {game.Player1.DisplayName}-{game.Player2.DisplayName}: {game.Score1}-{game.Score2}");
-
                 // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
                 // For now ignore a 0-0
                 if (game.Score1 == 0 && game.Score2 == 0)
@@ -80,23 +90,21 @@ namespace Rankings.Core.Services
                 if (game.Player1.EmailAddress == game.Player2.EmailAddress)
                     continue;
 
-                var oldRatingPlayer1 = ranking[game.Player1];
-                var oldRatingPlayer2 = ranking[game.Player2];
+                var oldRatingPlayer1 = eloStatsPlayers[game.Player1];
+                var oldRatingPlayer2 = eloStatsPlayers[game.Player2];
 
                 var player1Delta = CalculateDeltaFirstPlayer(oldRatingPlayer1.EloScore, oldRatingPlayer2.EloScore,
                     game.Score1,
                     game.Score2);
 
-                ranking[game.Player1].EloScore = oldRatingPlayer1.EloScore + player1Delta;
-                ranking[game.Player2].EloScore = oldRatingPlayer2.EloScore - player1Delta;
+                eloStatsPlayers[game.Player1].EloScore = oldRatingPlayer1.EloScore + player1Delta;
+                eloStatsPlayers[game.Player2].EloScore = oldRatingPlayer2.EloScore - player1Delta;
 
-                ranking[game.Player1].NumberOfGames += 1;
-                ranking[game.Player2].NumberOfGames += 1;
-                //_logger.LogTrace($"p1 {oldRatingPlayer1}+{player1Delta} = {ranking[game.Player1]}");
-                //_logger.LogTrace($"p2 {oldRatingPlayer2}+{-1*player1Delta} = {ranking[game.Player2]}");
+                eloStatsPlayers[game.Player1].NumberOfGames += 1;
+                eloStatsPlayers[game.Player2].NumberOfGames += 1;
             }
 
-            return ranking;
+            return eloStatsPlayers;
         }
 
 
@@ -111,6 +119,7 @@ namespace Rankings.Core.Services
                     player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0});
 
             // Now calculate current elo score based on all games played
+            _logger.LogInformation("********* List all games");
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
@@ -131,13 +140,12 @@ namespace Rankings.Core.Services
                     game.Score1,
                     game.Score2);
 
+                var eloGames = new EloGame(game, ranking[game.Player1].EloScore, ranking[game.Player2].EloScore, player1Delta, -1* player1Delta);
+
                 ranking[game.Player1].EloScore = oldRatingPlayer1.EloScore + player1Delta;
                 ranking[game.Player2].EloScore = oldRatingPlayer2.EloScore - player1Delta;
 
-                ranking[game.Player1].NumberOfGames += 1;
-                ranking[game.Player2].NumberOfGames += 1;
-
-                yield return new EloGame(game, player1Delta, -1* player1Delta);
+                yield return eloGames;
             }
         }
 
@@ -161,12 +169,16 @@ namespace Rankings.Core.Services
     public class EloGame
     {
         public Game Game { get; }
+        public decimal EloPlayer1 { get; }
+        public decimal EloPlayer2 { get; }
         public decimal Player1Delta { get; }
         public decimal Player2Delta { get; }
 
-        public EloGame(Game game, in decimal player1Delta, decimal player2Delta)
+        public EloGame(Game game, decimal eloPlayer1, decimal eloPlayer2, decimal player1Delta, decimal player2Delta)
         {
             Game = game;
+            EloPlayer1 = eloPlayer1;
+            EloPlayer2 = eloPlayer2;
             Player1Delta = player1Delta;
             Player2Delta = player2Delta;
         }
