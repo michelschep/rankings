@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Rankings.Core.Entities;
 using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
@@ -88,6 +90,41 @@ namespace Rankings.ConsoleApp
                 // Show summaries games
 
                 // Show social ranking
+                var result = games.SelectMany((game, i) => new List<EloGame>()
+                {
+                    game, new EloGame(new Game()
+                    {
+                        GameType = game.Game.GameType,
+                        Player1 = game.Game.Player2,
+                        Player2 = game.Game.Player1,
+                        Score1 = game.Game.Score2,
+                        Score2 = game.Game.Score1,
+                        RegistrationDate = game.Game.RegistrationDate,
+                        Venue = game.Game.Venue,
+                    }, game.EloPlayer2, game.EloPlayer1, game.Player2Delta, game.Player1Delta)
+                }).GroupBy(game => game.Game.Player1.EmailAddress);
+
+                var numberOfPlayers = result.Count();
+                foreach (var item in result)
+                {
+                    var eloGames = item.ToList();
+                    var op = eloGames.Select(game => game.Game.Player2.EmailAddress).Distinct().Count();
+
+                    var groups = eloGames.GroupBy(game => game.Game.Player2.EmailAddress)
+                        .ToDictionary(grouping => grouping.Key, grouping => grouping.ToList().Count);
+
+                    double total = 0;
+                    var avg = eloGames.Count() / numberOfPlayers;
+
+                    foreach (var g in groups)
+                    {
+                        total += Math.Pow(g.Value - avg, 2);
+                    }
+
+                    var r = Math.Sqrt(total / numberOfPlayers);
+
+                    Console.WriteLine($"{item.Key, -25}: {eloGames.Count, 5} {op, 3} {(100*op)/numberOfPlayers, 3 } {r}");
+                }
 
 
                 Console.ReadLine();
