@@ -29,7 +29,8 @@ namespace Rankings.Web.Controllers
         {
             gameType = gameType ?? "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
-            
+            endDate = new DateTime(2020, 1, 1, 1, 0, 0);
+
             var cacheEntry = _memoryCache.GetOrCreate("ranking-"+gameType, entry =>
             {
                 var model = RankingViewModelsFor(gameType, endDate).ToList();
