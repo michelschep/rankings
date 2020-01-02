@@ -47,6 +47,22 @@ namespace Rankings.Core.Services
             return orderedRanking;
         }
 
+        public IEnumerable<char> History(string emailAddress)
+        {
+            var enumerable = _gamesService
+                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, DateTime.MinValue,
+                    DateTime.MaxValue))
+                .TakeLast(7);
+
+            var @select = enumerable
+                .Select(game => new { 
+                    Score1 = string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase) ? game.Score1 : game.Score2, 
+                    Score2 = string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase) ? game.Score2 : game.Score1  });
+
+            return @select
+                .Select(g => g.Score1 > g.Score2 ? 'W' : 'L');
+        }
+
         public IDictionary<Profile, decimal> GoatScores(string tafeltennis, in DateTime minValue, in DateTime maxValue)
         {
             throw new NotImplementedException();

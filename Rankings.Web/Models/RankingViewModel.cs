@@ -46,5 +46,7 @@ namespace Rankings.Web.Models
 
         [Display(Name = "Days #1")]
         public string TimeNumberOne { get; set; }
+
+        public string EmailAddress { get; set; }
     }
 }

@@ -62,22 +62,20 @@ namespace Rankings.Web.Controllers
             return NewRankingViewModels(gameType, startDate, endDate, precision);
         }
 
-        private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate,
-            DateTime endDate, int precision)
+        private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
         {
             // Determine list of players with elo score
             var eloScores = _statisticsService.TheNewRanking(gameType, startDate, endDate);
 
             // Fill view model with elo score
-            var list = new List<RankingViewModel>();
-            foreach (var pair in eloScores)
+            var list = eloScores
+                // TODO use id (guid) in stead of email address
+                .Select(pair => new RankingViewModel {EmailAddress = pair.Key.EmailAddress, NamePlayer = pair.Key.DisplayName, Points = pair.Value.EloScore.Round(precision), Ranking = pair.Value.Ranking})
+                .ToList();
+
+            foreach (var rankingViewModel in list)
             {
-                list.Add(new RankingViewModel
-                {
-                    NamePlayer = pair.Key.DisplayName,
-                    Points = pair.Value.EloScore.Round(precision),
-                    Ranking = pair.Value.Ranking 
-                });
+                rankingViewModel.History = _statisticsService.History(rankingViewModel.EmailAddress).ToList();
             }
 
             try
@@ -87,7 +85,7 @@ namespace Rankings.Web.Controllers
                 {
                     var oldLine = oldRankingViewModel.Single(model => model.NamePlayer == rankingViewModel.NamePlayer);
 
-                    rankingViewModel.History = new List<char>();
+//                    rankingViewModel.History = new List<char>();
                     rankingViewModel.SetWinPercentage = oldLine.SetWinPercentage;
                     rankingViewModel.WinPercentage = oldLine.WinPercentage;
                     rankingViewModel.TimeNumberOne = oldLine.TimeNumberOne;
@@ -97,7 +95,7 @@ namespace Rankings.Web.Controllers
             {
                 foreach (var rankingViewModel in list)
                 {
-                    rankingViewModel.History = new List<char>();
+//                    rankingViewModel.History = new List<char>();
                     rankingViewModel.SetWinPercentage = "?";
                     rankingViewModel.WinPercentage = "?";
                     rankingViewModel.TimeNumberOne = "?";

@@ -240,6 +240,11 @@ namespace Rankings.Core.Services.ToBeObsolete
             throw new NotImplementedException();
         }
 
+        public IEnumerable<char> History(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
         public Dictionary<Profile, decimal> EloStats(string gameType, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
