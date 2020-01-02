@@ -152,7 +152,7 @@ this.FeatureBackground();
                             "Geale",
                             "1200"});
                 table10.AddRow(new string[] {
-                            "2",
+                            "1",
                             "Michel",
                             "1200"});
 #line 15

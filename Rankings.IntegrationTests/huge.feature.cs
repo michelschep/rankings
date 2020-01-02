@@ -163,6 +163,9 @@ namespace Rankings.IntegrationTests
 #line 31
  testRunner.And("margin of victory active", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
+#line 32
+ testRunner.And("only in ranking with a minimum of 7 games", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
         }
         
         void System.IDisposable.Dispose()
@@ -177,7 +180,7 @@ namespace Rankings.IntegrationTests
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Really many games", null, ((string[])(null)));
-#line 33
+#line 34
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -200,7 +203,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 34
+#line 35
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
@@ -2489,7 +2492,7 @@ this.FeatureBackground();
                             "Hans",
                             "3",
                             "1"});
-#line 35
+#line 36
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table8, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
@@ -2539,80 +2542,60 @@ this.FeatureBackground();
                             "48"});
                 table9.AddRow(new string[] {
                             "9",
-                            "Yassine",
-                            "1195",
-                            "1"});
-                table9.AddRow(new string[] {
-                            "10",
-                            "Mulder",
-                            "1184",
-                            "0"});
-                table9.AddRow(new string[] {
-                            "11",
-                            "Vink",
-                            "1183",
-                            "0"});
-                table9.AddRow(new string[] {
-                            "12",
                             "Arnold1",
                             "1182",
                             "48"});
                 table9.AddRow(new string[] {
-                            "13",
+                            "10",
                             "Arjen",
                             "1177",
                             "29"});
                 table9.AddRow(new string[] {
-                            "14",
-                            "Driek",
-                            "1149",
-                            "0"});
-                table9.AddRow(new string[] {
-                            "15",
+                            "11",
                             "Ricky",
                             "1115",
                             "28"});
                 table9.AddRow(new string[] {
-                            "16",
+                            "12",
                             "Eduard",
                             "1107",
                             "48"});
                 table9.AddRow(new string[] {
-                            "17",
+                            "13",
                             "Jeroen",
                             "1090",
                             "20"});
                 table9.AddRow(new string[] {
-                            "18",
+                            "14",
                             "Matthias",
                             "1073",
                             "23"});
                 table9.AddRow(new string[] {
-                            "19",
+                            "15",
                             "Enrico",
                             "1022",
                             "11"});
                 table9.AddRow(new string[] {
-                            "20",
+                            "16",
                             "Tarik",
                             "988",
                             "14"});
                 table9.AddRow(new string[] {
-                            "21",
+                            "17",
                             "Eltjo",
                             "971",
                             "18"});
                 table9.AddRow(new string[] {
-                            "22",
+                            "18",
                             "Arnold2",
                             "968",
                             "12"});
                 table9.AddRow(new string[] {
-                            "23",
+                            "19",
                             "Tjardo",
                             "875",
                             "0"});
-#line 417
+#line 418
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table9, "Then ");
 #line hidden
             }

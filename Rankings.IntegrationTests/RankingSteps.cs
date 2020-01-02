@@ -171,6 +171,12 @@ namespace Rankings.IntegrationTests
             _featureContext.MarginOfVictory = true;
         }
 
+        [Given(@"only in ranking with a minimum of (.*) games")]
+        public void GivenOnlyInRankingWithAMinimumOfGames(int p0)
+        {
+            _featureContext.MinimumRankingGames = p0;
+        }
+
         [Given(@"margin of victory is not active")]
         public void GivenMarginOfVictoryIsNotActive()
         {
@@ -216,7 +222,7 @@ namespace Rankings.IntegrationTests
                 throw new Exception("Calculator config missing");
             
             Output.Information($"***** Calculate ranking with k={context.Kfactor} n={context.N}");
-            var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value);
+            var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value, context.MinimumRankingGames ?? 0);
             var rankingController = CreateRankingController(eloConfiguration);
             var viewResult = (ViewResult) rankingController.Index(gameType, DateTime.MaxValue.ToString(CultureInfo.InvariantCulture), precision);
             var viewModel = (IEnumerable<RankingViewModel>) viewResult.Model;

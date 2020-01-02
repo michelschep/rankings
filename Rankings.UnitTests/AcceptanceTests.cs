@@ -26,7 +26,7 @@ namespace Rankings.UnitTests
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository);
-            var eloConfiguration = new EloConfiguration(5, 50, false, 100);
+            var eloConfiguration = new EloConfiguration(5, 50, false, 100, 0);
             var logger1 = (new Mock<ILogger<OldStatisticsService>>()).Object;
             var logger2 = (new Mock<ILogger<EloCalculator>>()).Object;
             _oldStatisticsService = new OldStatisticsService(_gamesService, eloConfiguration, logger1, new EloCalculator(eloConfiguration, logger2));

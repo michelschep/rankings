@@ -29,6 +29,7 @@ Background:
 	And the current user is Michel with role Admin
 	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	And margin of victory active
+	And only in ranking with a minimum of 7 games
 
 Scenario: Really many games
 	Given no games played
@@ -424,18 +425,14 @@ Scenario: Really many games
 		| 6       | Remco      | 1299   | 62  |
 		| 7       | Harro      | 1265   | 58  |
 		| 8       | Geale      | 1259   | 48  |
-		| 9       | Yassine    | 1195   | 1   |
-		| 10      | Mulder     | 1184   | 0   |
-		| 11      | Vink       | 1183   | 0   |
-		| 12      | Arnold1    | 1182   | 48  |
-		| 13      | Arjen      | 1177   | 29  |
-		| 14      | Driek      | 1149   | 0   |
-		| 15      | Ricky      | 1115   | 28  |
-		| 16      | Eduard     | 1107   | 48  |
-		| 17      | Jeroen     | 1090   | 20  |
-		| 18      | Matthias   | 1073   | 23  |
-		| 19      | Enrico     | 1022   | 11  |
-		| 20      | Tarik      | 988    | 14  |
-		| 21      | Eltjo      | 971    | 18  |
-		| 22      | Arnold2    | 968    | 12  |
-		| 23      | Tjardo     | 875    | 0   |
+		| 9       | Arnold1    | 1182   | 48  |
+		| 10      | Arjen      | 1177   | 29  |
+		| 11      | Ricky      | 1115   | 28  |
+		| 12      | Eduard     | 1107   | 48  |
+		| 13      | Jeroen     | 1090   | 20  |
+		| 14      | Matthias   | 1073   | 23  |
+		| 15      | Enrico     | 1022   | 11  |
+		| 16      | Tarik      | 988    | 14  |
+		| 17      | Eltjo      | 971    | 18  |
+		| 18      | Arnold2    | 968    | 12  |
+		| 19      | Tjardo     | 875    | 0   |

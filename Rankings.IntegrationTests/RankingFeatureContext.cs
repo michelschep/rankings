@@ -7,5 +7,6 @@
         public int? Kfactor { get; set; }
         public int? N { get; set; }
         public int? InitialElo { get; set; }
+        public int? MinimumRankingGames { get; set; }
     }
 }

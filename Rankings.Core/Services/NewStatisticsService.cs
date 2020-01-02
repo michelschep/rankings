@@ -11,15 +11,13 @@ namespace Rankings.Core.Services
 {
     public class NewStatisticsService : IStatisticsService
     {
-        private readonly IGamesService _gamesService; //todo
-        private readonly EloConfiguration _eloConfiguration; //todo
-        private readonly ILogger<IStatisticsService> _logger; //todo
-        private readonly EloCalculator _eloCalculator; //todo
-        private readonly OldStatisticsService _oldRankingOldStatisticsService; //todo
+        private readonly IGamesService _gamesService; 
+        private readonly EloConfiguration _eloConfiguration; 
+        private readonly ILogger<IStatisticsService> _logger;
+        private readonly EloCalculator _eloCalculator;
+        private readonly OldStatisticsService _oldRankingOldStatisticsService;
 
-        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration,
-            ILogger<IStatisticsService> logger, EloCalculator eloCalculator,
-            OldStatisticsService oldRankingOldStatisticsService)
+        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator, OldStatisticsService oldRankingOldStatisticsService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
@@ -35,8 +33,9 @@ namespace Rankings.Core.Services
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
 
             var rankedPlayers = eloStatsPlayers
-                .Where(pair => pair.Value.NumberOfGames >= 7)
-                .OrderByDescending(pair => pair.Value.EloScore);
+                .Where(pair => pair.Value.NumberOfGames >= _eloConfiguration.NumberOfGames)
+                .OrderByDescending(pair => pair.Value.EloScore).ThenBy(pair => pair.Key.DisplayName);
+                
             var orderedRanking = new Dictionary<Profile, EloStatsPlayer>(rankedPlayers);
 
             var index = 1;

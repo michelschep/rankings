@@ -15,7 +15,7 @@ Scenario: No games played yet
 	Then we have the following tafeltennis ranking with precision 0:
 		| Ranking | NamePlayer | Points |
 		| 1       | Geale      | 1200   |
-		| 2       | Michel     | 1200   |
+		| 1       | Michel     | 1200   |
 
 Scenario: First ever game played
 	Given no games played
