@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
@@ -71,16 +72,18 @@ namespace Rankings.Web
             services.AddSingleton<EloCalculator, EloCalculator>();
             services.AddSingleton<IStatisticsService, NewStatisticsService>();
             services.AddSingleton<OldStatisticsService, OldStatisticsService>();
-            services.AddSingleton<IGamesService, GamesService>((ctx) =>
+            services.Configure<RepositoryConfiguration>(Configuration.GetSection("Repository"));
+
+            services.AddTransient(provider =>
             {
                 var connectionFactory = new SqLiteDatabaseConnectionFactory();
-                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, ctx.GetRequiredService<ILoggerFactory>());
+                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetRequiredService<ILoggerFactory>());
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
-                // TODO what if setting is null or empty
-                var repository = repositoryFactory.Create(Configuration["Database"]);
+                var config = provider.GetRequiredService<IOptions<RepositoryConfiguration>>();
+                return repositoryFactory.Create(config.Value.Database);
 
-                return new GamesService(repository);
             });
+            services.AddTransient<IGamesService, GamesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,5 +125,10 @@ namespace Rankings.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+    }
+
+    public class RepositoryConfiguration
+    {
+        public string Database { get; set; }
     }
 }
