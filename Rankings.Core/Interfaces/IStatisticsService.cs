@@ -22,5 +22,6 @@ namespace Rankings.Core.Interfaces
         int RecordWinningStreak(string emailAddress);
         int CurrentWinningStreak(string emailAddress);
         decimal RecordEloStreak(string emailAddress);
+        decimal CurrentEloStreak(string emailAddress);
     }
 }

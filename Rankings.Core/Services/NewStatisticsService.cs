@@ -122,17 +122,6 @@ namespace Rankings.Core.Services
 
         }
 
-        private List<StatGame> GamesByPlayer(string emailAddress)
-        {
-            // TODO tafeltennis hardcoded...
-            return _gamesService
-                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, DateTime.MinValue, DateTime.MaxValue))
-                .Select(game => string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase) 
-                    ? new {game.Score1, game.Score2} : new {Score1 = game.Score2, Score2 = game.Score1})
-                .Select(arg => new StatGame(arg.Score1, arg.Score2))
-                .ToList();
-        }
-
         public int RecordWinningStreak(string emailAddress)
         {
                 var gamesByPlayer = GamesByPlayer(emailAddress);
@@ -163,7 +152,35 @@ namespace Rankings.Core.Services
 
         public decimal RecordEloStreak(string emailAddress)
         {
-            var gamesByPlayer = EloGames("tafeltennis", DateTime.MinValue, DateTime.MaxValue)
+            var gamesByPlayer = EloGamesByPlayer(emailAddress);
+
+            if (gamesByPlayer.Count == 0)
+                return 0;
+
+            var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
+            if (!series.Any())
+                return 0;
+
+            return series.Select(games => games.Sum(game => game.Delta1)).Max() ?? 0;
+        }
+
+        public decimal CurrentEloStreak(string emailAddress)
+        {
+            var gamesByPlayer = EloGamesByPlayer(emailAddress);
+
+            if (gamesByPlayer.Count == 0)
+                return 0;
+
+            var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
+            if (!series.Any())
+                return 0;
+
+            return series.Last().Sum(games => games.Delta1.Value);
+        }
+
+        private List<StatGame> EloGamesByPlayer(string emailAddress)
+        {
+            return EloGames("tafeltennis", DateTime.MinValue, DateTime.MaxValue)
                 .Where((game, i) => game.Game.Player1.EmailAddress.Equals(emailAddress, StringComparison.CurrentCultureIgnoreCase) || game.Game.Player2.EmailAddress.Equals(emailAddress, StringComparison.CurrentCultureIgnoreCase))
                 .Select(game => string.Equals(game.Game.Player1.EmailAddress, emailAddress,
                     StringComparison.CurrentCultureIgnoreCase)
@@ -178,15 +195,17 @@ namespace Rankings.Core.Services
                         Delta2 = game.Player1Delta
                     })
                 .Select(arg => new StatGame(arg.Score1, arg.Score2, arg.Delta1, arg.Delta2)).ToList();
+        }
 
-                if (gamesByPlayer.Count == 0)
-                    return 0;
-
-                var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
-                if (!series.Any())
-                    return 0;
-
-                return series.Select(games => games.Sum(game => game.Delta1)).Max() ?? 0;
+        private List<StatGame> GamesByPlayer(string emailAddress)
+        {
+            // TODO tafeltennis hardcoded...
+            return _gamesService
+                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, DateTime.MinValue, DateTime.MaxValue))
+                .Select(game => string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase) 
+                    ? new {game.Score1, game.Score2} : new {Score1 = game.Score2, Score2 = game.Score1})
+                .Select(arg => new StatGame(arg.Score1, arg.Score2))
+                .ToList();
         }
 
         public IDictionary<Profile, decimal> GoatScores(string tafeltennis, in DateTime minValue, in DateTime maxValue)
