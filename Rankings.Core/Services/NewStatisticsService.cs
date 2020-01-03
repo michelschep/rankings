@@ -11,15 +11,6 @@ namespace Rankings.Core.Services
 {
     public static class LinqExtensions
     {
-        public static int LongestStreak<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
-        {
-            return source.Aggregate(new {Longest = 0, Current = 0},
-                (agg, element) => predicate(element)
-                    ? new {Longest = Math.Max(agg.Longest, agg.Current + 1), Current = agg.Current + 1}
-                    : new {agg.Longest, Current = 0},
-                agg => agg.Longest);
-        }
-
         public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> items, Predicate<T> p)
         {
             while (true)
@@ -38,6 +29,7 @@ namespace Rankings.Core.Services
             }
         }
     }
+
     public class NewStatisticsService : IStatisticsService
     {
         private readonly IGamesService _gamesService; 
@@ -60,11 +52,17 @@ namespace Rankings.Core.Services
             _logger.LogInformation("Calculate ELO new");
 
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
+            var orderedRanking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
 
+            return orderedRanking;
+        }
+
+        private Dictionary<Profile, EloStatsPlayer> CalculateRanking(Dictionary<Profile, EloStatsPlayer> eloStatsPlayers, int numberOfGames)
+        {
             var rankedPlayers = eloStatsPlayers
-                .Where(pair => pair.Value.NumberOfGames >= _eloConfiguration.NumberOfGames)
+                .Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.EloScore).ThenBy(pair => pair.Key.DisplayName);
-                
+
             var orderedRanking = new Dictionary<Profile, EloStatsPlayer>(rankedPlayers);
 
             var index = 1;
@@ -215,13 +213,16 @@ namespace Rankings.Core.Services
 
         private Dictionary<Profile, EloStatsPlayer> EloStatsPlayers(string gameType, DateTime startDate, DateTime endDate)
         {
-            var eloGames = EloGames(gameType, startDate, endDate);
+            var eloGames = EloGames(gameType, startDate, endDate).ToList();
             var allPlayers = _gamesService.List(new AllProfiles()).ToList();
 
             // All players have an initial elo score
             var eloStatsPlayers = allPlayers
                 .ToDictionary(player => player,
-                    player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0});
+                    player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0, TimeNumberOne = new TimeSpan(0,0,0)});
+
+            var lastGameRegistrationDate = eloGames.First().Game.RegistrationDate;
+            Profile lastNumberOne = null;
 
             foreach (var eloGame in eloGames)
             {
@@ -232,11 +233,21 @@ namespace Rankings.Core.Services
                 player1.NumberOfGames += 1;
                 player2.EloScore += eloGame.Player2Delta;
                 player2.NumberOfGames += 1;
+
+                var ranking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
+                if (ranking.Any())
+                {
+                    var diff = eloGame.Game.RegistrationDate - lastGameRegistrationDate;
+                    var profile = ranking.First().Key;
+                    if (profile == lastNumberOne)
+                        eloStatsPlayers[profile].TimeNumberOne += diff;
+                    lastNumberOne = profile;
+                }
+                lastGameRegistrationDate = eloGame.Game.RegistrationDate;
             }
 
             return eloStatsPlayers;
         }
-
 
         public IEnumerable<EloGame> EloGames(string gameType, DateTime startDate, DateTime endDate)
         {
@@ -332,8 +343,9 @@ namespace Rankings.Core.Services
 
     public class EloStatsPlayer
     {
-        public decimal EloScore { get; set; }
         public int Ranking { get; set; }
+        public decimal EloScore { get; set; }
         public int NumberOfGames { get; set; }
+        public TimeSpan TimeNumberOne { get; set; }
     }
 }

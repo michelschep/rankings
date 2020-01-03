@@ -68,9 +68,18 @@ namespace Rankings.Web.Controllers
             var eloScores = _statisticsService.TheNewRanking(gameType, startDate, endDate);
 
             // Fill view model with elo score
+            var ranking = 1;
             var list = eloScores
+                .Where((pair, i) => pair.Value.NumberOfGames >= 7)
                 // TODO use id (guid) in stead of email address
-                .Select(pair => new RankingViewModel {EmailAddress = pair.Key.EmailAddress, NamePlayer = pair.Key.DisplayName, Points = pair.Value.EloScore.Round(precision), Ranking = pair.Value.Ranking})
+                .Select(pair => new RankingViewModel
+                {
+                    EmailAddress = pair.Key.EmailAddress, 
+                    NamePlayer = pair.Key.DisplayName, 
+                    Points = pair.Value.EloScore.Round(precision), 
+                    Ranking = ranking++,
+                    TimeNumberOne = pair.Value.TimeNumberOne.ToString(@"%d")
+                })
                 .ToList();
 
             foreach (var rankingViewModel in list)
