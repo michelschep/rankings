@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Services;
 using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Web.Models;
 
@@ -43,11 +44,11 @@ namespace Rankings.Web.Controllers
 
             // TODO make it work for other types as well
             // TODO maybe better some build in types if it really means something different. Or constants to avoid strings all over the place.
-            var ratings = _statisticsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue).DeprecatedRatings;
+            var ratings = _statisticsService.TheNewRanking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
             var thisPlayerElo = ratings.First(pair => pair.Key.EmailAddress == User.Identity.Name).Value.Ranking;
             foreach (var stats in ratings.OrderByDescending(pair => pair.Value.Ranking))
             {
-                var eloDiff = (int) Math.Round(stats.Value.Ranking - thisPlayerElo, 0, MidpointRounding.AwayFromZero);
+                var eloDiff = (int) Math.Round(stats.Value.EloScore - thisPlayerElo, 0, MidpointRounding.AwayFromZero);
                 var draw = CalculateDeltaResult(thisPlayerElo, stats, 1, 1);
                 var oneZeroWin = CalculateDeltaResult(thisPlayerElo, stats, 1, 0);
                 var oneZeroLost = CalculateDeltaResult(thisPlayerElo, stats, 0, 1);
@@ -58,14 +59,14 @@ namespace Rankings.Web.Controllers
                 var threeZeroWin = CalculateDeltaResult(thisPlayerElo, stats, 3, 0);
                 var threeZeroLost = CalculateDeltaResult(thisPlayerElo, stats, 0, 3);
 
-                var line = new EloMatrixViewModel(stats.Key.DisplayName, (int) Math.Round(stats.Value.Ranking, 0, MidpointRounding.AwayFromZero), eloDiff, draw, oneZeroWin, oneZeroLost, twoZeroWin, twoZeroLost, threeZeroWin, threeZeroLost);                
+                var line = new EloMatrixViewModel(stats.Key.DisplayName, (int) Math.Round(stats.Value.EloScore, 0, MidpointRounding.AwayFromZero), eloDiff, draw, oneZeroWin, oneZeroLost, twoZeroWin, twoZeroLost, threeZeroWin, threeZeroLost);                
                 model.Add(line);
             }
             
             return View(model);
         }
 
-        private int CalculateDeltaResult(decimal thisPlayerElo, KeyValuePair<Profile, ObsoletePlayerStats> stats, int gameScore1, int gameScore2)
+        private int CalculateDeltaResult(decimal thisPlayerElo, KeyValuePair<Profile, EloStatsPlayer> stats, int gameScore1, int gameScore2)
         {
             var deltaFirstPlayer = _statisticsService.CalculateDeltaFirstPlayer(thisPlayerElo, stats.Value.Ranking, gameScore1, gameScore2);
             return (int) Math.Round(deltaFirstPlayer, 0, MidpointRounding.AwayFromZero);

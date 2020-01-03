@@ -4,10 +4,8 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
-using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Web.Models;
 
 namespace Rankings.Web.Controllers
@@ -94,58 +92,6 @@ namespace Rankings.Web.Controllers
             }
 
             return list;
-        }
-
-        [Obsolete("This one will be replaced by better mechnism")]
-        private IEnumerable<RankingViewModel> ObsoleteRankingViewModels(string gameType, DateTime startDate,
-            DateTime endDate, int numberOfGames)
-        {
-            var ratings = _statisticsService.Ranking(gameType, startDate, endDate);
-            var ranking = 1;
-            var lastPointInTime = _statisticsService.CalculateStats(startDate, endDate);
-
-            var model = ratings.DeprecatedRatings.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
-                .OrderByDescending(pair => pair.Value.Ranking)
-                .Select(r => new RankingViewModel
-                {
-                    NumberOfGames = r.Value.NumberOfGames,
-                    WinPercentage = Math.Round(r.Value.WinPercentage, 0, MidpointRounding.AwayFromZero)
-                        .ToString(CultureInfo.InvariantCulture),
-                    SetWinPercentage = Math.Round(r.Value.SetWinPercentage, 0, MidpointRounding.AwayFromZero)
-                        .ToString(CultureInfo.InvariantCulture),
-                    Points = Math.Round(r.Value.Ranking, 0, MidpointRounding.AwayFromZero),
-                    NamePlayer = r.Key.DisplayName,
-                    Ranking = (ranking++),
-                    History = ToHistory(r),
-                    RecordWinningStreak = ToWinningStreak(r),
-                    CurrentWinningStreak = ToCurrentWinningStreak(r),
-                    RecordEloStreak = (int) r.Value.BestEloSeries,
-                    CurrentEloStreak = (int) r.Value.CurrentEloSeries,
-                    SkalpStreak = (int) r.Value.SkalpStreak,
-                    Goat = (int) r.Value.Goat,
-                    TimeNumberOne =
-                        Math.Round(
-                            (new TimeSpan(0, lastPointInTime.Value.NewPlayerStats[r.Key].TimeNumberOne, 0).TotalDays),
-                            0,
-                            MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture)
-                });
-            return model;
-        }
-
-        private int ToWinningStreak(in KeyValuePair<Profile, ObsoletePlayerStats> r)
-        {
-            return r.Value.History.Split('L').Select(s => s.Length).Max();
-        }
-
-        private int ToCurrentWinningStreak(in KeyValuePair<Profile, ObsoletePlayerStats> r)
-        {
-            return r.Value.History.Split('L').Select(s => s.Length).Last();
-        }
-
-        private static List<char> ToHistory(KeyValuePair<Profile, ObsoletePlayerStats> r)
-        {
-            var chars = r.Value.History.ToCharArray().Reverse().ToList();
-            return chars.Take(7).Reverse().ToList();
         }
     }
 }

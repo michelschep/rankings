@@ -61,11 +61,12 @@ namespace Rankings.Web.Controllers
         private List<GameViewModel> CreateGameSummaryViewModels(string gameType)
         {
             gameType ??= "tafeltennis";
-            var daysBack = gameType == "tafeltennis" ? -7 : -365;
+            var daysBack = gameType == "tafeltennis" ? -31 : -365;
 
             var games = _gamesService
                 .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate)
+                .Take(50)
                 .ToList();
 
             var model = games.Select(type => new GameViewModel

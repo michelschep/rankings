@@ -146,14 +146,10 @@ namespace Rankings.ConsoleApp
                 var rankingService = CreateGamesService(provider);
 
                 var eloConfiguration = new EloConfiguration(50, 400, true, 1200, 7);
-                var oldStatsService = new OldStatisticsService(rankingService, eloConfiguration,
-                    provider.GetService<ILogger<OldStatisticsService>>(),
-                    new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()));
 
                 return new NewStatisticsService(rankingService, eloConfiguration,
                     provider.GetService<ILogger<NewStatisticsService>>(),
-                    new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()),
-                    oldStatsService);
+                    new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()));
             }
 
             private static GamesService CreateGamesService(ServiceProvider provider)

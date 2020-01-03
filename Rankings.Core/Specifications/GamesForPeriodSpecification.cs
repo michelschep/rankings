@@ -12,6 +12,8 @@ namespace Rankings.Core.Specifications
                         && g.RegistrationDate <= endDate
                         // TODO quick fix. Do not show same player games. 
                         && g.Player1 != g.Player2
+                        // TODO quick fix 0-0 is not allowed for table tennis 
+                        && (g.Score1 != 0 || g.Score2 !=0) 
                         )
         {
             AddInclude(g => g.GameType);
@@ -29,6 +31,7 @@ namespace Rankings.Core.Specifications
                         && g.RegistrationDate <= endDate
                         && g.Player1 != g.Player2
                         && (g.Player1.EmailAddress == emailAddres || g.Player2.EmailAddress == emailAddres) 
+                        && (g.Score1 != 0 || g.Score2 !=0) 
                         )
         {
             AddInclude(g => g.GameType);

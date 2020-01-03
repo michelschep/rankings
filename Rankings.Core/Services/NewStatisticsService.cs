@@ -36,14 +36,12 @@ namespace Rankings.Core.Services
         private readonly EloConfiguration _eloConfiguration; 
         private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
-        private readonly OldStatisticsService _oldRankingOldStatisticsService;
 
-        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator, OldStatisticsService oldRankingOldStatisticsService)
+        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
             _eloCalculator = eloCalculator ?? throw new ArgumentNullException(nameof(eloCalculator));
-            _oldRankingOldStatisticsService = oldRankingOldStatisticsService;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -288,16 +286,6 @@ namespace Rankings.Core.Services
 
                 yield return eloGames;
             }
-        }
-
-        public KeyValuePair<DateTime, RankingStats> CalculateStats(DateTime startDate, DateTime endDate)
-        {
-            return _oldRankingOldStatisticsService.CalculateStats(startDate, endDate);
-        }
-
-        public ObsoleteRanking Ranking(string gameType, DateTime startDate, DateTime endDate)
-        {
-            return _oldRankingOldStatisticsService.Ranking(gameType, startDate, endDate);
         }
 
         public decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1,

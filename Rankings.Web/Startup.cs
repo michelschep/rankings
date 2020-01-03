@@ -71,7 +71,6 @@ namespace Rankings.Web
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();
             services.AddSingleton<EloCalculator, EloCalculator>();
             services.AddSingleton<IStatisticsService, NewStatisticsService>();
-            services.AddSingleton<OldStatisticsService, OldStatisticsService>();
             services.Configure<RepositoryConfiguration>(Configuration.GetSection("Repository"));
 
             services.AddTransient(provider =>
