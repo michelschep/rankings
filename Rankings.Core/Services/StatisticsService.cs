@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
-using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Core.Specifications;
 using System;
 using System.Collections.Generic;
@@ -9,35 +8,14 @@ using System.Linq;
 
 namespace Rankings.Core.Services
 {
-    public static class LinqExtensions
-    {
-        public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> items, Predicate<T> p)
-        {
-            while (true)
-            {
-                items = items.SkipWhile(i => !p(i));
-                var trueItems = items.TakeWhile(i => p(i)).ToList();
-                if (trueItems.Count > 0)
-                {
-                    yield return trueItems;
-                    items = items.Skip(trueItems.Count);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    public class NewStatisticsService : IStatisticsService
+    public class StatisticsService : IStatisticsService
     {
         private readonly IGamesService _gamesService; 
         private readonly EloConfiguration _eloConfiguration; 
         private readonly ILogger<IStatisticsService> _logger;
         private readonly EloCalculator _eloCalculator;
 
-        public NewStatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, EloCalculator eloCalculator)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
@@ -45,10 +23,8 @@ namespace Rankings.Core.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IDictionary<Profile, EloStatsPlayer> TheNewRanking(string gameType, DateTime startDate, DateTime endDate)
+        public IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
-            _logger.LogInformation("Calculate ELO new");
-
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
             var orderedRanking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
 
@@ -72,10 +48,10 @@ namespace Rankings.Core.Services
             return orderedRanking;
         }
 
-        public IEnumerable<char> History(string emailAddress)
+        public IEnumerable<char> History(string emailAddress, DateTime startDate, DateTime endDate)
         {
             return _gamesService
-                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, DateTime.MinValue, DateTime.MaxValue))
+                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
                 .TakeLast(7)
                 .Select(game => new { 
                     Score1 = string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase) ? game.Score1 : game.Score2, 
@@ -89,9 +65,9 @@ namespace Rankings.Core.Services
                 });
         }
 
-        public decimal WinPercentage(string emailAddress)
+        public decimal WinPercentage(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            var gamesByPlayer = GamesByPlayer(emailAddress);
+            var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
 
             if (gamesByPlayer.Count == 0)
                 return 0;
@@ -102,9 +78,9 @@ namespace Rankings.Core.Services
             return (decimal) won / gamesByPlayer.Count;
         }
 
-        public decimal SetWinPercentage(string emailAddress)
+        public decimal SetWinPercentage(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            var gamesByPlayer = GamesByPlayer(emailAddress);
+            var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
 
             if (gamesByPlayer.Count == 0)
                 return 0;
@@ -118,9 +94,9 @@ namespace Rankings.Core.Services
 
         }
 
-        public int RecordWinningStreak(string emailAddress)
+        public int RecordWinningStreak(string emailAddress, DateTime startDate, DateTime endDate)
         {
-                var gamesByPlayer = GamesByPlayer(emailAddress);
+                var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
 
                 if (gamesByPlayer.Count == 0)
                     return 0;
@@ -132,9 +108,9 @@ namespace Rankings.Core.Services
                 return series.Select(games => games.Count()).Max();
         }
 
-        public int CurrentWinningStreak(string emailAddress)
+        public int CurrentWinningStreak(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            var gamesByPlayer = GamesByPlayer(emailAddress);
+            var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
 
             if (gamesByPlayer.Count == 0)
                 return 0;
@@ -146,9 +122,9 @@ namespace Rankings.Core.Services
             return series.Last().Count();
         }
 
-        public decimal RecordEloStreak(string emailAddress)
+        public decimal RecordEloStreak(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            var gamesByPlayer = EloGamesByPlayer(emailAddress);
+            var gamesByPlayer = EloGamesByPlayer(emailAddress, startDate, endDate);
 
             if (gamesByPlayer.Count == 0)
                 return 0;
@@ -160,9 +136,9 @@ namespace Rankings.Core.Services
             return series.Select(games => games.Sum(game => game.Delta1)).Max() ?? 0;
         }
 
-        public decimal CurrentEloStreak(string emailAddress)
+        public decimal CurrentEloStreak(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            var gamesByPlayer = EloGamesByPlayer(emailAddress);
+            var gamesByPlayer = EloGamesByPlayer(emailAddress, startDate, endDate);
 
             if (gamesByPlayer.Count == 0)
                 return 0;
@@ -174,9 +150,9 @@ namespace Rankings.Core.Services
             return series.Last().Sum(games => games.Delta1.Value);
         }
 
-        private List<StatGame> EloGamesByPlayer(string emailAddress)
+        private List<StatGame> EloGamesByPlayer(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            return EloGames("tafeltennis", DateTime.MinValue, DateTime.MaxValue)
+            return EloGames("tafeltennis", startDate, endDate)
                 .Where((game, i) => game.Game.Player1.EmailAddress.Equals(emailAddress, StringComparison.CurrentCultureIgnoreCase) || game.Game.Player2.EmailAddress.Equals(emailAddress, StringComparison.CurrentCultureIgnoreCase))
                 .Select(game => string.Equals(game.Game.Player1.EmailAddress, emailAddress,
                     StringComparison.CurrentCultureIgnoreCase)
@@ -193,11 +169,11 @@ namespace Rankings.Core.Services
                 .Select(arg => new StatGame(arg.Score1, arg.Score2, arg.Delta1, arg.Delta2)).ToList();
         }
 
-        private List<StatGame> GamesByPlayer(string emailAddress)
+        private List<StatGame> GamesByPlayer(string emailAddress, DateTime startDate, DateTime endDate)
         {
             // TODO tafeltennis hardcoded...
             return _gamesService
-                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, DateTime.MinValue, DateTime.MaxValue))
+                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
                 .Select(game => string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase) 
                     ? new {game.Score1, game.Score2} : new {Score1 = game.Score2, Score2 = game.Score1})
                 .Select(arg => new StatGame(arg.Score1, arg.Score2))
@@ -219,6 +195,9 @@ namespace Rankings.Core.Services
                 .ToDictionary(player => player,
                     player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0, TimeNumberOne = new TimeSpan(0,0,0)});
 
+            if (!eloGames.Any())
+                return eloStatsPlayers;
+            
             var lastGameRegistrationDate = eloGames.First().Game.RegistrationDate;
             Profile lastNumberOne = null;
 
@@ -262,11 +241,6 @@ namespace Rankings.Core.Services
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                // TODO for tafeltennis a 0-0 is not a valid result. For time related games it is possible
-                // For now ignore a 0-0
-                if (game.Score1 == 0 && game.Score2 == 0)
-                    continue;
-
                 // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
                 // It should not be possible to enter these games.
                 if (game.Player1.EmailAddress == game.Player2.EmailAddress)
@@ -293,47 +267,5 @@ namespace Rankings.Core.Services
         {
             return _eloCalculator.CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, gameScore1, gameScore2);
         }
-    }
-
-    internal class StatGame
-    {
-        public int Score1 { get; }
-        public int Score2 { get; }
-        public decimal? Delta1 { get; }
-        public decimal? Delta2 { get; }
-
-        public StatGame(in int score1, in int score2, decimal? delta1 = null, decimal? delta2 = null)
-        {
-            Score1 = score1;
-            Score2 = score2;
-            Delta1 = delta1;
-            Delta2 = delta2;
-        }
-    }
-
-    public class EloGame
-    {
-        public Game Game { get; }
-        public decimal EloPlayer1 { get; }
-        public decimal EloPlayer2 { get; }
-        public decimal Player1Delta { get; }
-        public decimal Player2Delta { get; }
-
-        public EloGame(Game game, decimal eloPlayer1, decimal eloPlayer2, decimal player1Delta, decimal player2Delta)
-        {
-            Game = game;
-            EloPlayer1 = eloPlayer1;
-            EloPlayer2 = eloPlayer2;
-            Player1Delta = player1Delta;
-            Player2Delta = player2Delta;
-        }
-    }
-
-    public class EloStatsPlayer
-    {
-        public int Ranking { get; set; }
-        public decimal EloScore { get; set; }
-        public int NumberOfGames { get; set; }
-        public TimeSpan TimeNumberOne { get; set; }
     }
 }

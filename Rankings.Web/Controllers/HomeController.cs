@@ -44,7 +44,7 @@ namespace Rankings.Web.Controllers
 
             // TODO make it work for other types as well
             // TODO maybe better some build in types if it really means something different. Or constants to avoid strings all over the place.
-            var ratings = _statisticsService.TheNewRanking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
+            var ratings = _statisticsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
             var thisPlayerElo = ratings.First(pair => pair.Key.EmailAddress == User.Identity.Name).Value.Ranking;
             foreach (var stats in ratings.OrderByDescending(pair => pair.Value.Ranking))
             {

@@ -8,8 +8,4 @@
     <PackageReference Include="Ardalis.Specification" Version="1.2.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\NewCalculating\" />
-  </ItemGroup>
-
 </Project>

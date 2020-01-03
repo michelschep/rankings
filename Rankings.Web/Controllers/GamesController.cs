@@ -175,7 +175,11 @@ namespace Rankings.Web.Controllers
 
             _gamesService.RegisterGame(game);
 
+            // TODO improve way of handling caching
             _memoryCache.Remove("ranking-" + game.GameType.Code);
+            _memoryCache.Remove("ranking-tafeltennis-2020");
+            _memoryCache.Remove("ranking-tafeltennis-eternal");
+
             return RedirectToAction("Index");
         }
 

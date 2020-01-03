@@ -21,13 +21,13 @@ namespace Rankings.Web.Controllers
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
-        [HttpGet("/rankings")]
         [HttpGet("/rankings/{gametype}/{endDateInput}")]
         public IActionResult Index(string gameType, string endDateInput, int precision = 0)
         {
             gameType ??= "tafeltennis";
             var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
-
+            endDate = new DateTime(2020, 1, 1);
+            
             var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType, entry =>
             {
                 var model = RankingViewModelsFor(gameType, DateTime.MinValue, endDate, precision)
@@ -37,6 +37,43 @@ namespace Rankings.Web.Controllers
 
             return View(cacheEntry);
         }
+        
+        [HttpGet("/rankings/{year}")]
+        public IActionResult Ranking(int year)
+        {
+            var gameType = "tafeltennis";
+            var beginEnd = new DateTime(year, 1, 1);
+            var endDate = new DateTime(year+1, 1, 1);
+            
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + year, entry =>
+            {
+                var model = RankingViewModelsFor(gameType, beginEnd, endDate, 0)
+                    .ToList();
+                return model;
+            });
+
+            return View("Index", cacheEntry);
+        }
+
+        [HttpGet("/rankings")]
+        [HttpGet("/rankings/eternal")]
+        public IActionResult Ranking()
+        {
+            var gameType = "tafeltennis";
+            var beginEnd = DateTime.MinValue; 
+            var endDate = DateTime.MaxValue; 
+            
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-eternal", entry =>
+            {
+                var model = RankingViewModelsFor(gameType, beginEnd, endDate, 0)
+                    .ToList();
+                return model;
+            });
+
+            return View("Index", cacheEntry);
+        }
+
+
 
         [HttpGet("/rankings/month/{gametype}/{year}/{month}")]
         public IActionResult Month(string gameType, int year, int month)
@@ -63,12 +100,12 @@ namespace Rankings.Web.Controllers
         private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
         {
             // Determine list of players with elo score
-            var eloScores = _statisticsService.TheNewRanking(gameType, startDate, endDate);
+            var eloScores = _statisticsService.Ranking(gameType, startDate, endDate);
 
             // Fill view model with elo score
             var ranking = 1;
             var list = eloScores
-                .Where((pair, i) => pair.Value.NumberOfGames >= 7)
+                .Where((pair, i) => pair.Value.NumberOfGames >= 0)
                 // TODO use id (guid) in stead of email address
                 .Select(pair => new RankingViewModel
                 {
@@ -82,13 +119,13 @@ namespace Rankings.Web.Controllers
 
             foreach (var rankingViewModel in list)
             {
-                rankingViewModel.History = _statisticsService.History(rankingViewModel.EmailAddress).ToList();
-                rankingViewModel.WinPercentage = (100* _statisticsService.WinPercentage(rankingViewModel.EmailAddress)).Round().ToString(CultureInfo.CurrentCulture);
-                rankingViewModel.SetWinPercentage = (100* _statisticsService.SetWinPercentage(rankingViewModel.EmailAddress)).Round().ToString(CultureInfo.CurrentCulture);
-                rankingViewModel.RecordWinningStreak = _statisticsService.RecordWinningStreak(rankingViewModel.EmailAddress);
-                rankingViewModel.CurrentWinningStreak = _statisticsService.CurrentWinningStreak(rankingViewModel.EmailAddress);
-                rankingViewModel.RecordEloStreak = (int) _statisticsService.RecordEloStreak(rankingViewModel.EmailAddress).Round();
-                rankingViewModel.CurrentEloStreak = (int) _statisticsService.CurrentEloStreak(rankingViewModel.EmailAddress).Round();
+                rankingViewModel.History = _statisticsService.History(rankingViewModel.EmailAddress, startDate, endDate).ToList();
+                rankingViewModel.WinPercentage = (100* _statisticsService.WinPercentage(rankingViewModel.EmailAddress, startDate, endDate)).Round().ToString(CultureInfo.CurrentCulture);
+                rankingViewModel.SetWinPercentage = (100* _statisticsService.SetWinPercentage(rankingViewModel.EmailAddress, startDate, endDate)).Round().ToString(CultureInfo.CurrentCulture);
+                rankingViewModel.RecordWinningStreak = _statisticsService.RecordWinningStreak(rankingViewModel.EmailAddress, startDate, endDate);
+                rankingViewModel.CurrentWinningStreak = _statisticsService.CurrentWinningStreak(rankingViewModel.EmailAddress, startDate, endDate);
+                rankingViewModel.RecordEloStreak = (int) _statisticsService.RecordEloStreak(rankingViewModel.EmailAddress, startDate, endDate).Round();
+                rankingViewModel.CurrentEloStreak = (int) _statisticsService.CurrentEloStreak(rankingViewModel.EmailAddress, startDate, endDate).Round();
             }
 
             return list;

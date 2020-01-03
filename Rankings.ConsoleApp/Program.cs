@@ -37,7 +37,7 @@ namespace Rankings.ConsoleApp
                 var statsService = CreateStatisticsService();
 
                 // show current ranking
-                var ranking = statsService.TheNewRanking(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
+                var ranking = statsService.Ranking(GameTypes.Tafeltennis, DateTime.MinValue, DateTime.MaxValue);
                 foreach (var item in ranking)
                     Console.WriteLine(
                         $"{item.Value.Ranking,2}. {item.Key.DisplayName,-20} {item.Value.NumberOfGames,3} {item.Value.EloScore.Round(),4}");
@@ -130,7 +130,7 @@ namespace Rankings.ConsoleApp
                 Console.ReadLine();
             }
 
-            private static NewStatisticsService CreateStatisticsService()
+            private static StatisticsService CreateStatisticsService()
             {
                 Log.Logger = new LoggerConfiguration()
                     .Enrich.FromLogContext()
@@ -147,8 +147,8 @@ namespace Rankings.ConsoleApp
 
                 var eloConfiguration = new EloConfiguration(50, 400, true, 1200, 7);
 
-                return new NewStatisticsService(rankingService, eloConfiguration,
-                    provider.GetService<ILogger<NewStatisticsService>>(),
+                return new StatisticsService(rankingService, eloConfiguration,
+                    provider.GetService<ILogger<StatisticsService>>(),
                     new EloCalculator(eloConfiguration, provider.GetService<ILogger<EloCalculator>>()));
             }
 
