@@ -245,6 +245,31 @@ namespace Rankings.Core.Services.ToBeObsolete
             throw new NotImplementedException();
         }
 
+        public decimal WinPercentage(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public decimal SetWinPercentage(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int RecordWinningStreak(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CurrentWinningStreak(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public decimal RecordEloStreak(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
         public Dictionary<Profile, decimal> EloStats(string gameType, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();

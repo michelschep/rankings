@@ -76,30 +76,11 @@ namespace Rankings.Web.Controllers
             foreach (var rankingViewModel in list)
             {
                 rankingViewModel.History = _statisticsService.History(rankingViewModel.EmailAddress).ToList();
-            }
-
-            try
-            {
-                var oldRankingViewModel = ObsoleteRankingViewModels(gameType, startDate, endDate, 7).ToList();
-                foreach (var rankingViewModel in list)
-                {
-                    var oldLine = oldRankingViewModel.Single(model => model.NamePlayer == rankingViewModel.NamePlayer);
-
-//                    rankingViewModel.History = new List<char>();
-                    rankingViewModel.SetWinPercentage = oldLine.SetWinPercentage;
-                    rankingViewModel.WinPercentage = oldLine.WinPercentage;
-                    rankingViewModel.TimeNumberOne = oldLine.TimeNumberOne;
-                }
-            }
-            catch
-            {
-                foreach (var rankingViewModel in list)
-                {
-//                    rankingViewModel.History = new List<char>();
-                    rankingViewModel.SetWinPercentage = "?";
-                    rankingViewModel.WinPercentage = "?";
-                    rankingViewModel.TimeNumberOne = "?";
-                }
+                rankingViewModel.WinPercentage = (100* _statisticsService.WinPercentage(rankingViewModel.EmailAddress)).Round().ToString(CultureInfo.CurrentCulture);
+                rankingViewModel.SetWinPercentage = (100* _statisticsService.SetWinPercentage(rankingViewModel.EmailAddress)).Round().ToString(CultureInfo.CurrentCulture);
+                rankingViewModel.RecordWinningStreak = _statisticsService.RecordWinningStreak(rankingViewModel.EmailAddress);
+                rankingViewModel.CurrentWinningStreak = _statisticsService.CurrentWinningStreak(rankingViewModel.EmailAddress);
+                rankingViewModel.RecordEloStreak = (int) _statisticsService.RecordEloStreak(rankingViewModel.EmailAddress).Round();
             }
 
             return list;
