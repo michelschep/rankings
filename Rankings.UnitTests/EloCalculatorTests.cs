@@ -30,7 +30,7 @@ namespace Rankings.UnitTests
             var diff = score1 > score2 ? elo1 - elo2 : elo2 - elo1;
             var config = new EloConfiguration(50, 400, true, 1200, 0);
 
-            var actualMultiplier = new EloCalculator(config, new Mock<ILogger<EloCalculator>>().Object).MarginOfVictoryMultiplier(score1, score2, diff);
+            var actualMultiplier = new EloCalculatorVersion2019().MarginOfVictoryMultiplier(score1, score2, diff);
 
             actualMultiplier.Should().BeApproximately(expectedMultiplier, 0.001m);
         }
@@ -55,9 +55,9 @@ namespace Rankings.UnitTests
         [InlineData(1300, 1200, 3, 2, 11.932)]
         public void CalculateDeltaPlayerTests(decimal eloPlayerOne, decimal eloPlayerTwo, int scorePlayerOne, int scorePlayerTwo, decimal expectedDelta)
         {
-            var logger = new Mock<ILogger<EloCalculator>>().Object;
+            var logger = new Mock<ILogger<EloCalculatorVersion2019>>().Object;
             var config = new EloConfiguration(50, 400, true, 1200);
-            var actualDelta = new EloCalculator(config, logger).CalculateDeltaPlayer(eloPlayerOne, eloPlayerTwo, scorePlayerOne, scorePlayerTwo);
+            var actualDelta = new EloCalculatorVersion2019().CalculateDeltaPlayer(eloPlayerOne, eloPlayerTwo, scorePlayerOne, scorePlayerTwo);
 
             actualDelta.Should().BeApproximately(expectedDelta, 0.001m);
         }

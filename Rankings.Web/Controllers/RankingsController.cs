@@ -38,14 +38,17 @@ namespace Rankings.Web.Controllers
             return View(cacheEntry);
         }
         
-        [HttpGet("/rankings/{year}")]
-        public IActionResult Ranking(int year)
+        [HttpGet("/rankings/{id}")]
+        public IActionResult YearRanking(int id)
         {
             var gameType = "tafeltennis";
-            var beginEnd = new DateTime(year, 1, 1);
-            var endDate = new DateTime(year+1, 1, 1);
+            if (id != 2019)
+                id = 2019;
+
+            var beginEnd = new DateTime(id, 1, 1);
+            var endDate = new DateTime(id+1, 1, 1);
             
-            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + year, entry =>
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + id, entry =>
             {
                 var model = RankingViewModelsFor(gameType, beginEnd, endDate, 0)
                     .ToList();
@@ -55,9 +58,8 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        [HttpGet("/rankings")]
         [HttpGet("/rankings/eternal")]
-        public IActionResult Ranking()
+        public IActionResult EternalRanking()
         {
             var gameType = "tafeltennis";
             var beginEnd = DateTime.MinValue; 
@@ -104,8 +106,9 @@ namespace Rankings.Web.Controllers
 
             // Fill view model with elo score
             var ranking = 1;
+            int minimalNumberOfGames = startDate.Year <= 2019 ? 7 : 0 ;
             var list = eloScores
-                .Where((pair, i) => pair.Value.NumberOfGames >= 0)
+                .Where((pair, i) => pair.Value.NumberOfGames >= minimalNumberOfGames)
                 // TODO use id (guid) in stead of email address
                 .Select(pair => new RankingViewModel
                 {

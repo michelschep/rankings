@@ -7,7 +7,6 @@ namespace Rankings.Core.Interfaces
 {
     public interface IStatisticsService
     {
-        decimal CalculateDeltaFirstPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2);
         IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate);
         IEnumerable<char> History(string emailAddress, DateTime startDate, DateTime endDate);
         decimal WinPercentage(string emailAddress, DateTime startDate, DateTime endDate);

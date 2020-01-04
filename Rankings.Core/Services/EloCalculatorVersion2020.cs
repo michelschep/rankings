@@ -1,39 +1,49 @@
 using System;
-using Microsoft.Extensions.Logging;
 
 namespace Rankings.Core.Services
 {
-    public class EloCalculator
+    public class EloCalculatorVersion2020 : IEloCalculator
     {
-        private readonly EloConfiguration _eloConfiguration;
-        private readonly ILogger<EloCalculator> _logger;
-
-        public EloCalculator(EloConfiguration eloConfiguration, ILogger<EloCalculator> logger)
-        {
-            _eloConfiguration = eloConfiguration;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
         {
-            _logger.LogDebug($"CalculateDeltaPlayer n={_eloConfiguration.N}, k={_eloConfiguration.Kfactor} margin={_eloConfiguration.WithMarginOfVictory}");
-
             var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
             decimal actualResult = ActualResult(gameScore1, gameScore2);
+
+            var kfactor = ResolveKFactorFor(ratingPlayer1, gameScore1, gameScore2);
+            var outcome1 = (actualResult - expectedOutcome1);
 
             var winnerEloDiff = gameScore1 > gameScore2
                 ? ratingPlayer1 - ratingPlayer2
                 : ratingPlayer2 - ratingPlayer1;
 
-            var marginOfVictoryMultiplier = _eloConfiguration.WithMarginOfVictory ? MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff) : 1;
+            var delta = kfactor * outcome1;// * MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff);
 
-            var outcome1 = (actualResult - expectedOutcome1);
+            return delta;
+        }
 
-            // TODO next version elo. Less influence margin of victory. And a smaller k factor (25?)
-            //var player1Delta = _k * outcome1 * (decimal)Math.Sqrt(Math.Sqrt((double)marginOfVictoryMultiplier));
-            var player1Delta = _eloConfiguration.Kfactor * outcome1 * marginOfVictoryMultiplier;
+        private decimal ResolveKFactorFor(decimal rating, int gameScore1, int gameScore2)
+        {
+            var maxKfactor = ResolveMaxKFactor(gameScore1, gameScore2);
+            
+            if (rating > 1600)
+                return (0.5m * maxKfactor).Round();
 
-            return player1Delta;
+            if (rating > 1400)
+                return (0.75m * maxKfactor).Round();
+
+            return maxKfactor;
+        }
+
+        private int ResolveMaxKFactor(int gameScore1, int gameScore2)
+        {
+            var maxGameScore = Math.Max(gameScore1, gameScore2);
+            if (maxGameScore >= 3)
+                return 50;
+
+            if (maxGameScore == 2)
+                return 25;
+
+            return 10;
         }
 
         private decimal ActualResult(int gameScore1, int gameScore2)
@@ -49,7 +59,7 @@ namespace Rankings.Core.Services
             if (gameScore1 == gameScore2)
                 return 1;
 
-            return (decimal)Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) *
+            return (decimal)Math.Log(Math.Sqrt(Math.Abs(gameScore1 - gameScore2) + 1)) *
                    (2.2m / (winnerEloDiff * 0.001m + 2.2m));
         }
 
@@ -60,7 +70,7 @@ namespace Rankings.Core.Services
 
         private decimal ExpectationForWinningOneSet(decimal ratingPlayer1, decimal ratingPlayer2)
         {
-            decimal exponent = (ratingPlayer2 - ratingPlayer1) / _eloConfiguration.N;
+            decimal exponent = (ratingPlayer2 - ratingPlayer1) / 400;
             decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
 
             return expected;

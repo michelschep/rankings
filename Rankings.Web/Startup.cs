@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
-using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.SqLite;
 using Serilog;
@@ -69,7 +68,7 @@ namespace Rankings.Web
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();
-            services.AddSingleton<EloCalculator, EloCalculator>();
+            services.AddSingleton<IEloCalculator, EloCalculatorVersion2019>();
             services.AddSingleton<IStatisticsService, StatisticsService>();
             services.Configure<RepositoryConfiguration>(Configuration.GetSection("Repository"));
 
