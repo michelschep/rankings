@@ -14,8 +14,7 @@ namespace Rankings.Core.Services
         private readonly EloConfiguration _eloConfiguration;
         private readonly ILogger<IStatisticsService> _logger;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration,
-            ILogger<IStatisticsService> logger, IEloCalculator eloCalculator)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration;
@@ -232,14 +231,29 @@ namespace Rankings.Core.Services
                 if (ranking.Any())
                 {
                     var diff = eloGame.Game.RegistrationDate - lastGameRegistrationDate;
-                    var profile = ranking.First().Key;
-                    if (profile == lastNumberOne)
-                        eloStatsPlayers[profile].TimeNumberOne += diff;
-                    lastNumberOne = profile;
+                    var currentNumberOne = ranking.First().Key;
+
+                    if (lastNumberOne != null) {
+                        eloStatsPlayers[lastNumberOne].TimeNumberOne += diff;
+//                        _logger.LogInformation($"{lastNumberOne.EmailAddress} {eloStatsPlayers[lastNumberOne].TimeNumberOne}");
+                    }
+
+                   // if (lastNumberOne != currentNumberOne)
+                   // {
+                   //     _logger.LogInformation( $" New nr1: {currentNumberOne.EmailAddress} {eloGame.Game.RegistrationDate} ==> {eloStatsPlayers[currentNumberOne].TimeNumberOne}");
+                   //     if (lastNumberOne != null)
+                   //      _logger.LogInformation( $" Old nr1: {lastNumberOne.EmailAddress} ==> {eloStatsPlayers[lastNumberOne].TimeNumberOne}");
+                   // }
+
+                    lastNumberOne = currentNumberOne;
                 }
 
                 lastGameRegistrationDate = eloGame.Game.RegistrationDate;
             }
+
+            var lastDate = DateTime.Now < endDate ? DateTime.Now : endDate;
+            var diff2 = eloGames.Last().Game.RegistrationDate - lastGameRegistrationDate;
+            eloStatsPlayers[lastNumberOne].TimeNumberOne += diff2;
 
             return eloStatsPlayers;
         }
@@ -256,7 +270,7 @@ namespace Rankings.Core.Services
 
             var calculator2019 = new EloCalculatorVersion2019();
             var calculator2020 = new EloCalculatorVersion2020();
-            IEloCalculator eloCalculator = calculator2020;
+            IEloCalculator eloCalculator = calculator2019;
 
             // Now calculate current elo score based on all games played
             _logger.LogInformation("********* List all games");

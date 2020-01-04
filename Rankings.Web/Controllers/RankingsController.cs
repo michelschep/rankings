@@ -116,7 +116,7 @@ namespace Rankings.Web.Controllers
                     NamePlayer = pair.Key.DisplayName, 
                     Points = pair.Value.EloScore.Round(precision), 
                     Ranking = ranking++,
-                    TimeNumberOne = pair.Value.TimeNumberOne.ToString(@"%d")
+                    TimeNumberOne = pair.Value.TimeNumberOne > new TimeSpan(0) ? pair.Value.TimeNumberOne.ToString(@"d\.hh\:mm") : ""
                 })
                 .ToList();
 

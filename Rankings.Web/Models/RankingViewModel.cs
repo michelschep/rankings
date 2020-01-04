@@ -44,7 +44,7 @@ namespace Rankings.Web.Models
         public int SkalpStreak { get; set; }
         public int Goat { get; set; }
 
-        [Display(Name = "Days #1")]
+        [Display(Name = "Time #1")]
         public string TimeNumberOne { get; set; }
 
         public string EmailAddress { get; set; }
