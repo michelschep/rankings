@@ -13,24 +13,23 @@ namespace Rankings.Core.Services
         private readonly IGamesService _gamesService;
         private readonly EloConfiguration _eloConfiguration;
         private readonly ILogger<IStatisticsService> _logger;
+        private readonly IEloCalculatorFactory _eloCalculatorFactory;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, IEloCalculatorFactory eloCalculatorFactory)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
-            _eloConfiguration = eloConfiguration;
+            _eloConfiguration = eloConfiguration ?? throw new ArgumentNullException(nameof(eloConfiguration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _eloCalculatorFactory = eloCalculatorFactory ?? throw new ArgumentNullException(nameof(eloCalculatorFactory));
         }
 
         public IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
-            var orderedRanking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
-
-            return orderedRanking;
+            return CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
         }
 
-        private Dictionary<Profile, EloStatsPlayer> CalculateRanking(
-            Dictionary<Profile, EloStatsPlayer> eloStatsPlayers, int numberOfGames)
+        private Dictionary<Profile, EloStatsPlayer> CalculateRanking( Dictionary<Profile, EloStatsPlayer> eloStatsPlayers, int numberOfGames)
         {
             var rankedPlayers = eloStatsPlayers
                 .Where(pair => pair.Value.NumberOfGames >= numberOfGames)
@@ -115,6 +114,16 @@ namespace Rankings.Core.Services
             return series.Select(games => games.Count()).Max();
         }
 
+
+       // public List<IEnumerable<StatGame>> WinningStreaks(string emailAddress, DateTime startDate, DateTime endDate)
+       // {
+       //     var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
+
+       //     var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
+
+       //     return series.Select(games => games.Select(game => game.));
+       // }
+
         public int CurrentWinningStreak(string emailAddress, DateTime startDate, DateTime endDate)
         {
             var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
@@ -196,8 +205,7 @@ namespace Rankings.Core.Services
             throw new NotImplementedException();
         }
 
-        private Dictionary<Profile, EloStatsPlayer> EloStatsPlayers(string gameType, DateTime startDate,
-            DateTime endDate)
+        private Dictionary<Profile, EloStatsPlayer> EloStatsPlayers(string gameType, DateTime startDate, DateTime endDate)
         {
             var eloGames = EloGames(gameType, startDate, endDate).ToList();
             var allPlayers = _gamesService.List(new AllProfiles()).ToList();
@@ -235,7 +243,6 @@ namespace Rankings.Core.Services
 
                     if (lastNumberOne != null) {
                         eloStatsPlayers[lastNumberOne].TimeNumberOne += diff;
-//                        _logger.LogInformation($"{lastNumberOne.EmailAddress} {eloStatsPlayers[lastNumberOne].TimeNumberOne}");
                     }
 
                    // if (lastNumberOne != currentNumberOne)
@@ -252,7 +259,7 @@ namespace Rankings.Core.Services
             }
 
             var lastDate = DateTime.Now < endDate ? DateTime.Now : endDate;
-            var diff2 = eloGames.Last().Game.RegistrationDate - lastGameRegistrationDate;
+            var diff2 = lastDate - lastGameRegistrationDate;
             eloStatsPlayers[lastNumberOne].TimeNumberOne += diff2;
 
             return eloStatsPlayers;
@@ -268,16 +275,12 @@ namespace Rankings.Core.Services
                 .ToDictionary(player => player,
                     player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0});
 
-            var calculator2019 = new EloCalculatorVersion2019();
-            var calculator2020 = new EloCalculatorVersion2020();
-            IEloCalculator eloCalculator = calculator2019;
-
             // Now calculate current elo score based on all games played
             _logger.LogInformation("********* List all games");
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                //eloCalculator = game.RegistrationDate.Year == 2019 ? (IEloCalculator) calculator2019 : calculator2020;
+                var eloCalculator = _eloCalculatorFactory.Create(game.RegistrationDate.Year);
 
                 // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
                 // It should not be possible to enter these games.

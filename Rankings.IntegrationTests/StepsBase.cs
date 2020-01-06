@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
-using Rankings.Core.Services.ToBeObsolete;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Rankings.Web.Controllers;
@@ -67,12 +66,25 @@ namespace Rankings.IntegrationTests
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration)
         {
-            var logger1 = _factory.CreateLogger<IStatisticsService>();
-            var logger2 = _factory.CreateLogger<EloCalculatorVersion2019>();
-            var eloCalculator = new EloCalculatorVersion2019();
-            IStatisticsService rankingService = new StatisticsService(_gamesService, eloConfiguration, logger1);
+            IEloCalculatorFactory eloCalculatorFactory = new AdHocEloCalculatorFactory(() => new EloCalculatorVersion2019());
+            var rankingService = new StatisticsService(_gamesService, eloConfiguration, _factory.CreateLogger<IStatisticsService>(), eloCalculatorFactory);
 
             return new RankingsController(rankingService, _memoryCache);
+        }
+    }
+
+    public class AdHocEloCalculatorFactory : IEloCalculatorFactory
+    {
+        private readonly Func<IEloCalculator> _create;
+
+        public AdHocEloCalculatorFactory(Func<IEloCalculator> create)
+        {
+            _create = create;
+        }
+
+        public IEloCalculator Create(int year)
+        {
+            return _create();
         }
     }
 }

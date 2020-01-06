@@ -10,6 +10,7 @@ Background:
 	And the current user is Amy with role Admin
 	And elo system with k-factor 5 and n is 50 and initial elo is 100
 	And margin of victory is not active
+	And only in ranking with a minimum of 1 games
 
 Scenario: At the start of the ranking
 	Given no games played

@@ -21,32 +21,12 @@ namespace Rankings.Web.Controllers
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
-        [HttpGet("/rankings/{gametype}/{endDateInput}")]
-        public IActionResult Index(string gameType, string endDateInput, int precision = 0)
-        {
-            gameType ??= "tafeltennis";
-            var endDate = endDateInput == null ? DateTime.MaxValue : DateTime.Parse(endDateInput);
-            endDate = new DateTime(2020, 1, 1);
-            
-            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType, entry =>
-            {
-                var model = RankingViewModelsFor(gameType, DateTime.MinValue, endDate, precision)
-                    .ToList();
-                return model;
-            });
-
-            return View(cacheEntry);
-        }
-        
         [HttpGet("/rankings/{id}")]
         public IActionResult YearRanking(int id)
         {
             var gameType = "tafeltennis";
-            if (id != 2019)
-                id = 2019;
-
             var beginEnd = new DateTime(id, 1, 1);
-            var endDate = new DateTime(id+1, 1, 1);
+            var endDate = new DateTime(id, 12, 31);
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + id, entry =>
             {
@@ -72,25 +52,6 @@ namespace Rankings.Web.Controllers
                 return model;
             });
 
-            return View("Index", cacheEntry);
-        }
-
-
-
-        [HttpGet("/rankings/month/{gametype}/{year}/{month}")]
-        public IActionResult Month(string gameType, int year, int month)
-        {
-            gameType ??= "tafeltennis";
-            var startDate = new DateTime(2019, 9, 1, 0, 0, 0);
-            var endDate = new DateTime(2019, 10, 1, 0, 0, 0);
-
-            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + ":" + year + ":" + month, entry =>
-            {
-                var model = RankingViewModelsFor(gameType, startDate, endDate,  2).ToList();
-                return model;
-            });
-
-            Response.Headers.Add("Refresh", "60");
             return View("Index", cacheEntry);
         }
 

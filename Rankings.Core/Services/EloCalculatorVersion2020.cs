@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using Rankings.Core.Services.ToBeObsolete;
 
 namespace Rankings.Core.Services
 {
@@ -6,32 +8,60 @@ namespace Rankings.Core.Services
     {
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
         {
-            var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
-            decimal actualResult = ActualResult(gameScore1, gameScore2);
+            var setPoints = 0m;
+            if (gameScore1 + gameScore2 > 1)
+            {
+                var total1 = 0m;
+                foreach (var x in Enumerable.Range(1, gameScore1))
+                {
+                    total1 += CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, 1, 0);
+                }
 
-            var kfactor = ResolveKFactorFor(ratingPlayer1, gameScore1, gameScore2);
-            var outcome1 = (actualResult - expectedOutcome1);
+                var total2 = 0m;
+                foreach (var x in Enumerable.Range(1, gameScore2))
+                {
+                    total2 += CalculateDeltaPlayer(ratingPlayer2, ratingPlayer1, 1, 0);
+                }
+
+                var diff = (total1 - total2);
+                setPoints = diff;// / (gameScore1 + gameScore2); // - total2 > 0 ? total1 - total2 : 0;
+            }
+
+
+            var expectedOutcome1 = GeneralEloCalculator.CalculateExpectationForBestOf(ratingPlayer1, ratingPlayer2, Math.Max(gameScore1, gameScore2));
+            var actualResult = GeneralEloCalculator.ActualResult(gameScore1, gameScore2);
 
             var winnerEloDiff = gameScore1 > gameScore2
                 ? ratingPlayer1 - ratingPlayer2
                 : ratingPlayer2 - ratingPlayer1;
 
-            var delta = kfactor * outcome1;// * MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff);
+            //var sign = Math.Sign(delta);
+            //var pi = (decimal)Math.PI/2;
+            //delta = (decimal) Math.Atan((double) delta*5)/pi * kfactor;
+            var outcome1 = (actualResult - expectedOutcome1);
+            var marginOfVictoryMultiplier = 1;// GeneralEloCalculator.MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff);
+            var resolveKFactorFor = ResolveKFactorFor(ratingPlayer1, gameScore1, gameScore2);
+            var delta = outcome1
+                        * (marginOfVictoryMultiplier)
+                        * resolveKFactorFor;
 
-            return delta;
+            return delta;//+ setPoints;
         }
 
         private decimal ResolveKFactorFor(decimal rating, int gameScore1, int gameScore2)
         {
             var maxKfactor = ResolveMaxKFactor(gameScore1, gameScore2);
-            
-            if (rating > 1600)
-                return (0.5m * maxKfactor).Round();
-
-            if (rating > 1400)
-                return (0.75m * maxKfactor).Round();
-
             return maxKfactor;
+            var startElo = 1300;
+            var targetElo = 1400;
+
+            if (rating <= startElo)
+                return maxKfactor;
+
+            var factor = rating > targetElo ? maxKfactor / 2m : maxKfactor - ((rating - startElo) / (targetElo - startElo)) * (maxKfactor / 2m);
+            var result = factor;
+
+            return result;
         }
 
         private int ResolveMaxKFactor(int gameScore1, int gameScore2)
@@ -43,37 +73,7 @@ namespace Rankings.Core.Services
             if (maxGameScore == 2)
                 return 25;
 
-            return 10;
-        }
-
-        private decimal ActualResult(int gameScore1, int gameScore2)
-        {
-            if (gameScore1 == gameScore2)
-                return 0.5m;
-
-            return gameScore1 > gameScore2 ? 1 : 0;
-        }
-
-        public decimal MarginOfVictoryMultiplier(int gameScore1, int gameScore2, decimal winnerEloDiff)
-        {
-            if (gameScore1 == gameScore2)
-                return 1;
-
-            return (decimal)Math.Log(Math.Sqrt(Math.Abs(gameScore1 - gameScore2) + 1)) *
-                   (2.2m / (winnerEloDiff * 0.001m + 2.2m));
-        }
-
-        private decimal CalculateExpectation(decimal ratingPlayer1, decimal ratingPlayer2)
-        {
-            return ExpectationForWinningOneSet(ratingPlayer1, ratingPlayer2);
-        }
-
-        private decimal ExpectationForWinningOneSet(decimal ratingPlayer1, decimal ratingPlayer2)
-        {
-            decimal exponent = (ratingPlayer2 - ratingPlayer1) / 400;
-            decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
-
-            return expected;
+            return 5;
         }
     }
 }

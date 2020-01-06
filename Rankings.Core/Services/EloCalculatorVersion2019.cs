@@ -2,6 +2,22 @@ using System;
 
 namespace Rankings.Core.Services
 {
+    public interface IEloCalculatorFactory
+    {
+        IEloCalculator Create(int year);
+    }
+
+    public class EloCalculatorFactory : IEloCalculatorFactory
+    {
+        public IEloCalculator Create(int year)
+        {
+            if (year == 2020)
+                return new EloCalculatorVersion2020();
+
+            return new EloCalculatorVersion2019();
+        }
+    }
+
     public class EloCalculatorVersion2019 : IEloCalculator
     {
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)

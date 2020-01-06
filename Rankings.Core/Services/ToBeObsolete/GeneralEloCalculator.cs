@@ -2,7 +2,7 @@ using System;
 
 namespace Rankings.Core.Services.ToBeObsolete
 {
-    public static class NewEloCalculator
+    public static class GeneralEloCalculator
     {
         public static decimal ExpectationOneSet(decimal oldRatingPlayer1, decimal oldRatingPlayer2)
         {
@@ -12,6 +12,24 @@ namespace Rankings.Core.Services.ToBeObsolete
             decimal expected = (decimal) (1 / (1 + Math.Pow(10, (double) exponent)));
 
             return expected;
+        }
+
+        public static decimal MarginOfVictoryMultiplier(int gameScore1, int gameScore2, decimal winnerEloDiff)
+        {
+            if (gameScore1 == gameScore2)
+                return 1;
+
+            return 1;
+            return (decimal) Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) * (2.2m / (winnerEloDiff * 0.001m + 2.2m));
+            //return (decimal)Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) * (2.2m / (winnerEloDiff * 0.001m + 2.2m));
+        }
+
+        public static decimal ActualResult(int gameScore1, int gameScore2)
+        {
+            if (gameScore1 == gameScore2)
+                return 0.5m;
+
+            return gameScore1 > gameScore2 ? 1 : 0;
         }
 
         public static decimal CalculateExpectationForBestOf(decimal oldRatingPlayer1, decimal oldRatingPlayer2, int numberOfGames)
@@ -26,7 +44,7 @@ namespace Rankings.Core.Services.ToBeObsolete
                     break;
                 var factor = scorePlayer1 == scoreOtherPlayer ? 0.5m : 1;
 
-                total += factor * ChanceOfHavingThisResultAllSetsPlayed(scorePlayer1, scoreOtherPlayer, expectationOneSet);
+                total += factor * ChanceOfHavingThisResultInBestOf(scorePlayer1, scoreOtherPlayer, expectationOneSet);
             }
 
             return total;
