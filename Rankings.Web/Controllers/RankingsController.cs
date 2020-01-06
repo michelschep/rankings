@@ -25,10 +25,7 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings/{id}")]
         public IActionResult YearRanking(int id)
         {
-             
-            var isAdmin = User.Claims.Any(claim => claim.Type == ClaimTypes.Role && claim.Value == Roles.Admin);
-
-            if (!isAdmin)
+            if (!IsAdmin())
                 id = 2019;
 
             var gameType = "tafeltennis";
@@ -43,6 +40,11 @@ namespace Rankings.Web.Controllers
             });
 
             return View("Index", cacheEntry);
+        }
+
+        private bool IsAdmin()
+        {
+            return User.Claims.Any(claim => claim.Type == ClaimTypes.Role && claim.Value == Roles.Admin);
         }
 
         [HttpGet("/rankings/eternal")]
@@ -74,7 +76,7 @@ namespace Rankings.Web.Controllers
 
             // Fill view model with elo score
             var ranking = 1;
-            int minimalNumberOfGames = startDate.Year <= 2019 ? 7 : 0 ;
+            int minimalNumberOfGames = startDate.Year <= 2019 ? 7 : (IsAdmin()?0:7) ;
             var list = eloScores
                 .Where((pair, i) => pair.Value.NumberOfGames >= minimalNumberOfGames)
                 // TODO use id (guid) in stead of email address

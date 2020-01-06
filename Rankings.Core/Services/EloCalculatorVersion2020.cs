@@ -11,49 +11,29 @@ namespace Rankings.Core.Services
             var setPoints = 0m;
             if (gameScore1 + gameScore2 > 1)
             {
-                var total1 = 0m;
-                foreach (var x in Enumerable.Range(1, gameScore1))
-                {
-                    total1 += CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, 1, 0);
-                }
+                var total1 = gameScore1 * CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, 1, 0);
+                var total2 = gameScore2 * CalculateDeltaPlayer(ratingPlayer2, ratingPlayer1, 1, 0);
 
-                var total2 = 0m;
-                foreach (var x in Enumerable.Range(1, gameScore2))
-                {
-                    total2 += CalculateDeltaPlayer(ratingPlayer2, ratingPlayer1, 1, 0);
-                }
-
-                var diff = (total1 - total2);
-                setPoints = total1;//total1 - total2 > 0 ? total1 - total2 : 0;
+                var diff = (total1 - total2) > 0 ? total1 - total2 : 0;
+                setPoints = total1 + diff; //total1 - total2 > 0 ? total1 - total2 : 0;
             }
 
 
             var expectedOutcome1 = GeneralEloCalculator.CalculateExpectationForBestOf(ratingPlayer1, ratingPlayer2, Math.Max(gameScore1, gameScore2));
             var actualResult = GeneralEloCalculator.ActualResult(gameScore1, gameScore2);
 
-            var winnerEloDiff = gameScore1 > gameScore2
-                ? ratingPlayer1 - ratingPlayer2
-                : ratingPlayer2 - ratingPlayer1;
-
-            //var sign = Math.Sign(delta);
-            //var pi = (decimal)Math.PI/2;
-            //delta = (decimal) Math.Atan((double) delta*5)/pi * kfactor;
             var outcome1 = (actualResult - expectedOutcome1);
-            var marginOfVictoryMultiplier = 1;// GeneralEloCalculator.MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff);
             var resolveKFactorFor = ResolveKFactorFor(ratingPlayer1, gameScore1, gameScore2);
-            var delta = outcome1
-                        * (marginOfVictoryMultiplier)
-                        * resolveKFactorFor;
 
-            return delta + setPoints;
+            return outcome1 * resolveKFactorFor + setPoints / 2;
         }
 
         private decimal ResolveKFactorFor(decimal rating, int gameScore1, int gameScore2)
         {
             var maxKfactor = ResolveMaxKFactor(gameScore1, gameScore2);
-            return maxKfactor;
+
             var startElo = 1300;
-            var targetElo = 1400;
+            var targetElo = 1500;
 
             if (rating <= startElo)
                 return maxKfactor;
