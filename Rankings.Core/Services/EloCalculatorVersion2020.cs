@@ -24,7 +24,7 @@ namespace Rankings.Core.Services
                 }
 
                 var diff = (total1 - total2);
-                setPoints = diff;// / (gameScore1 + gameScore2); // - total2 > 0 ? total1 - total2 : 0;
+                setPoints = total1;//total1 - total2 > 0 ? total1 - total2 : 0;
             }
 
 
@@ -45,7 +45,7 @@ namespace Rankings.Core.Services
                         * (marginOfVictoryMultiplier)
                         * resolveKFactorFor;
 
-            return delta;//+ setPoints;
+            return delta + setPoints;
         }
 
         private decimal ResolveKFactorFor(decimal rating, int gameScore1, int gameScore2)

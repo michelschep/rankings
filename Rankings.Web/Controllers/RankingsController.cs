@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Interfaces;
@@ -24,6 +25,12 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings/{id}")]
         public IActionResult YearRanking(int id)
         {
+             
+            var isAdmin = User.Claims.Any(claim => claim.Type == ClaimTypes.Role && claim.Value == Roles.Admin);
+
+            if (!isAdmin)
+                id = 2019;
+
             var gameType = "tafeltennis";
             var beginEnd = new DateTime(id, 1, 1);
             var endDate = new DateTime(id, 12, 31);
