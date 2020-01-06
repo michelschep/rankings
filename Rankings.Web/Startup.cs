@@ -115,6 +115,7 @@ namespace Rankings.Web
             }
 
             app.UseAuthorization();
+            app.UseMiddleware(typeof(AuditAuthenticationMiddleware));
 
             app.UseEndpoints(endpoints =>
             {

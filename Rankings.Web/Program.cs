@@ -15,6 +15,7 @@ namespace Rankings.Web
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
+                .WriteTo.Seq("http://localhost:5341")
                 .WriteTo.File(@".\ranKINGS.json", shared: true)
                 .CreateLogger();
 
