@@ -26,7 +26,7 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings")]
         public IActionResult Index()
         {
-            return View(new WhatIfModel());
+            return View(new MainStats());
         }
 
         [HttpGet("/home/matrix")]
