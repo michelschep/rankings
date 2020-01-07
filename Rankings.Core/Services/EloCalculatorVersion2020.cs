@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Rankings.Core.Services.ToBeObsolete;
 
 namespace Rankings.Core.Services
@@ -12,12 +11,14 @@ namespace Rankings.Core.Services
             if (gameScore1 + gameScore2 > 1)
             {
                 var total1 = gameScore1 * CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, 1, 0);
-                var total2 = gameScore2 * CalculateDeltaPlayer(ratingPlayer2, ratingPlayer1, 1, 0);
+                var total2 = gameScore2 * CalculateDeltaPlayer(ratingPlayer1, ratingPlayer2, 0, 1);
 
-                var diff = (total1 - total2) > 0 ? total1 - total2 : 0;
-                setPoints = total1 + diff; //total1 - total2 > 0 ? total1 - total2 : 0;
+                var winnerEloDiff = gameScore1 > gameScore2
+                ? ratingPlayer1 - ratingPlayer2
+                : ratingPlayer2 - ratingPlayer1;
+
+                setPoints = (total1+total2) * GeneralEloCalculator.MarginOfVictoryMultiplier(gameScore1, gameScore2, winnerEloDiff); 
             }
-
 
             var expectedOutcome1 = GeneralEloCalculator.CalculateExpectationForBestOf(ratingPlayer1, ratingPlayer2, Math.Max(gameScore1, gameScore2));
             var actualResult = GeneralEloCalculator.ActualResult(gameScore1, gameScore2);
@@ -25,7 +26,7 @@ namespace Rankings.Core.Services
             var outcome1 = (actualResult - expectedOutcome1);
             var resolveKFactorFor = ResolveKFactorFor(ratingPlayer1, gameScore1, gameScore2);
 
-            return outcome1 * resolveKFactorFor + setPoints / 2;
+            return ((75 * outcome1 * resolveKFactorFor) + (25 * setPoints))/100;
         }
 
         private decimal ResolveKFactorFor(decimal rating, int gameScore1, int gameScore2)
@@ -33,7 +34,7 @@ namespace Rankings.Core.Services
             var maxKfactor = ResolveMaxKFactor(gameScore1, gameScore2);
 
             var startElo = 1300;
-            var targetElo = 1500;
+            var targetElo = 1800;
 
             if (rating <= startElo)
                 return maxKfactor;
@@ -53,7 +54,7 @@ namespace Rankings.Core.Services
             if (maxGameScore == 2)
                 return 25;
 
-            return 5;
+            return 10;
         }
     }
 }

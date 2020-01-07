@@ -4,74 +4,16 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+<div>
     <h3 class="display-4">RanKINGS</h3>
     <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Create">Register your games!</a>
-
-    <h3 class="display-4">What's new?</h3>
-    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Matrix">Matrix with elo points you can gain</a>
-    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index" asp-route-gameType="quarto">Results Quarto</a>
-    <a class="nav-link" asp-area="" asp-controller="Rankings" asp-action="Index" asp-route-gameType="quarto">Ranking Quarto</a>
-    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index" asp-route-gameType="armpjedrukken">Results Armpje Drukken</a>
-    <a class="nav-link" asp-area="" asp-controller="Rankings" asp-action="Index" asp-route-gameType="armpjedrukken">Ranking Armpje Drukken</a>
-    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index" asp-route-gameType="tafelvoetbal">Results Tafelvoetbal</a>
-    <a class="nav-link" asp-area="" asp-controller="Rankings" asp-action="Index" asp-route-gameType="tafelvoetbal">Ranking Tafelvoetbal</a>
+    @* <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Matrix">Matrix with elo points you can gain</a> *@
+    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index" asp-route-gameType="tafeltennis">Results Tafeltennis</a>
+    <a class="nav-link" asp-area="" asp-controller="Ranking" asp-action="YearRanking" asp-route-gameType="tafeltennis">Ranking Tafeltennis 2019</a>
+    <br/>
+    <h2>Coming soon</h2>
+    <ul>
+        <li>The 2020 Tafeltennis Ranking</li>
+        <li>The Eternal Tafeltennis Ranking</li>
+    </ul>
 </div>
-
-@* <div class="row"> *@
-@*     <div class="col-md-4"> *@
-@*         <form asp-action="WhatIf"> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="RatingPlayer1" class="control-label"></label> *@
-@*                 <input readonly="" asp-for="RatingPlayer1" class="form-control" /> *@
-@*                 <span asp-validation-for="RatingPlayer1" class="text-danger"></span> *@
-@*             </div> *@
-@*         </form> *@
-@*     </div> *@
-@* </div> *@
-
-@* <div class="row"> *@
-@*     <div class="col-md-4"> *@
-@*         <form asp-action="WhatIf"> *@
-@*             <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="RatingPlayer1" class="control-label"></label> *@
-@*                 <input asp-for="RatingPlayer1" class="form-control" /> *@
-@*                 <span asp-validation-for="RatingPlayer1" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="RatingPlayer2" class="control-label"></label> *@
-@*                 <input asp-for="RatingPlayer2" class="form-control" /> *@
-@*                 <span asp-validation-for="RatingPlayer2" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="GameScore1" class="control-label"></label> *@
-@*                 <input asp-for="GameScore1" class="form-control" /> *@
-@*                 <span asp-validation-for="GameScore1" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="GameScore2" class="control-label"></label> *@
-@*                 <input asp-for="GameScore2" class="form-control" /> *@
-@*                 <span asp-validation-for="GameScore2" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="ExpectedToWinSet" class="control-label"></label> *@
-@*                 <input readonly="readonly" asp-for="ExpectedToWinSet" class="form-control" /> *@
-@*                 <span asp-validation-for="ExpectedToWinSet" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="ExpectedToWinGame" class="control-label"></label> *@
-@*                 <input readonly="readonly" asp-for="ExpectedToWinGame" class="form-control" /> *@
-@*                 <span asp-validation-for="ExpectedToWinGame" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="Delta" class="control-label"></label> *@
-@*                 <input readonly="readonly" asp-for="Delta" class="form-control" /> *@
-@*                 <span asp-validation-for="Delta" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <input type="submit" value="What If" class="btn btn-primary" /> *@
-@*             </div> *@
-@*         </form> *@
-@*     </div> *@
-@* </div> *@

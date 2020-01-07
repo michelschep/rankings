@@ -10,27 +10,40 @@ namespace Rankings.Web.Controllers
         public string Name { get; }
         public int Elo { get; }
         public int EloDiff { get; }
-        public int Draw { get; }
+        public decimal Draw { get; }
 
         [DisplayName("1-0")]
-        public int OneZeroWin { get; }
+        public decimal OneZeroWin { get; }
         
         [DisplayName("0-1")]
-        public int OneZeroLost { get; }
+        public decimal OneZeroLost { get; }
         
         [DisplayName("2-0")]
-        public int TwoZeroWin { get; }
+        public decimal TwoZeroWin { get; }
         
         [DisplayName("0-2")]
-        public int TwoZeroLost { get; }
+        public decimal TwoZeroLost { get; }
         
         [DisplayName("3-0")]
-        public int ThreeZeroWin { get; }
+        public decimal ThreeZeroWin { get; }
         
-        [DisplayName("0-3")]
-        public int ThreeZeroLost { get; }
+        [DisplayName("3-1")]
+        public decimal ThreeOneWin { get; set; }
 
-        public EloMatrixViewModel(string name, int elo, int eloDiff, int draw, int oneZeroWin, int oneZeroLost, int twoZeroWin, int twoZeroLost, int threeZeroWin, int threeZeroLost)
+        [DisplayName("3-2")]
+        public decimal ThreeTwoWin { get; set; }
+
+        [DisplayName("0-3")]
+        public decimal ThreeZeroLost { get; }
+
+        [DisplayName("1-3")]
+        public decimal ThreeOneLost { get; set; }
+        [DisplayName("2-3")]
+        public decimal ThreeTwoLost { get; set; }
+
+        public EloMatrixViewModel(string name, int elo, int eloDiff, decimal draw, decimal oneZeroWin, decimal oneZeroLost, decimal twoZeroWin, decimal twoZeroLost, 
+            decimal threeZeroWin, 
+            decimal threeZeroLost)
         {
             Name = name;
             Elo = elo;

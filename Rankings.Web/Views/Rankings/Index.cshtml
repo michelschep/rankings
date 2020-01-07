@@ -3,7 +3,10 @@
 <p>
     <a asp-controller="Games" asp-action="Create">Register a new game!</a>
 </p>
-<p>A player needs to play at least 7 games to see it's ranking (and other stats)</p>
+
+<h1>@ViewBag.Title</h1>
+<p>@ViewBag.Message</p>
+
 <table class="table" style="table-layout: fixed;">
     <thead>
         <tr>

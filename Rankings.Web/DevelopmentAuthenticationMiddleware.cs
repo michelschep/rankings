@@ -20,7 +20,7 @@ namespace Rankings.Web
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public async Task Invoke(HttpContext context)
         {
-            var identity = new GenericIdentity("admin@domain.nl");
+            var identity = new GenericIdentity("mschep@vitas.nl");
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, Roles.Admin),

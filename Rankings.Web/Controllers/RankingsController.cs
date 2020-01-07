@@ -28,13 +28,19 @@ namespace Rankings.Web.Controllers
             if (!IsAdmin())
                 id = 2019;
 
+            ViewBag.Title = $"The {id} Ranking";
+            ViewBag.Message = "You need at least 7 games to be in the ranking";
+
+            if (id == 2020)
+                ViewBag.Message += " (but for January everybody who played at least one game will be shown)";
+
             var gameType = "tafeltennis";
             var beginEnd = new DateTime(id, 1, 1);
             var endDate = new DateTime(id, 12, 31);
             
             var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + id, entry =>
             {
-                var model = RankingViewModelsFor(gameType, beginEnd, endDate, 0)
+                var model = RankingViewModelsFor(gameType, beginEnd, endDate)
                     .ToList();
                 return model;
             });
@@ -61,6 +67,9 @@ namespace Rankings.Web.Controllers
                 return model;
             });
 
+            this.ViewBag.Title = "The Eternal Ranking";
+            this.ViewBag.Message = "You need at least 7 games to be in the ranking";
+
             return View("Index", cacheEntry);
         }
 
@@ -76,7 +85,7 @@ namespace Rankings.Web.Controllers
 
             // Fill view model with elo score
             var ranking = 1;
-            int minimalNumberOfGames = startDate.Year <= 2019 ? 7 : (IsAdmin()?0:7) ;
+            int minimalNumberOfGames = startDate.Year <= 2019 ? 7 : 1;
             var list = eloScores
                 .Where((pair, i) => pair.Value.NumberOfGames >= minimalNumberOfGames)
                 // TODO use id (guid) in stead of email address

@@ -19,9 +19,7 @@ namespace Rankings.Core.Services.ToBeObsolete
             if (gameScore1 == gameScore2)
                 return 1;
 
-            return 1;
             return (decimal) Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) * (2.2m / (winnerEloDiff * 0.001m + 2.2m));
-            //return (decimal)Math.Log(Math.Abs(gameScore1 - gameScore2) + 1) * (2.2m / (winnerEloDiff * 0.001m + 2.2m));
         }
 
         public static decimal ActualResult(int gameScore1, int gameScore2)
