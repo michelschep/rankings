@@ -25,9 +25,6 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings/{year}")]
         public IActionResult YearRanking(int year)
         {
-            if (!IsAdmin())
-                year = 2019;
-
             ViewBag.Title = $"The {year} Ranking";
             ViewBag.Message = "You need at least 7 games to be in the ranking";
 
