@@ -62,7 +62,8 @@ namespace Rankings.Web.Controllers
             foreach (var stats in ratings.OrderByDescending(pair => pair.Value.EloScore))
             {
                 var eloDiff = (int) Math.Round(stats.Value.EloScore - thisPlayerElo, 0, MidpointRounding.AwayFromZero);
-                var draw = CalculateDeltaResult(thisPlayerElo, 1, 1, stats.Value.EloScore);
+                var oneOneDraw = CalculateDeltaResult(thisPlayerElo, 1, 1, stats.Value.EloScore);
+                var twoToDraw = CalculateDeltaResult(thisPlayerElo, 2, 2, stats.Value.EloScore);
                 var oneZeroWin = CalculateDeltaResult(thisPlayerElo, 1, 0, stats.Value.EloScore);
                 var oneZeroLost = CalculateDeltaResult(thisPlayerElo, 0, 1, stats.Value.EloScore);
 
@@ -79,7 +80,7 @@ namespace Rankings.Web.Controllers
                 var threeOneLost = CalculateDeltaResult(thisPlayerElo, 1, 3, stats.Value.EloScore);
                 var threeTwoLost = CalculateDeltaResult(thisPlayerElo, 2, 3, stats.Value.EloScore);
 
-                var line = new EloMatrixViewModel(stats.Key.DisplayName, (int) Math.Round(stats.Value.EloScore, 0, MidpointRounding.AwayFromZero), eloDiff, draw, 
+                var line = new EloMatrixViewModel(stats.Key.DisplayName, (int) Math.Round(stats.Value.EloScore, 0, MidpointRounding.AwayFromZero), eloDiff, oneOneDraw, 
                     oneZeroWin, oneZeroLost, twoZeroWin, twoZeroLost, threeZeroWin, 
                     threeZeroLost)
                 {
@@ -89,6 +90,7 @@ namespace Rankings.Web.Controllers
                     ThreeTwoLost = threeTwoLost,
                     TwoOneLost = twoOneLost,
                     TwoOneWin = twoOneWin,
+                    TwoTwoDraw = twoToDraw
                 };
                 model.Add(line);
             }

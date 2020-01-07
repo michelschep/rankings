@@ -10,7 +10,9 @@ namespace Rankings.Web.Controllers
         public string Name { get; }
         public int Elo { get; }
         public int EloDiff { get; }
-        public decimal Draw { get; }
+
+        [DisplayName("1-1")]
+        public decimal OneOneDraw { get; }
 
         [DisplayName("1-0")]
         public decimal OneZeroWin { get; }
@@ -46,14 +48,17 @@ namespace Rankings.Web.Controllers
         [DisplayName("2-1")]
         public decimal TwoOneWin { get; set; }
 
-        public EloMatrixViewModel(string name, int elo, int eloDiff, decimal draw, decimal oneZeroWin, decimal oneZeroLost, decimal twoZeroWin, decimal twoZeroLost, 
+        [DisplayName("2-2")]
+        public decimal TwoTwoDraw { get; set; }
+
+        public EloMatrixViewModel(string name, int elo, int eloDiff, decimal oneOneDraw, decimal oneZeroWin, decimal oneZeroLost, decimal twoZeroWin, decimal twoZeroLost, 
             decimal threeZeroWin, 
             decimal threeZeroLost)
         {
             Name = name;
             Elo = elo;
             EloDiff = eloDiff;
-            Draw = draw;
+            OneOneDraw = oneOneDraw;
             OneZeroWin = oneZeroWin;
             OneZeroLost = oneZeroLost;
             TwoZeroWin = twoZeroWin;

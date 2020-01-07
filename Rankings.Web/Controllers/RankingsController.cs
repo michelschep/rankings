@@ -22,23 +22,23 @@ namespace Rankings.Web.Controllers
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
-        [HttpGet("/rankings/{id}")]
-        public IActionResult YearRanking(int id)
+        [HttpGet("/rankings/{year}")]
+        public IActionResult YearRanking(int year)
         {
             if (!IsAdmin())
-                id = 2019;
+                year = 2019;
 
-            ViewBag.Title = $"The {id} Ranking";
+            ViewBag.Title = $"The {year} Ranking";
             ViewBag.Message = "You need at least 7 games to be in the ranking";
 
-            if (id == 2020)
+            if (year == 2020)
                 ViewBag.Message += " (but for January everybody who played at least one game will be shown)";
 
             var gameType = "tafeltennis";
-            var beginEnd = new DateTime(id, 1, 1);
-            var endDate = new DateTime(id, 12, 31);
+            var beginEnd = new DateTime(year, 1, 1);
+            var endDate = new DateTime(year, 12, 31);
             
-            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + id, entry =>
+            var cacheEntry = _memoryCache.GetOrCreate("ranking-" + gameType + "-" + year, entry =>
             {
                 var model = RankingViewModelsFor(gameType, beginEnd, endDate)
                     .ToList();
