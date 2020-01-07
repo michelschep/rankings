@@ -26,7 +26,7 @@ namespace Rankings.Core.Services
             var outcome1 = (actualResult - expectedOutcome1);
             var resolveKFactorFor = ResolveKFactorFor(ratingPlayer1, gameScore1, gameScore2);
 
-            return ((75 * outcome1 * resolveKFactorFor) + (25 * setPoints))/100;
+            return ((70 * outcome1 * resolveKFactorFor) + (30 * setPoints))/100;
         }
 
         private decimal ResolveKFactorFor(decimal rating, int gameScore1, int gameScore2)

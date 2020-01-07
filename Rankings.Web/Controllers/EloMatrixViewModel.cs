@@ -41,6 +41,11 @@ namespace Rankings.Web.Controllers
         [DisplayName("2-3")]
         public decimal ThreeTwoLost { get; set; }
 
+        [DisplayName("1-2")]
+        public decimal TwoOneLost { get; set; }
+        [DisplayName("2-1")]
+        public decimal TwoOneWin { get; set; }
+
         public EloMatrixViewModel(string name, int elo, int eloDiff, decimal draw, decimal oneZeroWin, decimal oneZeroLost, decimal twoZeroWin, decimal twoZeroLost, 
             decimal threeZeroWin, 
             decimal threeZeroLost)

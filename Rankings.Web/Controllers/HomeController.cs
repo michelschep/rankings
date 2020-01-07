@@ -67,7 +67,9 @@ namespace Rankings.Web.Controllers
                 var oneZeroLost = CalculateDeltaResult(thisPlayerElo, 0, 1, stats.Value.EloScore);
 
                 var twoZeroWin = CalculateDeltaResult(thisPlayerElo, 2, 0, stats.Value.EloScore);
+                var twoOneWin = CalculateDeltaResult(thisPlayerElo, 2, 1, stats.Value.EloScore);
                 var twoZeroLost = CalculateDeltaResult(thisPlayerElo, 0, 2, stats.Value.EloScore);
+                var twoOneLost = CalculateDeltaResult(thisPlayerElo, 1, 2, stats.Value.EloScore);
 
                 var threeZeroWin = CalculateDeltaResult(thisPlayerElo, 3, 0, stats.Value.EloScore);
                 var threeOneWin = CalculateDeltaResult(thisPlayerElo, 3, 1, stats.Value.EloScore);
@@ -85,6 +87,8 @@ namespace Rankings.Web.Controllers
                     ThreeTwoWin = threeTwoWin,
                     ThreeOneLost = threeOneLost,
                     ThreeTwoLost = threeTwoLost,
+                    TwoOneLost = twoOneLost,
+                    TwoOneWin = twoOneWin,
                 };
                 model.Add(line);
             }
