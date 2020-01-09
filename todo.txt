@@ -6,8 +6,6 @@
   - use date in cache key
 - calculate ranking async (not when opening ranking page after registrating game)
 
-- use specflow to create end to end acceptance tests
-- refactor calculation (statistics service)
 - use migrations for database updates
 
 ====================== back log ===========================================================
@@ -23,7 +21,6 @@
 - stats per hour/part of day (when is a player at his best?)
 
 - courier for numbers in ranking
-- add logging
 - show + elo next to game
 - avatar for player
 - player of the month ranking + historical overview
@@ -35,11 +32,6 @@
     - n x elo opponents
     - n x percentage elo ranking
 
-- elo improvements
-  - k factor lower for experienced players
-  - less influence game score
-  - smaller k factor
-  
 - Rename methods in IGamesService
 - Game registration time should be stored with timeoffset to keep the proper time(zone)
 - fix registration dates before and after wintertijd (prod database)
@@ -197,26 +189,4 @@ Setw%	68
    - End Date
    - Just Before game	link
    - Just After game	link
-  
-======================= done =====================================================
-X points that can be gained per player in ranking or other page
-X unit tests for elo ranking calculation
-X take draws into account when calculating elo (conatins a bug now)
-X ranking per type
-X "the reply url specified in the request does not match the reply urls configured for the application 87b..."
-X edit older games not possible (after let's say 72 hours). Only admin can change older games
-X player can only edit his/her game
-X admin can edit venues and game types
-X Admin cannot edit game (is redirected to ranking). Admin should always be able to edit a game
-X matrix with possible elo points (opponents x results)
-X get rid of ugly loading of missing entities (use include)
-X edit venues
-X Name player unique
-X player can see readonly profile other players
-X Use auto mapper in controllers
-X for table tennis 0-0 is not allowed
-X alignment elo score in ranking. Not always 4 digits.
-X website favicon
-X games, ranks for each gametype (now very table tennis orientated)
-X  show always winner game in first column
-X links to rankings on home page
+ 
