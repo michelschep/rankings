@@ -21,12 +21,59 @@ namespace Rankings.Web.Controllers
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
         }
 
-        
+
         [HttpGet("/")]
         [HttpGet("/rankings")]
         public IActionResult Index()
         {
-            return View(new MainStats());
+            var mainStats = new MainStats();
+
+            mainStats.Summaries = new List<Summary>
+            {
+                new Summary
+                {
+                    Title = "Vitas 2019 Champion", 
+                    Name1 = "Johannes", Score1 = "1705",
+                    Name2 = "Hans", Score2 = "1697", 
+                    Name3 = "The Main Cardioid", Score3 = "1472"
+                },
+                new Summary
+                {
+                    Title = "Best Winning Streak 2019", 
+                    Name1 = "Johannes", Score1 = "52",
+                    Name2 = "Irma", Score2 = "23", 
+                    Name3 = "Hans", Score3 = "12"
+                },
+                new Summary
+                {
+                    Title = "Best ELO Streak 2019", 
+                    Name1 = "Johannes", Score1 = "410",
+                    Name2 = "Hans", Score2 = "204", 
+                    Name3 = "Harro", Score3 = "159"
+                },new Summary
+                {
+                    Title = "", 
+                    Name1 = "", Score1 = "",
+                    Name2 = "", Score2 = "", 
+                    Name3 = "", Score3 = ""
+                },new Summary
+                {
+                    Title = "Vitas Champion 2020", 
+                    Name1 = "You?", Score1 = "",
+                    Name2 = "You?", Score2 = "", 
+                    Name3 = "You?", Score3 =""
+                },
+//
+//
+//                new Summary
+//                {
+//                    Title = "2020 Ranking", 
+//                    Name1 = "Irma", Score1 = 1286,
+//                    Name2 = "Hans", Score2 = 1251, 
+//                    Name3 = "Tarik", Score3 = 1237
+//                },
+                            };
+            return View(mainStats);
         }
 
         [HttpGet("/home/matrix")]
@@ -80,8 +127,8 @@ namespace Rankings.Web.Controllers
                 var threeOneLost = CalculateDeltaResult(thisPlayerElo, 1, 3, stats.Value.EloScore);
                 var threeTwoLost = CalculateDeltaResult(thisPlayerElo, 2, 3, stats.Value.EloScore);
 
-                var line = new EloMatrixViewModel(stats.Key.DisplayName, (int) Math.Round(stats.Value.EloScore, 0, MidpointRounding.AwayFromZero), eloDiff, oneOneDraw, 
-                    oneZeroWin, oneZeroLost, twoZeroWin, twoZeroLost, threeZeroWin, 
+                var line = new EloMatrixViewModel(stats.Key.DisplayName, (int) Math.Round(stats.Value.EloScore, 0, MidpointRounding.AwayFromZero), eloDiff, oneOneDraw,
+                    oneZeroWin, oneZeroLost, twoZeroWin, twoZeroLost, threeZeroWin,
                     threeZeroLost)
                 {
                     ThreeOneWin = threeOneWin,
@@ -116,6 +163,17 @@ namespace Rankings.Web.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
+    }
+
+    public class Summary
+    {
+        public string Title { get; set; }
+        public string Name1 { get; set; }
+        public string Score1 { get; set; }
+        public string Name2 { get; set; }
+        public string Score2 { get; set; }
+        public string Name3 { get; set; }
+        public string Score3 { get; set; }
     }
 
     public class MatrixComparer : IEqualityComparer<KeyValuePair<Profile, EloStatsPlayer>>

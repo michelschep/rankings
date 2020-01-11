@@ -114,14 +114,24 @@ namespace Rankings.Core.Services
         }
 
 
-        // public List<IEnumerable<StatGame>> WinningStreaks(string emailAddress, DateTime startDate, DateTime endDate)
-        // {
-        //     var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
+        public IEnumerable<IEnumerable<StatGame>> WinningStreaks(string emailAddress, DateTime startDate, DateTime endDate)
+        {
+            var gamesByPlayer = EloGamesByPlayer(emailAddress, startDate, endDate);
 
-        //     var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
+            var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
 
-        //     return series.Select(games => games.Select(game => game.));
-        // }
+            return series;
+        }
+
+        public IEnumerable<IEnumerable<StatGame>> LosingStreaks(string emailAddress, DateTime startDate, DateTime endDate)
+        {
+            var gamesByPlayer = EloGamesByPlayer(emailAddress, startDate, endDate);
+
+            var series = gamesByPlayer.Split(game => game.Score1 < game.Score2).ToList();
+
+            return series;
+        }
+
 
         public int CurrentWinningStreak(string emailAddress, DateTime startDate, DateTime endDate)
         {
@@ -195,7 +205,9 @@ namespace Rankings.Core.Services
                     string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
                         ? new {game.Score1, game.Score2}
                         : new {Score1 = game.Score2, Score2 = game.Score1})
-                .Select(arg => new StatGame(arg.Score1, arg.Score2))
+                .Select(arg => new StatGame(arg.Score1, arg.Score2)
+                {
+                })
                 .ToList();
         }
 

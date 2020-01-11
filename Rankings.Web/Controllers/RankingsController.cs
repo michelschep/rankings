@@ -91,7 +91,7 @@ namespace Rankings.Web.Controllers
                     EmailAddress = pair.Key.EmailAddress, 
                     NamePlayer = pair.Key.DisplayName, 
                     Points = pair.Value.EloScore.Round(precision), 
-                    Ranking = ranking++,
+                    Ranking = CreateIcon(ranking++),
                     TimeNumberOne = pair.Value.TimeNumberOne > new TimeSpan(0) ? pair.Value.TimeNumberOne.ToString(@"d\.hh\:mm") : ""
                 })
                 .ToList();
@@ -108,6 +108,20 @@ namespace Rankings.Web.Controllers
             }
 
             return list;
+        }
+
+        private string CreateIcon(int ranking)
+        {
+            if (ranking == 1)
+                return "🥇";
+
+            if (ranking == 2)
+                return "🥈";
+
+            if (ranking == 3)
+                return "🥉";
+
+            return ranking.ToString();
         }
     }
 }
