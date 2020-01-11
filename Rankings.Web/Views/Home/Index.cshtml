@@ -5,13 +5,13 @@
 }
 
 <div>
-    <h2>You wanna play a game?</h2>
-    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Create">Register your games!</a>
-    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Matrix">Matrix with elo points you can gain in 2020</a>
-    <br/>
-
     <h2>Hall of Fame</h2>
     <br/>
 
-    <partial name="SummaryView" for="@Model.Summaries"/>
+    <partial name="SummaryView" for="@Model.HallOfFame"/>
+    <br/>
+
+    <h2>Running Battles</h2>
+    <br/>
+    <partial name="SummaryView" for="@Model.RunningBattles"/>
 </div>
