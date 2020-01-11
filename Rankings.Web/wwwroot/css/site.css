@@ -164,3 +164,15 @@ body {
     text-decoration-line: none;
     text-decoration-style: solid;
 }
+
+.rankinglinevert {
+    border-right-color: #222;
+    border-right-style: solid;
+    border-right-width: 2px;
+}
+
+table .rankinglinehor {
+    border-bottom-color: #222;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+}
