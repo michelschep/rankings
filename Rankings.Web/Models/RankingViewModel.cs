@@ -8,7 +8,7 @@ namespace Rankings.Web.Models
     public class RankingViewModel
     {
         [Display(Name = "")]
-        public int Ranking { get; set; }
+        public string Ranking { get; set; }
 
         [Display(Name = "Player")]
         public string NamePlayer { get; set; }

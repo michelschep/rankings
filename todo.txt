@@ -5,7 +5,6 @@
   - when game is deleted
   - use date in cache key
 - calculate ranking async (not when opening ranking page after registrating game)
-
 - use migrations for database updates
 
 ====================== back log ===========================================================

@@ -1,25 +1,17 @@
-﻿@model Rankings.Web.Models.WhatIfModel
+﻿@model Rankings.Web.Models.MainStats
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div>
-    <h1 class="display-4">RanKINGS</h1>
-    <br/>
-
     <h2>You wanna play a game?</h2>
     <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Create">Register your games!</a>
     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Matrix">Matrix with elo points you can gain in 2020</a>
-    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index" asp-route-gameType="tafeltennis">Results Tafeltennis</a>
-    <br/>
-
-    <h2>The Rankings</h2>
-    <a class="nav-link" asp-area="" asp-controller="Rankings" asp-action="EternalRanking">The Eternal Tafeltennis Ranking</a>
-    <a class="nav-link" asp-area="" asp-controller="Rankings" asp-action="YearRanking" asp-route-year="2019">The 2019 Tafeltennis Ranking</a>
-    <a class="nav-link" asp-area="" asp-controller="Rankings" asp-action="YearRanking" asp-route-year="2020">The 2020 Tafeltennis Ranking</a>
     <br/>
 
     <h2>Hall of Fame</h2>
-    <p>Coming soon</p>
+    <br/>
+
+    <partial name="SummaryView" for="@Model.Summaries"/>
 </div>

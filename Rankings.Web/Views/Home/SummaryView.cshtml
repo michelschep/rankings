@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Rankings.Web.Controllers.Summary>
+
+<table class="table table-striped table-dark">
+    <thead>
+        <tr class="rankinglinehor">
+            <th class="rankinglinevert rankinglinehor">
+            </th>
+            <th>
+                🥇
+            </th>
+            <th class="rankinglinevert">
+            </th>
+            <th>
+                🥈
+            </th>
+            <th class="rankinglinevert" >
+            </th>
+            <th>
+               🥉 
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td class="rankinglinevert">
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name1)
+            </td>
+            <td style="text-align: right" class="rankinglinevert">
+                @Html.DisplayFor(modelItem => item.Score1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name2)
+            </td>
+            <td style="text-align: right" class="rankinglinevert">
+                @Html.DisplayFor(modelItem => item.Score2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name3)
+            </td>
+            <td style="text-align: right">
+                @Html.DisplayFor(modelItem => item.Score3)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
