@@ -33,7 +33,9 @@
                 <partial name="_LoginPartial"/>
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark active" asp-area="" asp-controller="Games" asp-action="Create"><div style="color:red">Register a new game!</div></a>
+                        <a class="nav-link text-dark active" asp-area="" asp-controller="Games" asp-action="Create">
+                            <div style="color: red">Register a new game!</div>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Rankings" asp-action="EternalRanking">Eternal</a>
@@ -55,11 +57,16 @@
                     </li>
                     @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
                     {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="GameTypes" asp-action="Index">Admin:Game Types</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Venues" asp-action="Index">Admin:Venues</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-area="" asp-controller="GameTypes" asp-action="Index">Game Types</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Venues" asp-action="Index">Venues</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-area="" asp-controller="Games" asp-action="AdminIndex">Games</a>
+                            </div>
                         </li>
                     }
                 </ul>

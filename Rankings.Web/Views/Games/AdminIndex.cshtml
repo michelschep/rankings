@@ -1,9 +1,10 @@
-﻿@model IEnumerable<Rankings.Web.Models.GameViewModel>
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model IEnumerable<Rankings.Web.Models.GameViewModel>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table table-striped table-dark">
     <thead>
         <tr>
             <th>
@@ -25,10 +26,6 @@
                 @Html.DisplayNameFor(model => model.NameSecondPlayer)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ScoreFirstPlayer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ScoreSecondPlayer)
             </th>
             <th></th>
         </tr>
@@ -40,7 +37,7 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RegistrationDate)
+                @Html.ActionLink(item.RegistrationDate, "Edit", new {  id=item.Id  })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GameType)
@@ -55,13 +52,9 @@
                 @Html.DisplayFor(modelItem => item.NameSecondPlayer)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ScoreFirstPlayer)
+                @Html.DisplayFor(modelItem => item.ScoreFirstPlayer)- @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ScoreSecondPlayer)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
                 @Html.ActionLink("Delete", "Delete", new { id=item.Id  })
             </td>
         </tr>
