@@ -29,7 +29,7 @@ namespace Rankings.Web.Controllers
             ViewBag.Message = "You need at least 7 games to be in the ranking";
 
             if (year == 2019)
-                ViewBag.Message = "";
+                ViewBag.Message = " ";
 
             if (year == 2020)
                 ViewBag.Message += " (but for January everybody who played at least one game will be shown)";
