@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -79,9 +81,10 @@ namespace Rankings.Web
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
                 var config = provider.GetRequiredService<IOptions<RepositoryConfiguration>>();
                 return repositoryFactory.Create(config.Value.Database);
-
             });
             services.AddTransient<IGamesService, GamesService>();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,7 +125,17 @@ namespace Rankings.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHub<NotificationHub>("/notificationhub");
             });
+        }
+    }
+
+    public class NotificationHub : Hub
+    {
+        public Task SendMessage(string user, string message)
+        {
+            return Clients.All.SendAsync("ReceiveMessage", user, message);
         }
     }
 }
