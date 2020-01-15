@@ -21,45 +21,13 @@ namespace Rankings.Web.Controllers
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
         }
 
-
         [HttpGet("/")]
         [HttpGet("/rankings")]
         public IActionResult Index()
         {
             var mainStats = new MainStats();
 
-           // var ranking = _statisticsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
-           // var numberOne = ranking.First();
-           // var numberTwo = ranking.Skip(1).First();
-           // var numberThree = ranking.Skip(2).First();
-           // var mainStatsEternal = new List<Summary>
-           // {
-           //     new Summary
-           //     {
-           //         Title = "Vitas Eternal Ranking",
-           //         Name1 = numberOne.Key.DisplayName, Score1 = numberOne.Value.EloScore.Round().ToString(),
-           //         Name2 = numberTwo.Key.DisplayName, Score2 = numberTwo.Value.EloScore.Round().ToString(),
-           //         Name3 = numberThree.Key.DisplayName, Score3 = numberThree.Value.EloScore.Round().ToString(),
-           //     },
-           // };
-
-           // var goatScores = _statisticsService.GoatScore(DateTime.MinValue, DateTime.MaxValue).OrderByDescending(pair => pair.Value).ToList();
-           // var numberOne2 = goatScores.First();
-           // var numberTwo2 = goatScores.Skip(1).First();
-           // var numberThree2 = goatScores.Skip(2).First();
-           // mainStatsEternal.Add(new Summary
-           //     {
-           //         Title = "Vitas Eternal Goat",
-           //         Name1 = numberOne2.Key.DisplayName, Score1 = numberOne2.Value.Round().ToString(),
-           //         Name2 = numberTwo2.Key.DisplayName, Score2 = numberTwo2.Value.Round().ToString(),
-           //         Name3 = numberThree2.Key.DisplayName, Score3 = numberThree2.Value.Round().ToString(),
-           //     }); 
-           // //mainStatsEternal.Add(Top3Fibonacci("Fibonacci", DateTime.MinValue, DateTime.MaxValue));
-
-           // mainStats.Eternal = mainStatsEternal;
-
-
-            // *************** 2019 *************************
+            // *************** Eternal *************************
             var startDate = DateTime.MinValue ;
             var endDate = DateTime.MaxValue;
             mainStats.Eternal = new List<Summary>
