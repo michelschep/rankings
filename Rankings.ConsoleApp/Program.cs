@@ -53,168 +53,196 @@ namespace Rankings.ConsoleApp
                 var gamesService = CreateGamesService(provider);
                 var games = gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, new DateTime(2019, 12, 31)));
 
-                var statsService = CreateStatisticsService();
-                var eloGames = statsService.EloGames("tafeltennis", DateTime.MinValue, new DateTime(2019, 12, 31));
+                var tennis = gamesService.List<GameType>(new AllGameTypes()).Where((type, i) => type.Code == "tafeltennis").First();
+                var players = gamesService.List<Profile>(new AllProfiles()).ToList();
+                var venue = gamesService.List<Venue>(new AllVenues()).First();
+                var j = players.Where((profile, i) => profile.EmailAddress.Equals("jflameling@vitas.nl", StringComparison.InvariantCultureIgnoreCase)).First();
+                var g = players.Where((profile, i) => profile.EmailAddress.Equals("GPostma@vitas.nl", StringComparison.InvariantCultureIgnoreCase)).First();
+                var m = players.Where((profile, i) => profile.EmailAddress.Equals("mschep@vitas.nl", StringComparison.InvariantCultureIgnoreCase)).First();
 
-
-                // Summary of classic games
-                var summary = eloGames.Select(game => game.Game)
-                    .SelectMany(game =>
+                for (var x = 1; x < 25; ++x)
+                {
+                    gamesService.RegisterGame(new Game()
                     {
-                        if (game.Player1.Id < game.Player2.Id)
-                        {
-                            return new[] {new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2}}.ToList();
-                        }
-
-                        return new[] {new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1}}.ToList();
-                    })
-                    .GroupBy(arg => new {arg.Player1, arg.Player2})
-                    .Select(grouping => new {grouping.Key.Player1, grouping.Key.Player2, Aantal = grouping.Count(), Won = grouping.Count(arg => arg.Score1 > arg.Score2), Sets1 = grouping.Sum(arg => arg.Score1), Sets2 = grouping.Sum(arg => arg.Score2)})
-                    //.Where(arg => arg.Aantal >= 10)
-                    .OrderByDescending(arg => arg.Player1);
-
-                Console.WriteLine();
-                Console.WriteLine();
-                foreach (var item in summary)
-                {
-                    var p1 = Regex.Replace(item.Player1, @"[^\u0000-\u007F]+", string.Empty);
-                    var p2 = Regex.Replace(item.Player2, @"[^\u0000-\u007F]+", string.Empty);
-                    var winperc = (100m * item.Won / item.Aantal).Round();
-                    var setwinperc = (100m * item.Sets1 / (item.Sets1 + item.Sets2)).Round();
-                    Log.Logger.Information($"{p1,-20} - {p2,-20} {item.Won,3} - {item.Aantal - item.Won,3} {winperc,3} - {100 - winperc,3} {item.Sets1,3} - {item.Sets2,3} {setwinperc,3} - {100 - setwinperc,3}");
-                }
-
-                // Social player
-                var summary2 = eloGames.Select(game => game.Game)
-                    .SelectMany(game =>
+                        GameType = tennis,
+                        Player1 = j,
+                        Player2 = g,
+                        Score1 = 3,
+                        Score2 = 0,
+                        Venue = venue 
+                    });
+                    gamesService.RegisterGame(new Game()
                     {
-                        return new[]
-                        {
-                            new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2},
-                            new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1}
-                        }.ToList();
-                    })
-                    .GroupBy(arg => arg.Player1)
-                    .Select(grouping => new {Player = grouping.Key, Total = grouping.Select(arg => arg.Player2).Distinct().Count()});
-
-                Log.Logger.Information("");
-                foreach (var item in summary2.OrderByDescending(arg => arg.Total))
-                {
-                    Log.Logger.Information($"{item.Player,-20} {item.Total,3}");
+                        GameType = tennis,
+                        Player1 = j,
+                        Player2 = m,
+                        Score1 = 3,
+                        Score2 = 0,
+                        Venue = venue 
+                    });
                 }
+               // var statsService = CreateStatisticsService();
+               // var eloGames = statsService.EloGames("tafeltennis", DateTime.MinValue, new DateTime(2019, 12, 31));
 
-                // All streaks
-                var players = eloGames.SelectMany(game => new[] {game.Game.Player1.EmailAddress, game.Game.Player2.EmailAddress}).Distinct().ToList();
 
-                var list = new Dictionary<string, dynamic>();
-                foreach (var player in players)
-                {
-                    var streaks = statsService.WinningStreaks(player, DateTime.MinValue, DateTime.MaxValue);
-                    var totalWins = streaks.Sum(s => s.Count());
-                    if (streaks.Count() == 0)
-                        continue;
+               // // Summary of classic games
+               // var summary = eloGames.Select(game => game.Game)
+               //     .SelectMany(game =>
+               //     {
+               //         if (game.Player1.Id < game.Player2.Id)
+               //         {
+               //             return new[] {new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2}}.ToList();
+               //         }
 
-                    var countAvg = ((decimal) streaks.Sum(s => s.Count()) / streaks.Count()).Round(1);
-                    var eloAvg = ((decimal) streaks.Sum(s => s.Sum(game => game.Delta1)) / streaks.Count()).Round(1);
-                    list.Add(player, new { Count= streaks.Count(), Avg = countAvg, EloAvg = eloAvg});
-                }
+               //         return new[] {new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1}}.ToList();
+               //     })
+               //     .GroupBy(arg => new {arg.Player1, arg.Player2})
+               //     .Select(grouping => new {grouping.Key.Player1, grouping.Key.Player2, Aantal = grouping.Count(), Won = grouping.Count(arg => arg.Score1 > arg.Score2), Sets1 = grouping.Sum(arg => arg.Score1), Sets2 = grouping.Sum(arg => arg.Score2)})
+               //     //.Where(arg => arg.Aantal >= 10)
+               //     .OrderByDescending(arg => arg.Player1);
 
-                Console.WriteLine("");
-                Console.WriteLine("Winner streaks");
-                foreach (var item in list.OrderByDescending(pair => pair.Value.Count))
-                {
-                    Console.WriteLine($"{item.Key, -35} {item.Value.Count,4} {item.Value.Avg, 4} {item.Value.EloAvg, 4}");
-                }
-                
-                // losing streaks
-                var list2 = new Dictionary<string, dynamic>();
-                foreach (var player in players)
-                {
-                    var streaks = statsService.LosingStreaks(player, DateTime.MinValue, DateTime.MaxValue);
-                    if (streaks.Count() < 4)
-                        continue;
+               // Console.WriteLine();
+               // Console.WriteLine();
+               // foreach (var item in summary)
+               // {
+               //     var p1 = Regex.Replace(item.Player1, @"[^\u0000-\u007F]+", string.Empty);
+               //     var p2 = Regex.Replace(item.Player2, @"[^\u0000-\u007F]+", string.Empty);
+               //     var winperc = (100m * item.Won / item.Aantal).Round();
+               //     var setwinperc = (100m * item.Sets1 / (item.Sets1 + item.Sets2)).Round();
+               //     Log.Logger.Information($"{p1,-20} - {p2,-20} {item.Won,3} - {item.Aantal - item.Won,3} {winperc,3} - {100 - winperc,3} {item.Sets1,3} - {item.Sets2,3} {setwinperc,3} - {100 - setwinperc,3}");
+               // }
 
-                    var countAvg = ((decimal) streaks.Sum(s => s.Count()) / streaks.Count()).Round(1);
-                    var eloAvg = ((decimal) streaks.Sum(s => s.Sum(game => game.Delta1)) / streaks.Count()).Round(1);
-                    list2.Add(player, new { Count = streaks.Count(), Percentage = countAvg, EloAvg = eloAvg });
-                }
+               // // Social player
+               // var summary2 = eloGames.Select(game => game.Game)
+               //     .SelectMany(game =>
+               //     {
+               //         return new[]
+               //         {
+               //             new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2},
+               //             new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1}
+               //         }.ToList();
+               //     })
+               //     .GroupBy(arg => arg.Player1)
+               //     .Select(grouping => new {Player = grouping.Key, Total = grouping.Select(arg => arg.Player2).Distinct().Count()});
 
-                Console.WriteLine("");
-                Console.WriteLine("Loser streaks");
-                foreach (var item in list2.OrderByDescending(pair => pair.Value.Count))
-                {
-                    Console.WriteLine($"{item.Key, -35} {item.Value.Count,4} {item.Value.Percentage, 4} {item.Value.EloAvg, 4}");
-                }
+               // Log.Logger.Information("");
+               // foreach (var item in summary2.OrderByDescending(arg => arg.Total))
+               // {
+               //     Log.Logger.Information($"{item.Player,-20} {item.Total,3}");
+               // }
+
+               // // All streaks
+               // var players = eloGames.SelectMany(game => new[] {game.Game.Player1.EmailAddress, game.Game.Player2.EmailAddress}).Distinct().ToList();
+
+               // var list = new Dictionary<string, dynamic>();
+               // foreach (var player in players)
+               // {
+               //     var streaks = statsService.WinningStreaks(player, DateTime.MinValue, DateTime.MaxValue);
+               //     var totalWins = streaks.Sum(s => s.Count());
+               //     if (streaks.Count() == 0)
+               //         continue;
+
+               //     var countAvg = ((decimal) streaks.Sum(s => s.Count()) / streaks.Count()).Round(1);
+               //     var eloAvg = ((decimal) streaks.Sum(s => s.Sum(game => game.Delta1)) / streaks.Count()).Round(1);
+               //     list.Add(player, new { Count= streaks.Count(), Avg = countAvg, EloAvg = eloAvg});
+               // }
+
+               // Console.WriteLine("");
+               // Console.WriteLine("Winner streaks");
+               // foreach (var item in list.OrderByDescending(pair => pair.Value.Count))
+               // {
+               //     Console.WriteLine($"{item.Key, -35} {item.Value.Count,4} {item.Value.Avg, 4} {item.Value.EloAvg, 4}");
+               // }
+               // 
+               // // losing streaks
+               // var list2 = new Dictionary<string, dynamic>();
+               // foreach (var player in players)
+               // {
+               //     var streaks = statsService.LosingStreaks(player, DateTime.MinValue, DateTime.MaxValue);
+               //     if (streaks.Count() < 4)
+               //         continue;
+
+               //     var countAvg = ((decimal) streaks.Sum(s => s.Count()) / streaks.Count()).Round(1);
+               //     var eloAvg = ((decimal) streaks.Sum(s => s.Sum(game => game.Delta1)) / streaks.Count()).Round(1);
+               //     list2.Add(player, new { Count = streaks.Count(), Percentage = countAvg, EloAvg = eloAvg });
+               // }
+
+               // Console.WriteLine("");
+               // Console.WriteLine("Loser streaks");
+               // foreach (var item in list2.OrderByDescending(pair => pair.Value.Count))
+               // {
+               //     Console.WriteLine($"{item.Key, -35} {item.Value.Count,4} {item.Value.Percentage, 4} {item.Value.EloAvg, 4}");
+               // }
            
-                // var result = eloGames.SelectMany((game, i) => new List<EloGame>()
-                // {
-                //     game, new EloGame(new Game()
-                //     {
-                //         GameType = game.Game.GameType,
-                //         Player1 = game.Game.Player2,
-                //         Player2 = game.Game.Player1,
-                //         Score1 = game.Game.Score2,
-                //         Score2 = game.Game.Score1,
-                //         RegistrationDate = game.Game.RegistrationDate,
-                //         Venue = game.Game.Venue,
-                //     }, game.EloPlayer2, game.EloPlayer1, game.Player2Delta, game.Player1Delta)
-                // }).GroupBy(game => game.Game.Player1.EmailAddress);
-                //
-                // var numberOfPlayers = result.Count();
-                //
-                // foreach (var item in result)
-                // {
-                //     eloGames = item.ToList();
-                //     var op = eloGames.Select(game => game.Game.Player2.EmailAddress).Distinct().Count();
-                //
-                //     var groups = eloGames.GroupBy(game => game.Game.Player2.EmailAddress)
-                //         .ToDictionary(grouping => grouping.Key, grouping => grouping.ToList().Count);
-                //
-                //     double total = 0;
-                //     var avg = eloGames.Count() / numberOfPlayers;
-                //
-                //     foreach (var g in groups)
-                //     {
-                //         total += Math.Pow(g.Value - avg, 2);
-                //     }
-                //
-                //     var r = Math.Sqrt(total / numberOfPlayers);
-                //
-                //     Console.WriteLine(
-                //         $"{item.Key,-25}: {eloGames.Count(),5} {op,3} {(100 * op) / numberOfPlayers,3} {r}");
-                // }
-                // // foreach (var game in games)
-                // {
-                //     gamesService.RegisterGame(new Game()
-                //     {
-                //         Player1 = game.Player1,
-                //         Player2 = game.Player2,
-                //         Venue = game.Venue,
-                //         GameType = game.GameType,
-                //         Score1 = game.Score1,
-                //         Score2 = game.Score2,
-                //         RegistrationDate = DateTime.Now
-                //     });
-                // }
+               // // var result = eloGames.SelectMany((game, i) => new List<EloGame>()
+               // // {
+               // //     game, new EloGame(new Game()
+               // //     {
+               // //         GameType = game.Game.GameType,
+               // //         Player1 = game.Game.Player2,
+               // //         Player2 = game.Game.Player1,
+               // //         Score1 = game.Game.Score2,
+               // //         Score2 = game.Game.Score1,
+               // //         RegistrationDate = game.Game.RegistrationDate,
+               // //         Venue = game.Game.Venue,
+               // //     }, game.EloPlayer2, game.EloPlayer1, game.Player2Delta, game.Player1Delta)
+               // // }).GroupBy(game => game.Game.Player1.EmailAddress);
+               // //
+               // // var numberOfPlayers = result.Count();
+               // //
+               // // foreach (var item in result)
+               // // {
+               // //     eloGames = item.ToList();
+               // //     var op = eloGames.Select(game => game.Game.Player2.EmailAddress).Distinct().Count();
+               // //
+               // //     var groups = eloGames.GroupBy(game => game.Game.Player2.EmailAddress)
+               // //         .ToDictionary(grouping => grouping.Key, grouping => grouping.ToList().Count);
+               // //
+               // //     double total = 0;
+               // //     var avg = eloGames.Count() / numberOfPlayers;
+               // //
+               // //     foreach (var g in groups)
+               // //     {
+               // //         total += Math.Pow(g.Value - avg, 2);
+               // //     }
+               // //
+               // //     var r = Math.Sqrt(total / numberOfPlayers);
+               // //
+               // //     Console.WriteLine(
+               // //         $"{item.Key,-25}: {eloGames.Count(),5} {op,3} {(100 * op) / numberOfPlayers,3} {r}");
+               // // }
+               // // // foreach (var game in games)
+               // // {
+               // //     gamesService.RegisterGame(new Game()
+               // //     {
+               // //         Player1 = game.Player1,
+               // //         Player2 = game.Player2,
+               // //         Venue = game.Venue,
+               // //         GameType = game.GameType,
+               // //         Score1 = game.Score1,
+               // //         Score2 = game.Score2,
+               // //         RegistrationDate = DateTime.Now
+               // //     });
+               // // }
 
 
-                // var calculator = new EloCalculatorVersion2020();
+               // // var calculator = new EloCalculatorVersion2020();
 
-                // var x = calculator.CalculateDeltaPlayer(1220, 2000, 2, 3).Round(3);
-                // var y = calculator.CalculateDeltaPlayer(1220, 2000, 1, 3).Round(3);
-                // var z = calculator.CalculateDeltaPlayer(1220, 2000, 0, 3).Round(3);
+               // // var x = calculator.CalculateDeltaPlayer(1220, 2000, 2, 3).Round(3);
+               // // var y = calculator.CalculateDeltaPlayer(1220, 2000, 1, 3).Round(3);
+               // // var z = calculator.CalculateDeltaPlayer(1220, 2000, 0, 3).Round(3);
 
-                // Console.WriteLine($"{x} == {y} == {z}");
+               // // Console.WriteLine($"{x} == {y} == {z}");
 
-                // x = calculator.CalculateDeltaPlayer(1200, 1200, 3, 2).Round(3);
-                // y = calculator.CalculateDeltaPlayer(1200, 1200, 3, 1).Round(3);
-                // z = calculator.CalculateDeltaPlayer(1200, 1200, 3, 0).Round(3);
+               // // x = calculator.CalculateDeltaPlayer(1200, 1200, 3, 2).Round(3);
+               // // y = calculator.CalculateDeltaPlayer(1200, 1200, 3, 1).Round(3);
+               // // z = calculator.CalculateDeltaPlayer(1200, 1200, 3, 0).Round(3);
 
-                // Console.WriteLine($"{x} == {y} == {z}");
-                //TestStats();
-                //ShowMatrix();
+               // // Console.WriteLine($"{x} == {y} == {z}");
+               // //TestStats();
+               // //ShowMatrix();
 
-                //var statsService = CreateStatisticsService();
+               // //var statsService = CreateStatisticsService();
                 Console.WriteLine("Ready");
                 Console.ReadLine();
             }
