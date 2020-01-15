@@ -9,5 +9,6 @@ namespace Rankings.Web.Models
     {
         public IEnumerable<Summary> HallOfFame { get; set; }
         public IEnumerable<Summary> RunningBattles { get; set; }
+        public IEnumerable<Summary> Eternal { get; set; }
     }
 }

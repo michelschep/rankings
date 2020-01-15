@@ -183,12 +183,20 @@ namespace Rankings.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult ResetCache()
+        {
+            _memoryCache.Remove("ranking-tafeltennis-2020");
+            _memoryCache.Remove("ranking-tafeltennis-eternal");
+
+            return RedirectToAction("Index");
+        }
+
         public async Task<IActionResult> Edit(int id)
         {
             var authResult = await _authorizationService.AuthorizeAsync(User, id, GameEditPolicy);
             if (!authResult.Succeeded)
             {
-                return RedirectToAction("Index", "Rankings");
+                return RedirectToAction("Index");
             }
 
             var game = _gamesService.Item(new SpecificGame(id));
@@ -221,7 +229,7 @@ namespace Rankings.Web.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, model.Id, GameEditPolicy);
             if (!authResult.Succeeded)
             {
-                return RedirectToAction("Index", "Rankings");
+                return RedirectToAction("Index");
             }
 
             var game = _gamesService.Item(new SpecificGame(model.Id));
@@ -242,7 +250,7 @@ namespace Rankings.Web.Controllers
         public IActionResult Delete(int id)
         {
             _gamesService.DeleteGame(id);
-            return View("Index");
+            return RedirectToAction("AdminIndex");
         }
     }
 }

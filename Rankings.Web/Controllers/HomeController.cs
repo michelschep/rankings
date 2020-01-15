@@ -28,43 +28,128 @@ namespace Rankings.Web.Controllers
         {
             var mainStats = new MainStats();
 
+           // var ranking = _statisticsService.Ranking("tafeltennis", DateTime.MinValue, DateTime.MaxValue);
+           // var numberOne = ranking.First();
+           // var numberTwo = ranking.Skip(1).First();
+           // var numberThree = ranking.Skip(2).First();
+           // var mainStatsEternal = new List<Summary>
+           // {
+           //     new Summary
+           //     {
+           //         Title = "Vitas Eternal Ranking",
+           //         Name1 = numberOne.Key.DisplayName, Score1 = numberOne.Value.EloScore.Round().ToString(),
+           //         Name2 = numberTwo.Key.DisplayName, Score2 = numberTwo.Value.EloScore.Round().ToString(),
+           //         Name3 = numberThree.Key.DisplayName, Score3 = numberThree.Value.EloScore.Round().ToString(),
+           //     },
+           // };
+
+           // var goatScores = _statisticsService.GoatScore(DateTime.MinValue, DateTime.MaxValue).OrderByDescending(pair => pair.Value).ToList();
+           // var numberOne2 = goatScores.First();
+           // var numberTwo2 = goatScores.Skip(1).First();
+           // var numberThree2 = goatScores.Skip(2).First();
+           // mainStatsEternal.Add(new Summary
+           //     {
+           //         Title = "Vitas Eternal Goat",
+           //         Name1 = numberOne2.Key.DisplayName, Score1 = numberOne2.Value.Round().ToString(),
+           //         Name2 = numberTwo2.Key.DisplayName, Score2 = numberTwo2.Value.Round().ToString(),
+           //         Name3 = numberThree2.Key.DisplayName, Score3 = numberThree2.Value.Round().ToString(),
+           //     }); 
+           // //mainStatsEternal.Add(Top3Fibonacci("Fibonacci", DateTime.MinValue, DateTime.MaxValue));
+
+           // mainStats.Eternal = mainStatsEternal;
+
+
+            // *************** 2019 *************************
+            var startDate = DateTime.MinValue ;
+            var endDate = DateTime.MaxValue;
+            mainStats.Eternal = new List<Summary>
+            {
+                Top3Elo("Vitas Eternal Ranking", startDate, endDate),
+                Top3TimeNumberOne("Vitas Eternal Time Number One", startDate, endDate),
+                Top3GoatScores("Vitas Eternal Goat", startDate, endDate),
+            };
+
+            // *************** 2020 *************************
+            startDate = new DateTime(2019, 1, 1);
+            endDate = new DateTime(2019, 12, 31);
             mainStats.HallOfFame = new List<Summary>
             {
-                new Summary
-                {
-                    Title = "Vitas 2019 Champion",
-                    Name1 = "Johannes", Score1 = "1705",
-                    Name2 = "Hans", Score2 = "1697",
-                    Name3 = "The Main Cardioid", Score3 = "1472"
-                },
-                new Summary
-                {
-                    Title = "Best Winning Streak 2019",
-                    Name1 = "Johannes", Score1 = "52",
-                    Name2 = "Irma", Score2 = "23",
-                    Name3 = "Hans", Score3 = "12"
-                },
-                new Summary
-                {
-                    Title = "Best ELO Streak 2019",
-                    Name1 = "Johannes", Score1 = "410",
-                    Name2 = "Hans", Score2 = "204",
-                    Name3 = "Harro", Score3 = "159"
-                },
+                Top3Elo("Vitas 2019 Ranking", startDate, endDate),
+                Top3TimeNumberOne("Vitas 2019 Time Number One", startDate, endDate),
+                Top3RecordWinningStreak("Best Winning Streak 2019", startDate, endDate),
+                Top3RecordEloStreak("Best Elo Streak 2019", startDate, endDate),
+                Top3Fibonacci("Fibonacci 2019", startDate, endDate)
             };
-            
+
+            // *************** 2020 *************************
+            startDate = new DateTime(2020, 1, 1);
+            endDate = new DateTime(2020, 12, 31);
             mainStats.RunningBattles = new List<Summary>
             {
-                new Summary
-                {
-                    Title = "Vitas 2020 Champion",
-                    Name1 = "You?", Score1 = "",
-                    Name2 = "You?", Score2 = "",
-                    Name3 = "You?", Score3 = ""
-                },
+                Top3Elo("Vitas 2020 Ranking", startDate, endDate),
+                Top3TimeNumberOne("Vitas 2020 Time Number One", startDate, endDate),
+                Top3GoatScores("Goat 2020", startDate, endDate),
+                Top3RecordWinningStreak("Best Winning Streak 2020", startDate, endDate),
+                Top3RecordEloStreak("Best Elo Streak 2020", startDate, endDate),
+                Top3Fibonacci("Fibonacci 2020", startDate, endDate)
             };
-        
+
             return View(mainStats);
+        }
+
+        private Summary Top3TimeNumberOne(string title, DateTime startDate, DateTime endDate)
+        {
+            var ranking = _statisticsService.Ranking("tafeltennis", startDate, endDate);
+            var list =  new Dictionary<Profile, EloStatsPlayer>(ranking.OrderByDescending(pair => pair.Value.TimeNumberOne).ThenByDescending(pair => pair.Value.EloScore)).ToList();
+
+            return CreateSummary(list, i => i.TimeNumberOne.ToString(@"d\.hh\:mm"), title);
+        }
+
+        private Summary Top3Elo(string title, DateTime startDate, DateTime endDate)
+        {
+            var ranking = _statisticsService.Ranking("tafeltennis", startDate, endDate);
+            var list =  new Dictionary<Profile, EloStatsPlayer>(ranking.OrderByDescending(pair => pair.Value.EloScore)).ToList();
+
+            return CreateSummary(list, i => i.EloScore.Round().ToString(), title);
+        }
+
+        private Summary Top3GoatScores(string title, DateTime startDate, DateTime endDate)
+        {
+            var goatScores = _statisticsService.GoatScore(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
+            return CreateSummary(goatScores, i => i.Round().ToString(), title);
+        }
+
+        private Summary Top3Fibonacci(string title, DateTime startDate, DateTime endDate)
+        {
+            var winningStreaks = _statisticsService.FibonacciScore(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
+            return CreateSummary(winningStreaks, i => i.ToString(), title);
+        }
+
+        private Summary Top3RecordWinningStreak(string title, DateTime startDate, DateTime endDate)
+        {
+            var winningStreaks = _statisticsService.RecordWinningStreak(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
+            return CreateSummary(winningStreaks, i => i.ToString(), title);
+        }
+
+        private Summary Top3RecordEloStreak(string title, DateTime startDate, DateTime endDate)
+        {
+            var winningStreaks = _statisticsService.RecordEloStreak(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
+            return CreateSummary(winningStreaks, i => i.Round().ToString(), title);
+        }
+
+        private static Summary CreateSummary<T>(List<KeyValuePair<Profile, T>> winningStreaks, Func<T, string> toString, string title)
+        {
+            var numberOne = winningStreaks.First();
+            var numberTwo = winningStreaks.Skip(1).First();
+            var numberThree = winningStreaks.Skip(2).First();
+
+            return new Summary
+            {
+                Title = title,
+                Name1 = numberOne.Key.DisplayName, Score1 = toString(numberOne.Value),
+                Name2 = numberTwo.Key.DisplayName, Score2 = toString(numberTwo.Value),
+                Name3 = numberThree.Key.DisplayName, Score3 = toString(numberThree.Value),
+            };
         }
 
         [HttpGet("/home/matrix")]

@@ -113,6 +113,82 @@ namespace Rankings.Core.Services
             return series.Select(games => games.Count()).Max();
         }
 
+        public Dictionary<Profile, int> RecordWinningStreak(DateTime startDate, DateTime endDate)
+        {
+            return StatsPerPlayer(startDate, endDate, RecordWinningStreak);
+        }
+
+        public Dictionary<Profile, int> FibonacciScore(DateTime startDate, DateTime endDate)
+        {
+            return StatsPerPlayer(startDate, endDate, FibonacciScore);
+        }
+
+        private int FibonacciScore(string emailAddress, DateTime startDate, DateTime endDate)
+        {
+            var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
+
+            if (gamesByPlayer.Count == 0)
+                return 0;
+
+            var totals = gamesByPlayer.GroupBy(game => game.Player2).Select(games => new {Opponent = games.Key, Count = games.Count()}).ToDictionary(arg => arg.Opponent, arg => arg.Count);
+
+            var fibonacciScore = 0;
+            while (true)
+            {
+                var numberOfPlayers = totals.Count;
+                fibonacciScore += Fibonacci(numberOfPlayers);
+                totals = totals.Select(pair => new {Player = pair.Key, Count = pair.Value - 1}).Where(arg => arg.Count > 0).ToDictionary(arg => arg.Player, arg => arg.Count);
+
+                if (totals.Count == 0)
+                    break;
+            }
+
+            return fibonacciScore;
+        }
+
+        private int Fibonacci(int n)
+        {
+            if (n == 1)
+                return 0;
+
+            if (n <= 3)
+                return 1;
+
+            return Fibonacci(n - 1) + Fibonacci(n - 2);
+        }
+
+        public Dictionary<Profile, decimal> RecordEloStreak(DateTime startDate, DateTime endDate)
+        {
+            return StatsPerPlayer(startDate, endDate, RecordEloStreak);
+        }
+
+        private Dictionary<Profile, T> StatsPerPlayer<T>(DateTime startDate, DateTime endDate, Func<string, DateTime, DateTime, T> calc)
+        {
+            var players = _gamesService.List(new AllProfiles()).ToList();
+
+            return players.ToDictionary(profile => profile, profile => calc(profile.EmailAddress, startDate, endDate));
+        }
+
+        public decimal GoatScore(string emailAddress, DateTime startDate, DateTime endDate)
+        {
+            var gamesByPlayer = EloGamesByPlayer(emailAddress, startDate, endDate);
+
+            var total = 1200m;
+            var goat = 1100m;
+            foreach (var statGame in gamesByPlayer)
+            {
+                total += statGame.Delta1.Value;
+                if (total > goat)
+                    goat = total;
+            }
+
+            return goat;
+        }
+
+        public Dictionary<Profile, decimal> GoatScore(DateTime startDate, DateTime endDate)
+        {
+            return StatsPerPlayer(startDate, endDate, GoatScore);
+        }
 
         public IEnumerable<IEnumerable<StatGame>> WinningStreaks(string emailAddress, DateTime startDate, DateTime endDate)
         {
@@ -203,10 +279,12 @@ namespace Rankings.Core.Services
                 .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
                 .Select(game =>
                     string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
-                        ? new {game.Score1, game.Score2}
-                        : new {Score1 = game.Score2, Score2 = game.Score1})
+                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress}
+                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress})
                 .Select(arg => new StatGame(arg.Score1, arg.Score2)
                 {
+                    Player1 = arg.Player1,
+                    Player2 = arg.Player2
                 })
                 .ToList();
         }
