@@ -9,7 +9,7 @@ namespace Rankings.Core.Interfaces
     {
         IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate);
         Dictionary<Profile, int> RecordWinningStreak(DateTime startDate, DateTime endDate);
-        Dictionary<Profile, int> FibonacciScore(DateTime startDate, DateTime endDate);
+        Dictionary<Profile, decimal> FibonacciScore(DateTime startDate, DateTime endDate);
         Dictionary<Profile, decimal> RecordEloStreak(DateTime startDate, DateTime endDate);
         Dictionary<Profile, decimal> GoatScore(DateTime startDate, DateTime endDate);
 

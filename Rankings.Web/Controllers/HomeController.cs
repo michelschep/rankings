@@ -90,7 +90,7 @@ namespace Rankings.Web.Controllers
         private Summary Top3Fibonacci(string title, DateTime startDate, DateTime endDate)
         {
             var winningStreaks = _statisticsService.FibonacciScore(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
-            return CreateSummary(winningStreaks, i => i.ToString(), title);
+            return CreateSummary(winningStreaks, i => i.Round().ToString(), title);
         }
 
         private Summary Top3RecordWinningStreak(string title, DateTime startDate, DateTime endDate)

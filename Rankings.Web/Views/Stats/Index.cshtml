@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<Rankings.Web.Controllers.RankingViewItem>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = @ViewBag.Title;
 }
-
+<h3>@ViewBag.Title</h3>
 <table class="table table-striped table-dark" style="table-layout: fixed;">
     <thead>
         <tr>

@@ -18,7 +18,7 @@ namespace Rankings.Web
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.Seq("http://localhost:5341")
-                .WriteTo.File(@".\ranKINGS.json", shared: true)
+                .WriteTo.RollingFile(@".\log-{Date}.txt")
                 .CreateLogger();
 
             try

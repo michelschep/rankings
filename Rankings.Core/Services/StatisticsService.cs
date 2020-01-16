@@ -118,12 +118,12 @@ namespace Rankings.Core.Services
             return StatsPerPlayer(startDate, endDate, RecordWinningStreak);
         }
 
-        public Dictionary<Profile, int> FibonacciScore(DateTime startDate, DateTime endDate)
+        public Dictionary<Profile, decimal> FibonacciScore(DateTime startDate, DateTime endDate)
         {
             return StatsPerPlayer(startDate, endDate, FibonacciScore);
         }
 
-        private int FibonacciScore(string emailAddress, DateTime startDate, DateTime endDate)
+        private decimal FibonacciScore(string emailAddress, DateTime startDate, DateTime endDate)
         {
             var gamesByPlayer = GamesByPlayer(emailAddress, startDate, endDate);
 
@@ -132,7 +132,7 @@ namespace Rankings.Core.Services
 
             var totals = gamesByPlayer.GroupBy(game => game.Player2).Select(games => new {Opponent = games.Key, Count = games.Count()}).ToDictionary(arg => arg.Opponent, arg => arg.Count);
 
-            var fibonacciScore = 0;
+            var fibonacciScore = 0m;
             while (true)
             {
                 var numberOfPlayers = totals.Count;
@@ -143,11 +143,15 @@ namespace Rankings.Core.Services
                     break;
             }
 
+            //return (int) Math.Round(Math.Sqrt(fibonacciScore));
             return fibonacciScore;
         }
 
         private int Fibonacci(int n)
         {
+            if (n >= 10)
+                return 34 + (n-10);
+
             if (n == 1)
                 return 0;
 

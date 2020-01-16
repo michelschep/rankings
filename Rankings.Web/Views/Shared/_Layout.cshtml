@@ -55,6 +55,15 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Matrix">Matrix</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Stats
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2019">Fibonacci 2019</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2020">Fibonacci 2020</a>
+                        </div>
+                    </li>
                     @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
                     {
                         <li class="nav-item dropdown">
