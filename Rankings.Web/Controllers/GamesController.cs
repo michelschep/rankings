@@ -179,6 +179,7 @@ namespace Rankings.Web.Controllers
             _memoryCache.Remove("ranking-" + game.GameType.Code);
             _memoryCache.Remove("ranking-tafeltennis-2020");
             _memoryCache.Remove("ranking-tafeltennis-eternal");
+            _memoryCache.Remove("homepage");
 
             return RedirectToAction("Index");
         }
@@ -187,6 +188,7 @@ namespace Rankings.Web.Controllers
         {
             _memoryCache.Remove("ranking-tafeltennis-2020");
             _memoryCache.Remove("ranking-tafeltennis-eternal");
+            _memoryCache.Remove("homepage");
 
             return RedirectToAction("Index");
         }

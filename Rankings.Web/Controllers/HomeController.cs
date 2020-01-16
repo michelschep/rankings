@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
@@ -15,20 +16,30 @@ namespace Rankings.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IStatisticsService _statisticsService;
+        private readonly IMemoryCache _memoryCache;
 
-        public HomeController(IStatisticsService rankingService)
+        public HomeController(IStatisticsService rankingService, IMemoryCache memoryCache)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
         [HttpGet("/")]
         [HttpGet("/rankings")]
         public IActionResult Index()
         {
+
+            var mainStats = _memoryCache.GetOrCreate("homepage", entry => CreateViewModel());
+
+            return View(mainStats);
+        }
+
+        private MainStats CreateViewModel()
+        {
             var mainStats = new MainStats();
 
             // *************** Eternal *************************
-            var startDate = DateTime.MinValue ;
+            var startDate = DateTime.MinValue;
             var endDate = DateTime.MaxValue;
             mainStats.Eternal = new List<Summary>
             {
@@ -62,11 +73,10 @@ namespace Rankings.Web.Controllers
                 Top3Fibonacci("Fibonacci 2020", startDate, endDate)
             };
 
-            mainStats.GameSummaries =  _statisticsService.GameSummaries(DateTime.MinValue, DateTime.MaxValue)
+            mainStats.GameSummaries = _statisticsService.GameSummaries(DateTime.MinValue, DateTime.MaxValue)
                 .Where((summary, i) => summary.TotalGames >= 15)
-                .OrderBy(summary => Math.Abs(summary.PercentageSet1-summary.PercentageSet2));
-
-            return View(mainStats);
+                .OrderBy(summary => Math.Abs(summary.PercentageSet1 - summary.PercentageSet2));
+            return mainStats;
         }
 
         private Summary Top3TimeNumberOne(string title, DateTime startDate, DateTime endDate)
