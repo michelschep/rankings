@@ -368,7 +368,6 @@ namespace Rankings.Core.Services
                 .ToDictionary(player => player, player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0});
 
             // Now calculate current elo score based on all games played
-            _logger.LogInformation("********* List all games");
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
