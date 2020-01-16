@@ -14,11 +14,17 @@ namespace Rankings.Web
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.Seq("http://localhost:5341")
-                .WriteTo.RollingFile(@".\log-{Date}.txt")
+                //.WriteTo.RollingFile(@".\log-{Date}.txt")
+                .WriteTo.File(
+                    @"D:\home\LogFiles\Application\rankings.txt",
+                    fileSizeLimitBytes: 1_000_000,
+                    rollOnFileSizeLimit: true,
+                    shared: true,
+                    flushToDiskInterval: TimeSpan.FromSeconds(1))
                 .CreateLogger();
 
             try
