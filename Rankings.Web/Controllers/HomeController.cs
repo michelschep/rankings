@@ -28,7 +28,6 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings")]
         public IActionResult Index()
         {
-
             var mainStats = _memoryCache.GetOrCreate("homepage", entry => CreateViewModel());
 
             return View(mainStats);
@@ -76,6 +75,7 @@ namespace Rankings.Web.Controllers
             mainStats.GameSummaries = _statisticsService.GameSummaries(DateTime.MinValue, DateTime.MaxValue)
                 .Where((summary, i) => summary.TotalGames >= 15)
                 .OrderBy(summary => Math.Abs(summary.PercentageSet1 - summary.PercentageSet2));
+
             return mainStats;
         }
 

@@ -52,6 +52,21 @@ namespace Rankings.Web.Controllers
             ViewBag.Title = $"Goat Ranking {year}";
             return View("Index", viewModel);
         }
+
+        [HttpGet("/stats/duels")]
+        [HttpGet("/stats/duels/{year}")]
+        public IActionResult Duels(int? year)
+        {
+            var startDate = year.HasValue ? new DateTime(year.Value, 1, 1) : DateTime.MinValue;
+            var endDate = year.HasValue ? new DateTime(year.Value, 12, 31) : DateTime.MaxValue;
+
+            var gameSummaries = _statisticsService.GameSummaries(startDate, endDate)
+                .OrderBy(summary => Math.Abs(summary.PercentageSet1 - summary.PercentageSet2))
+                .ThenByDescending(summary => summary.TotalGames);
+
+            return View("Duels", gameSummaries);
+        }
+
     }
 
     public class RankingViewItem
