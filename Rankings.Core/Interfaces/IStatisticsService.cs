@@ -21,5 +21,21 @@ namespace Rankings.Core.Interfaces
         int CurrentWinningStreak(string emailAddress, DateTime startDate, DateTime endDate);
         decimal RecordEloStreak(string emailAddress, DateTime startDate, DateTime endDate);
         decimal CurrentEloStreak(string emailAddress, DateTime startDate, DateTime endDate);
+        IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate);
+    }
+
+    public class GameSummary
+    {
+        public string Player1 { get; set; }
+        public string Player2 { get; set; }
+        public int TotalGames { get; set; }
+        public int Score1 { get; set; }
+        public int Score2 { get; set; }
+        public int PercentageScore1 { get; set; }
+        public int PercentageScore2 { get; set; }
+        public int Set1 { get; set; }
+        public int Set2 { get; set; }
+        public int PercentageSet1 { get; set; }
+        public int PercentageSet2 { get; set; }
     }
 }

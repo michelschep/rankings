@@ -51,7 +51,34 @@ namespace Rankings.ConsoleApp
                 var provider = services.BuildServiceProvider();
 
                 var gamesService = CreateGamesService(provider);
-                var games = gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, new DateTime(2019, 12, 31)));
+                var games = gamesService.List(new GamesForPeriodSpecification("tafeltennis", DateTime.MinValue, DateTime.MaxValue));
+
+                for (var x = 1; x <= 4; ++x)
+                {
+                    foreach (var game in games)
+                    {
+                        if (new List<string>() {game.Player1.EmailAddress, game.Player2.EmailAddress}.Contains("ISickler@vitas.nl", StringComparer.CurrentCultureIgnoreCase))
+                        {
+                            if (new List<string>() {game.Player1.EmailAddress, game.Player2.EmailAddress}.Contains("GPostma@vitas.nl", StringComparer.CurrentCultureIgnoreCase))
+                                continue;
+                            if (new List<string>() {game.Player1.EmailAddress, game.Player2.EmailAddress}.Contains("hoosterhuis@vitas.nl", StringComparer.CurrentCultureIgnoreCase))
+                                continue;
+                            if (new List<string>() {game.Player1.EmailAddress, game.Player2.EmailAddress}.Contains("JFlameling@vitas.nl", StringComparer.CurrentCultureIgnoreCase))
+                                continue;
+                            if (new List<string>() {game.Player1.EmailAddress, game.Player2.EmailAddress}.Contains("mschep@vitas.nl", StringComparer.CurrentCultureIgnoreCase))
+                                continue;
+                        }
+                        gamesService.RegisterGame(new Game()
+                        {
+                            GameType = game.GameType,
+                            Player1 = game.Player1,
+                            Player2 = game.Player2,
+                            Venue = game.Venue,
+                            Score1 = game.Score1,
+                            Score2 = game.Score2
+                        });
+                    }
+                }
 
                 Console.WriteLine("Ready");
                 Console.ReadLine();

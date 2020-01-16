@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Rankings.Core.Interfaces.GameSummary>
+
+<h3>Classics</h3>
+<table class="table table table-sm table-striped table-dark">
+    <thead>
+    <tr>
+        <th>
+        </th>
+        <th>
+        </th>
+        <th>
+            Games
+        </th>
+        <th>
+            Games%
+        </th>
+        <th>
+            Sets
+        </th>
+        <th>
+            Sets%
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Score1) - @Html.DisplayFor(modelItem => item.Score2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PercentageScore1) - @Html.DisplayFor(modelItem => item.PercentageScore2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Set1) - @Html.DisplayFor(modelItem => item.Set2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PercentageSet1) - @Html.DisplayFor(modelItem => item.PercentageSet2)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

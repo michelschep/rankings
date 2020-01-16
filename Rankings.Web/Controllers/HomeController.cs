@@ -62,6 +62,10 @@ namespace Rankings.Web.Controllers
                 Top3Fibonacci("Fibonacci 2020", startDate, endDate)
             };
 
+            mainStats.GameSummaries =  _statisticsService.GameSummaries(DateTime.MinValue, DateTime.MaxValue)
+                .Where((summary, i) => summary.TotalGames >= 15)
+                .OrderBy(summary => Math.Abs(summary.PercentageSet1-summary.PercentageSet2));
+
             return View(mainStats);
         }
 
