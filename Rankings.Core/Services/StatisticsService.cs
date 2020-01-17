@@ -151,7 +151,7 @@ namespace Rankings.Core.Services
         private int Fibonacci(int n)
         {
             if (n >= 10)
-                return 34 + (n - 10);
+                return 34 + (n - 10)*13;
 
             if (n == 1)
                 return 0;
