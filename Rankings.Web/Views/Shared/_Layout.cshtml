@@ -61,10 +61,11 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels">Eternal Classics</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2019">Fibonacci 2019</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2019">Classics 2019</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2020">Fibonacci 2020</a>
-                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2020">Classics 2020</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2019">2019 Classics</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2020">2020 Classics</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2019">2019 Fibonacci</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2020">2020 Fibonacci</a>
                         </div>
                     </li>
                     @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)

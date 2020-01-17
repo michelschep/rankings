@@ -57,6 +57,7 @@ namespace Rankings.Core.Services
                     new {Player1 = arg.Player2, arg.Elo},
                 })
                 .GroupBy(arg => arg.Player1)
+                .Where((grouping, i) => grouping.Count() >= 7)
                 .Select(grouping => new {Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count()})
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
         }
@@ -70,6 +71,7 @@ namespace Rankings.Core.Services
                     new {Player = arg.Game.Player2, Elo = arg.EloPlayer1},
                 })
                 .GroupBy(arg => arg.Player)
+                .Where((grouping, i) => grouping.Count() >= 7)
                 .Select(grouping => new {Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count()})
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
         }
@@ -83,6 +85,7 @@ namespace Rankings.Core.Services
                     new {Player = arg.Game.Player2, Elo = arg.EloPlayer1, Score1 = arg.Game.Score2, Score2 = arg.Game.Score1},
                 })
                 .GroupBy(arg => arg.Player)
+                .Where((grouping, i) => grouping.Count() >= 7)
                 .Where(grouping => grouping.Count(arg => arg.Score1 > arg.Score2) > 0)
                 .Select(grouping => new {Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 > arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 > arg.Score2)})
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
@@ -97,6 +100,7 @@ namespace Rankings.Core.Services
                     new {Player = arg.Game.Player2, Elo = arg.EloPlayer1, Score1 = arg.Game.Score2, Score2 = arg.Game.Score1},
                 })
                 .GroupBy(arg => arg.Player)
+                .Where((grouping, i) => grouping.Count() >= 7)
                 .Where(grouping => grouping.Count(arg => arg.Score1 < arg.Score2) > 0)
                 .Select(grouping => new {Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 < arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 < arg.Score2)})
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);

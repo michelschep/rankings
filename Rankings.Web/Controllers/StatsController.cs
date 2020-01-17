@@ -135,7 +135,7 @@ namespace Rankings.Web.Controllers
                 Score = pair.Value.Round().ToString()
             });
 
-            ViewBag.Title = "Strength Wins Ranking";
+            ViewBag.Title = "Strength Losts Ranking";
             return View("Index", viewModel);
         }
     }
