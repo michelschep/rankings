@@ -47,6 +47,61 @@ namespace Rankings.Core.Services
             return rankingCalculator.Ranking;
         }
 
+        public Dictionary<Profile, decimal> StrengthGamesPerPlayer(in DateTime startDate, in DateTime endDate)
+        {
+            return EloGames("tafeltennis", startDate, endDate)
+                .Select(game => new {game.Game.Player1, game.Game.Player2, Elo = (game.EloPlayer1 + game.EloPlayer2) / 2m})
+                .SelectMany(arg => new[]
+                {
+                    new {arg.Player1, arg.Elo},
+                    new {Player1 = arg.Player2, arg.Elo},
+                })
+                .GroupBy(arg => arg.Player1)
+                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count()})
+                .ToDictionary(arg => arg.Player, arg => arg.Elo);
+        }
+
+        public Dictionary<Profile, decimal> StrengthOponentPerPlayer(in DateTime startDate, in DateTime endDate)
+        {
+            return EloGames("tafeltennis", startDate, endDate)
+                .SelectMany(arg => new[]
+                {
+                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2},
+                    new {Player = arg.Game.Player2, Elo = arg.EloPlayer1},
+                })
+                .GroupBy(arg => arg.Player)
+                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count()})
+                .ToDictionary(arg => arg.Player, arg => arg.Elo);
+        }
+
+        public Dictionary<Profile, decimal> StrengthWinsPerPlayer(in DateTime startDate, in DateTime endDate)
+        {
+            return EloGames("tafeltennis", startDate, endDate)
+                .SelectMany(arg => new[]
+                {
+                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, Score1 = arg.Game.Score1, Score2 = arg.Game.Score2},
+                    new {Player = arg.Game.Player2, Elo = arg.EloPlayer1, Score1 = arg.Game.Score2, Score2 = arg.Game.Score1},
+                })
+                .GroupBy(arg => arg.Player)
+                .Where(grouping => grouping.Count(arg => arg.Score1 > arg.Score2) > 0)
+                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 > arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 > arg.Score2)})
+                .ToDictionary(arg => arg.Player, arg => arg.Elo);
+        }
+
+        public Dictionary<Profile, decimal> StrengthLostsPerPlayer(in DateTime startDate, in DateTime endDate)
+        {
+            return EloGames("tafeltennis", startDate, endDate)
+                .SelectMany(arg => new[]
+                {
+                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, Score1 = arg.Game.Score1, Score2 = arg.Game.Score2},
+                    new {Player = arg.Game.Player2, Elo = arg.EloPlayer1, Score1 = arg.Game.Score2, Score2 = arg.Game.Score1},
+                })
+                .GroupBy(arg => arg.Player)
+                .Where(grouping => grouping.Count(arg => arg.Score1 < arg.Score2) > 0)
+                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 < arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 < arg.Score2)})
+                .ToDictionary(arg => arg.Player, arg => arg.Elo);
+        }
+
         public IEnumerable<char> History(string emailAddress, DateTime startDate, DateTime endDate)
         {
             return _gamesService
@@ -144,13 +199,13 @@ namespace Rankings.Core.Services
                     break;
             }
 
-            return fibonacciScore; 
+            return fibonacciScore;
         }
 
         private int Fibonacci(int n)
         {
             if (n >= 10)
-                return 34 + (n - 10)*13;
+                return 34 + (n - 10) * 13;
 
             if (n == 1)
                 return 0;
@@ -257,42 +312,42 @@ namespace Rankings.Core.Services
 
         public IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate)
         {
-            return  _gamesService.List<Game>(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList()
+            return _gamesService.List<Game>(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList()
                 .Select(game =>
                 {
                     if (game.Player1.Id < game.Player2.Id)
                         return new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, Score1 = game.Score1, Score2 = game.Score2};
                     return new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1};
                 }).GroupBy(arg => new {arg.Player1, arg.Player2})
-                .Select(grouping => new 
+                .Select(grouping => new
                 {
-                    Player1 = grouping.Key.Player1, 
-                    Player2 = grouping.Key.Player2, 
-                    TotalGames = grouping.Count(), 
-                    TotalSets = grouping.Sum(g=>g.Score1+g.Score2), 
-                    Score1 = grouping.Count(g => g.Score1 > g.Score2), 
+                    Player1 = grouping.Key.Player1,
+                    Player2 = grouping.Key.Player2,
+                    TotalGames = grouping.Count(),
+                    TotalSets = grouping.Sum(g => g.Score1 + g.Score2),
+                    Score1 = grouping.Count(g => g.Score1 > g.Score2),
                     Score2 = grouping.Count(g => g.Score2 > g.Score1),
-                    Set1 = grouping.Sum(g=>g.Score1),
-                    Set2 = grouping.Sum(g=>g.Score2),
+                    Set1 = grouping.Sum(g => g.Score1),
+                    Set2 = grouping.Sum(g => g.Score2),
                 }).Select(arg =>
                 {
-                    if (arg.Score1>arg.Score2)
+                    if (arg.Score1 > arg.Score2)
                         return new {arg.Player1, arg.Player2, arg.Score1, arg.Score2, arg.Set1, arg.Set2, arg.TotalGames, arg.TotalSets};
                     return new {Player1 = arg.Player2, Player2 = arg.Player1, Score1 = arg.Score2, Score2 = arg.Score1, Set1 = arg.Set2, Set2 = arg.Set1, arg.TotalGames, arg.TotalSets};
                 })
                 .Select(summary => new GameSummary()
                 {
-                    Player1 = summary.Player1, 
-                    Player2 = summary.Player2, 
-                    TotalGames = summary.TotalGames, 
-                    Score1 = summary.Score1, 
+                    Player1 = summary.Player1,
+                    Player2 = summary.Player2,
+                    TotalGames = summary.TotalGames,
+                    Score1 = summary.Score1,
                     Score2 = summary.Score2,
                     Set1 = summary.Set1,
                     Set2 = summary.Set2,
-                    PercentageScore1 = (int)(100m * summary.Score1/summary.TotalGames).Round(),
-                    PercentageScore2 = (int)(100m * summary.Score2/summary.TotalGames).Round(),
-                    PercentageSet1 = (int)(100m * summary.Set1/summary.TotalSets).Round(),
-                    PercentageSet2 = (int)(100m * summary.Set2/summary.TotalSets).Round(),
+                    PercentageScore1 = (int) (100m * summary.Score1 / summary.TotalGames).Round(),
+                    PercentageScore2 = (int) (100m * summary.Score2 / summary.TotalGames).Round(),
+                    PercentageSet1 = (int) (100m * summary.Set1 / summary.TotalSets).Round(),
+                    PercentageSet2 = (int) (100m * summary.Set2 / summary.TotalSets).Round(),
                 });
         }
 

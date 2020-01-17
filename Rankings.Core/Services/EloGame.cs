@@ -10,6 +10,11 @@ namespace Rankings.Core.Services
         public decimal Player1Delta { get; }
         public decimal Player2Delta { get; }
 
+        public EloGame()
+        {
+
+        }
+
         public EloGame(Game game, decimal eloPlayer1, decimal eloPlayer2, decimal player1Delta, decimal player2Delta)
         {
             Game = game;

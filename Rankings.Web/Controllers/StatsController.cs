@@ -67,6 +67,77 @@ namespace Rankings.Web.Controllers
             return View("Duels", gameSummaries);
         }
 
+        [HttpGet("/stats/strength")]
+        public IActionResult Strength()
+        {
+            var result = _statisticsService.StrengthGamesPerPlayer(DateTime.MinValue, DateTime.MaxValue)
+                .OrderByDescending(pair => pair.Value).ToList();
+
+            var index = 1;
+            var viewModel = result.Select(pair => new RankingViewItem
+            {
+                Index = (index++).ToString(),
+                Name = pair.Key.DisplayName,
+                Score = pair.Value.Round().ToString()
+            });
+
+            ViewBag.Title = "Strength Ranking";
+            return View("Index", viewModel);
+        }
+
+        [HttpGet("/stats/oponents")]
+        public IActionResult StrengthOponents()
+        {
+            var result = _statisticsService.StrengthOponentPerPlayer(DateTime.MinValue, DateTime.MaxValue)
+                .OrderByDescending(pair => pair.Value).ToList();
+
+            var index = 1;
+            var viewModel = result.Select(pair => new RankingViewItem
+            {
+                Index = (index++).ToString(),
+                Name = pair.Key.DisplayName,
+                Score = pair.Value.Round().ToString()
+            });
+
+            ViewBag.Title = "Strength Oponents Ranking";
+            return View("Index", viewModel);
+        }
+
+        [HttpGet("/stats/wins")]
+        public IActionResult StrengthWins()
+        {
+            var result = _statisticsService.StrengthWinsPerPlayer(DateTime.MinValue, DateTime.MaxValue)
+                .OrderByDescending(pair => pair.Value).ToList();
+
+            var index = 1;
+            var viewModel = result.Select(pair => new RankingViewItem
+            {
+                Index = (index++).ToString(),
+                Name = pair.Key.DisplayName,
+                Score = pair.Value.Round().ToString()
+            });
+
+            ViewBag.Title = "Strength Wins Ranking";
+            return View("Index", viewModel);
+        }
+
+        [HttpGet("/stats/losts")]
+        public IActionResult StrengthLosts()
+        {
+            var result = _statisticsService.StrengthLostsPerPlayer(DateTime.MinValue, DateTime.MaxValue)
+                .OrderByDescending(pair => pair.Value).ToList();
+
+            var index = 1;
+            var viewModel = result.Select(pair => new RankingViewItem
+            {
+                Index = (index++).ToString(),
+                Name = pair.Key.DisplayName,
+                Score = pair.Value.Round().ToString()
+            });
+
+            ViewBag.Title = "Strength Wins Ranking";
+            return View("Index", viewModel);
+        }
     }
 
     public class RankingViewItem
