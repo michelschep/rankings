@@ -144,8 +144,7 @@ namespace Rankings.Core.Services
                     break;
             }
 
-            //return (int) Math.Round(Math.Sqrt(fibonacciScore));
-            return fibonacciScore;
+            return fibonacciScore; 
         }
 
         private int Fibonacci(int n)

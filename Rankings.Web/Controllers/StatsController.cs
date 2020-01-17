@@ -61,8 +61,8 @@ namespace Rankings.Web.Controllers
             var endDate = year.HasValue ? new DateTime(year.Value, 12, 31) : DateTime.MaxValue;
 
             var gameSummaries = _statisticsService.GameSummaries(startDate, endDate)
-                .OrderBy(summary => Math.Abs(summary.PercentageSet1 - summary.PercentageSet2))
-                .ThenByDescending(summary => summary.TotalGames);
+                .OrderByDescending(summary => summary.TotalGames)
+                .ThenByDescending(summary => Math.Abs(summary.PercentageSet1 - summary.PercentageSet2));
 
             return View("Duels", gameSummaries);
         }
