@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
@@ -16,14 +14,12 @@ namespace Rankings.Web.Controllers
     [Authorize]
     public class ProfilesController : Controller
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGamesService _gamesService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public ProfilesController(IHttpContextAccessor httpContextAccessor, IGamesService gamesService, IAuthorizationService authorizationService)
+        public ProfilesController(IGamesService gamesService, IAuthorizationService authorizationService)
         {
-            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             // TODO inject?
@@ -32,9 +28,6 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Index()
         {
-            // TODO get rid of this silly thing
-            ActivateCurrentUser();
-
             var list = _gamesService.List(new AllProfiles())
                 .Select(profile => _mapper.Map<Profile, ProfileViewModel>(profile));
 
@@ -59,16 +52,13 @@ namespace Rankings.Web.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            // TODO get rid of this
-            ActivateCurrentUser();
-
             var profile = _gamesService.Item(new SpecificProfile(id));
             var resolveProfileViewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
 
             var authResult = await _authorizationService.AuthorizeAsync(User, resolveProfileViewModel, "ProfileEditPolicy");
             if (!authResult.Succeeded)
             {
-                return RedirectToAction("Index", "Rankings");
+                return RedirectToAction("Index");
             }
 
             return View(resolveProfileViewModel);
@@ -80,7 +70,7 @@ namespace Rankings.Web.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, profileViewModel, "ProfileEditPolicy");
             if (!authResult.Succeeded)
             {
-                return RedirectToAction("Index", "Rankings");
+                return RedirectToAction("Index");
             }
 
             if (ModelState.IsValid)
@@ -94,9 +84,6 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Details(int id)
         {
-            // TODO get rid of this please....
-            ActivateCurrentUser();
-
             var profile = _gamesService.Item(new SpecificProfile(id));
             var viewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
 
@@ -110,14 +97,6 @@ namespace Rankings.Web.Controllers
                 cfg.CreateMap<Profile, ProfileViewModel>();
                 cfg.CreateMap<ProfileViewModel, Profile>();
             }).CreateMapper();
-        }
-
-        private void ActivateCurrentUser()
-        {
-            var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            var name = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname).Value;
-
-            _gamesService.ActivateProfile(email, name);
         }
     }
 }
