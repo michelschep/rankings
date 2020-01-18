@@ -146,7 +146,7 @@ namespace Rankings.Web.Controllers
                 .EloGames(profile).ToList();
             var result = statGames
                 .GroupBy(game => new {Month = game.RegistrationDate.Month, Variable = 50 * (int)(game.EloPlayer2 / 50)})
-                .Select(game => new Item {Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString(), Value = (int)game.Sum(statGame => statGame.Delta1).Value.Round()})
+                .Select(game => new Item {Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString(), Value = (int)game.Sum(statGame => statGame.Delta1).Round()})
                 .ToList();
 
             return new JsonResult(result);
