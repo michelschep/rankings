@@ -25,11 +25,18 @@ namespace Rankings.Web
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public async Task Invoke(HttpContext context)
         {
-            _logger.LogInformation("Visitor {username} for page {page}", context.User.Identity.Name, context.Request.GetDisplayUrl()); 
+            _logger.LogInformation("Visitor {username} for page {page}", context.User.Identity.Name, context.Request.GetDisplayUrl());
 
-            var email = context.User.FindFirst(ClaimTypes.Name).Value;
-            var name = context.User.FindFirst(ClaimTypes.Surname).Value;
-            _gamesService.ActivateProfile(email, name);
+            try
+            {
+                var email = context.User.FindFirst(ClaimTypes.Name).Value;
+                var name = context.User.FindFirst(ClaimTypes.Surname).Value;
+                _gamesService.ActivateProfile(email, name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Cannot activate user {context.User.Identity.Name}");
+            }
 
             await _next(context);
         }
