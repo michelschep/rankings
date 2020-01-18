@@ -87,6 +87,8 @@ namespace Rankings.Web.Controllers
             var profile = _gamesService.Item(new SpecificProfile(id));
             var viewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
 
+            ViewBag.Profile = profile.EmailAddress;
+
             return View(viewModel);
         }
 

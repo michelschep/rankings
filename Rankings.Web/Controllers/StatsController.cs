@@ -138,6 +138,31 @@ namespace Rankings.Web.Controllers
             ViewBag.Title = "Strength Losts Ranking";
             return View("Index", viewModel);
         }
+
+        [HttpGet("/Profiles/Details/Stats/PlayerHeatmapData/{profile}")]
+        public IActionResult PlayerHeatmapData(string profile)
+        {
+            var statGames = _statisticsService
+                .EloGames(profile).ToList();
+            var result = statGames
+                .GroupBy(game => new {Month = game.RegistrationDate.Month, Variable = 50 * (int)(game.EloPlayer2 / 50)})
+                .Select(game => new Item {Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString(), Value = (int)game.Sum(statGame => statGame.Delta1).Value.Round()})
+                .ToList();
+
+            return new JsonResult(result);
+        }
+
+        private int DetermineVariable(decimal gameEloPlayer)
+        {
+            return 100 * (int)(gameEloPlayer / 100);
+        }
+
+        public class Item
+        {
+            public string Group { get; set; }
+            public string Variable { get; set; }
+            public int Value { get; set; }
+        }
     }
 
     public class RankingViewItem

@@ -26,6 +26,7 @@ namespace Rankings.Core.Interfaces
         decimal RecordEloStreak(string emailAddress, DateTime startDate, DateTime endDate);
         decimal CurrentEloStreak(string emailAddress, DateTime startDate, DateTime endDate);
         IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate);
+        IEnumerable<StatGame> EloGames(string emailAddress);
     }
 
     public class GameSummary

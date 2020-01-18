@@ -354,6 +354,11 @@ namespace Rankings.Core.Services
                 });
         }
 
+        public IEnumerable<StatGame> EloGames(string emailAddress)
+        {
+            return EloGamesByPlayer(emailAddress, DateTime.MinValue, DateTime.MaxValue);
+        }
+
         private List<StatGame> EloGamesByPlayer(string emailAddress, DateTime startDate, DateTime endDate)
         {
             return EloGames("tafeltennis", startDate, endDate)
@@ -365,29 +370,38 @@ namespace Rankings.Core.Services
                     ? new
                     {
                         Score1 = game.Game.Score1, Score2 = game.Game.Score2, Delta1 = game.Player1Delta,
-                        Delta2 = game.Player2Delta
+                        Delta2 = game.Player2Delta, game.Game.RegistrationDate,
+                        EloPlayer2 = game.EloPlayer2
                     }
                     : new
                     {
-                        Score1 = game.Game.Score2, Score2 = game.Game.Score1, Delta1 = game.Player2Delta,
-                        Delta2 = game.Player1Delta
+                        Score1 = game.Game.Score2, 
+                        Score2 = game.Game.Score1, 
+                        Delta1 = game.Player2Delta,
+                        Delta2 = game.Player1Delta, 
+                        game.Game.RegistrationDate,
+                        EloPlayer2 = game.EloPlayer1
                     })
-                .Select(arg => new StatGame(arg.Score1, arg.Score2, arg.Delta1, arg.Delta2)).ToList();
+                .Select(arg => new StatGame(arg.Score1, arg.Score2, arg.Delta1, arg.Delta2)
+                {
+                    RegistrationDate = arg.RegistrationDate,
+                    EloPlayer2 = arg.EloPlayer2
+                }).ToList();
         }
 
         private List<StatGame> GamesByPlayer(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            // TODO tafeltennis hardcoded...
             return _gamesService
                 .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
                 .Select(game =>
                     string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
-                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress}
-                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress})
+                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress, game.RegistrationDate}
+                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress, game.RegistrationDate})
                 .Select(arg => new StatGame(arg.Score1, arg.Score2)
                 {
                     Player1 = arg.Player1,
-                    Player2 = arg.Player2
+                    Player2 = arg.Player2,
+                    RegistrationDate = arg.RegistrationDate
                 })
                 .ToList();
         }
