@@ -27,7 +27,7 @@
     }
 </div>
 
-<h3>Netto Elo Points Eternal Ranking</h3>
+<h3>Game Win% (based on elo score opponents from eternal ranking)</h3>
 <div id="my_dataviz"></div>
 <script src="https://d3js.org/d3.v4.js"></script>
 <script>
@@ -74,7 +74,8 @@
         .scalePow()
         .exponent(0.5)
         .range(["red", "green"])
-        .domain([-100, 100])
+        //.domain([-100, 100])
+        .domain([0, 100])
 
 //Read the data
     d3.json("Stats/PlayerHeatmapData/@ViewBag.Profile",
