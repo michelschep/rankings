@@ -12,7 +12,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.DisplayName)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -23,11 +22,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DisplayName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
 }
