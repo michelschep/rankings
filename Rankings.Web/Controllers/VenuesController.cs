@@ -19,7 +19,6 @@ namespace Rankings.Web.Controllers
         public VenuesController(IGamesService gamesService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
-            // TODO inject?
             _mapper = CreateMapper();
         }
 
