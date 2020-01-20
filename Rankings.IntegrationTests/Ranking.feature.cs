@@ -100,6 +100,9 @@ namespace Rankings.IntegrationTests
 #line 10
  testRunner.And("margin of victory active", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
+#line 11
+ testRunner.And("only in ranking with a minimum of 0 games", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
         }
         
         void System.IDisposable.Dispose()
@@ -114,7 +117,7 @@ namespace Rankings.IntegrationTests
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("No games played yet", null, ((string[])(null)));
-#line 12
+#line 13
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -137,10 +140,10 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 13
+#line 14
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 14
+#line 15
  testRunner.When("I view the tafeltennis ranking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
@@ -152,10 +155,10 @@ this.FeatureBackground();
                             "Geale",
                             "1200"});
                 table10.AddRow(new string[] {
-                            "1",
+                            "2",
                             "Michel",
                             "1200"});
-#line 15
+#line 16
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table10, "Then ");
 #line hidden
             }
@@ -169,7 +172,7 @@ this.FeatureBackground();
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("First ever game played", null, ((string[])(null)));
-#line 20
+#line 21
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -192,7 +195,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 21
+#line 22
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
@@ -207,7 +210,7 @@ this.FeatureBackground();
                             "Geale",
                             "2",
                             "1"});
-#line 22
+#line 23
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table11, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
@@ -222,7 +225,7 @@ this.FeatureBackground();
                             "2",
                             "Geale",
                             "1183"});
-#line 25
+#line 26
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table12, "Then ");
 #line hidden
             }
@@ -236,7 +239,7 @@ this.FeatureBackground();
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Player played two games", null, ((string[])(null)));
-#line 30
+#line 31
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -259,7 +262,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 31
+#line 32
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
@@ -280,7 +283,7 @@ this.FeatureBackground();
                             "Geale",
                             "1",
                             "2"});
-#line 32
+#line 33
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table13, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
@@ -295,7 +298,7 @@ this.FeatureBackground();
                             "2",
                             "Michel",
                             "1198"});
-#line 36
+#line 37
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table14, "Then ");
 #line hidden
             }
@@ -309,7 +312,7 @@ this.FeatureBackground();
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two games played between the same players but registered by different players", null, ((string[])(null)));
-#line 41
+#line 42
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -332,7 +335,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 42
+#line 43
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
@@ -353,7 +356,7 @@ this.FeatureBackground();
                             "Michel",
                             "2",
                             "1"});
-#line 43
+#line 44
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table15, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
@@ -368,7 +371,7 @@ this.FeatureBackground();
                             "2",
                             "Michel",
                             "1198"});
-#line 47
+#line 48
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table16, "Then ");
 #line hidden
             }

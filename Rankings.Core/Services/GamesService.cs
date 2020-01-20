@@ -13,10 +13,12 @@ namespace Rankings.Core.Services
     public class GamesService : IGamesService
     {
         private readonly IRepository _repository;
-       
-        public GamesService(IRepository repository)
+        private readonly IRankingsClock _clock;
+
+        public GamesService(IRepository repository, IRankingsClock rankingsClock)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _clock = rankingsClock;
         }
 
         public IEnumerable<T> List<T>(ISpecification<T> specification) where T : BaseEntity
@@ -98,7 +100,7 @@ namespace Rankings.Core.Services
             if (_repository.GetById<Profile>(game.Player2.Id) == null)
                 throw new Exception("Cannot register game because player2 is not registered");
 
-            game.RegistrationDate = DateTime.Now;
+            //game.RegistrationDate = _clock.Now();
 
             _repository.Add(game);
         }
@@ -116,6 +118,19 @@ namespace Rankings.Core.Services
         public bool IsDisplayNameUnique(string displayName)
         {
             return !List(new Profiles(displayName)).ToList().Any();
+        }
+    }
+
+    public interface IRankingsClock
+    {
+        DateTime Now();
+    }
+
+    public class RankingsClock : IRankingsClock
+    {
+        public DateTime Now()
+        {
+            return DateTime.Now;
         }
     }
 }

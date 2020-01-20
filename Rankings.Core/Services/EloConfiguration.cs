@@ -2,7 +2,7 @@
 {
     public class EloConfiguration
     {
-        public EloConfiguration(int kfactor, int n, bool withMarginOfVictory, int initialElo, int numberOfGames = 0)
+        public EloConfiguration(int kfactor, int n, bool withMarginOfVictory, int initialElo, int? numberOfGames)
         {
             Kfactor = kfactor;
             N = n;
@@ -15,6 +15,7 @@
         public int N { get; }
         public bool WithMarginOfVictory { get; }
         public int InitialElo { get; }
-        public int NumberOfGames { get; }
+        public int? NumberOfGames { get; }
+        public bool JustNumbersForRanking { get; set; }
     }
 }

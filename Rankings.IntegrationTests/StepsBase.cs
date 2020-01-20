@@ -47,7 +47,7 @@ namespace Rankings.IntegrationTests
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new RepositoryFactory(rankingContextFactory);
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
-            _gamesService = new GamesService(repository);
+            _gamesService = new GamesService(repository, new RankingsClock());
             var options = new MemoryCacheOptions();
             var optionsAccessor = Options.Create(options);
             _memoryCache = new MemoryCache(optionsAccessor);
@@ -66,10 +66,26 @@ namespace Rankings.IntegrationTests
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration)
         {
-            IEloCalculatorFactory eloCalculatorFactory = new AdHocEloCalculatorFactory(() => new EloCalculatorVersion2019());
+            //IEloCalculatorFactory eloCalculatorFactory = new AdHocEloCalculatorFactory(() => new EloCalculatorVersion2019());
+            IEloCalculatorFactory eloCalculatorFactory = new EloCalculatorFactory();
             var rankingService = new StatisticsService(_gamesService, eloConfiguration, _factory.CreateLogger<IStatisticsService>(), eloCalculatorFactory);
 
-            return new RankingsController(rankingService, _memoryCache);
+            return new RankingsController(rankingService, _memoryCache, eloConfiguration);
+        }
+    }
+
+    public class AdhocClock : IRankingsClock
+    {
+        private readonly Func<DateTime> _now;
+
+        public AdhocClock(Func<DateTime> now)
+        {
+            _now = now;
+        }
+
+        public DateTime Now()
+        {
+            return _now();
         }
     }
 

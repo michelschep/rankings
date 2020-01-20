@@ -222,9 +222,12 @@ namespace Rankings.IntegrationTests
                 throw new Exception("Calculator config missing");
             
             Output.Information($"***** Calculate ranking with k={context.Kfactor} n={context.N}");
-            var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value, context.MinimumRankingGames ?? 0);
+            var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value, context.MinimumRankingGames)
+            {
+                JustNumbersForRanking = true
+            };
             var rankingController = CreateRankingController(eloConfiguration);
-            var viewResult = (ViewResult) rankingController.EternalRanking();
+            var viewResult = (ViewResult) rankingController.EternalRanking(precision);
             var viewModel = (IEnumerable<RankingViewModel>) viewResult.Model;
             var actualRanking = viewModel.ToList();
 
@@ -235,7 +238,6 @@ namespace Rankings.IntegrationTests
                     .Including(model => model.Ranking)
                     .Including(model => model.NamePlayer)
                     .Including(model => model.Points)
-                    //.Including(model => model.WinPercentage)
                 );
         }
     }

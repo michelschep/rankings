@@ -2,22 +2,6 @@ using System;
 
 namespace Rankings.Core.Services
 {
-    public interface IEloCalculatorFactory
-    {
-        IEloCalculator Create(int year);
-    }
-
-    public class EloCalculatorFactory : IEloCalculatorFactory
-    {
-        public IEloCalculator Create(int year)
-        {
-            if (year == 2020)
-                return new EloCalculatorVersion2020();
-
-            return new EloCalculatorVersion2019();
-        }
-    }
-
     public class EloCalculatorVersion2019 : IEloCalculator
     {
         public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
@@ -61,6 +45,39 @@ namespace Rankings.Core.Services
         private decimal ExpectationForWinningOneSet(decimal ratingPlayer1, decimal ratingPlayer2)
         {
             decimal exponent = (ratingPlayer2 - ratingPlayer1) / 400;
+            decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
+
+            return expected;
+        }
+    }
+    
+    public class DefaultEloCalculator : IEloCalculator
+    {
+        public decimal CalculateDeltaPlayer(decimal ratingPlayer1, decimal ratingPlayer2, int gameScore1, int gameScore2)
+        {
+            var expectedOutcome1 = CalculateExpectation(ratingPlayer1, ratingPlayer2);
+            decimal actualResult = ActualResult(gameScore1, gameScore2);
+
+            var winnerEloDiff = gameScore1 > gameScore2
+                ? ratingPlayer1 - ratingPlayer2
+                : ratingPlayer2 - ratingPlayer1;
+
+            var outcome1 = (actualResult - expectedOutcome1);
+
+            return 5  * outcome1;
+        }
+
+        private decimal ActualResult(int gameScore1, int gameScore2)
+        {
+            if (gameScore1 == gameScore2)
+                return 0.5m;
+
+            return gameScore1 > gameScore2 ? 1 : 0;
+        }
+
+        private decimal CalculateExpectation(decimal ratingPlayer1, decimal ratingPlayer2)
+        {
+            decimal exponent = (ratingPlayer2 - ratingPlayer1) / 50;
             decimal expected = (decimal)(1 / (1 + Math.Pow(10, (double)exponent)));
 
             return expected;

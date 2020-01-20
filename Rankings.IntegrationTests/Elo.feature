@@ -10,7 +10,7 @@ Background:
 	And the current user is Amy with role Admin
 	And elo system with k-factor 5 and n is 50 and initial elo is 100
 	And margin of victory is not active
-	And only in ranking with a minimum of 1 games
+	And only in ranking with a minimum of 0 games
 
 Scenario: At the start of the ranking
 	Given no games played
@@ -25,7 +25,7 @@ Scenario: First round
 	Given no games played
 	When the following tafeltennis games are played in Amsterdam:
 		| Registration Date | First Player | Second Player | S1 | S2 |
-		| 2019-11-23 16:04  | Amy		   | Brad          | 1  | 0  |
+		| 2018-11-23 16:04  | Amy		   | Brad          | 1  | 0  |
 	Then we have the following tafeltennis ranking with precision 1:
 		| Ranking | NamePlayer | Points |
 		| 1       | Amy        | 102.5  |
@@ -37,8 +37,8 @@ Scenario: Second round
 	Given no games played
 	When the following tafeltennis games are played in Amsterdam:
 		| Registration Date | First Player | Second Player | S1 | S2 |
-		| 2019-11-23 16:04  | Amy		   | Brad          | 1  | 0  |
-		| 2019-11-23 16:04  | Dirk		   | Cindy         | 1  | 0  |
+		| 2018-11-23 16:04  | Amy		   | Brad          | 1  | 0  |
+		| 2018-11-23 16:04  | Dirk		   | Cindy         | 1  | 0  |
 	Then we have the following tafeltennis ranking with precision 1:
 		| Ranking | NamePlayer | Points |
 		| 1       | Amy        | 102.5  |
@@ -50,9 +50,9 @@ Scenario: Third round
 	Given no games played
 	When the following tafeltennis games are played in Amsterdam:
 		| Registration Date | First Player | Second Player | S1 | S2 |
-		| 2019-11-23 16:04  | Amy		   | Brad          | 1  | 0  |
-		| 2019-11-23 16:04  | Dirk		   | Cindy         | 1  | 0  |
-		| 2019-11-23 16:04  | Amy		   | Cindy         | 1  | 0  |
+		| 2018-11-23 16:04  | Amy		   | Brad          | 1  | 0  |
+		| 2018-11-23 16:04  | Dirk		   | Cindy         | 1  | 0  |
+		| 2018-11-23 16:04  | Amy		   | Cindy         | 1  | 0  |
 	Then we have the following tafeltennis ranking with precision 2:
 		| Ranking | NamePlayer | Points |
 		| 1       | Amy        | 104.71 |

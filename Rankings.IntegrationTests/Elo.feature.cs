@@ -107,7 +107,7 @@ namespace Rankings.IntegrationTests
  testRunner.And("margin of victory is not active", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 13
- testRunner.And("only in ranking with a minimum of 1 games", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("only in ranking with a minimum of 0 games", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         
@@ -216,7 +216,7 @@ this.FeatureBackground();
                             "S1",
                             "S2"});
                 table2.AddRow(new string[] {
-                            "2019-11-23 16:04",
+                            "2018-11-23 16:04",
                             "Amy",
                             "Brad",
                             "1",
@@ -291,13 +291,13 @@ this.FeatureBackground();
                             "S1",
                             "S2"});
                 table4.AddRow(new string[] {
-                            "2019-11-23 16:04",
+                            "2018-11-23 16:04",
                             "Amy",
                             "Brad",
                             "1",
                             "0"});
                 table4.AddRow(new string[] {
-                            "2019-11-23 16:04",
+                            "2018-11-23 16:04",
                             "Dirk",
                             "Cindy",
                             "1",
@@ -372,19 +372,19 @@ this.FeatureBackground();
                             "S1",
                             "S2"});
                 table6.AddRow(new string[] {
-                            "2019-11-23 16:04",
+                            "2018-11-23 16:04",
                             "Amy",
                             "Brad",
                             "1",
                             "0"});
                 table6.AddRow(new string[] {
-                            "2019-11-23 16:04",
+                            "2018-11-23 16:04",
                             "Dirk",
                             "Cindy",
                             "1",
                             "0"});
                 table6.AddRow(new string[] {
-                            "2019-11-23 16:04",
+                            "2018-11-23 16:04",
                             "Amy",
                             "Cindy",
                             "1",

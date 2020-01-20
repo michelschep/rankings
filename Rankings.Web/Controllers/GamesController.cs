@@ -154,11 +154,10 @@ namespace Rankings.Web.Controllers
                     .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
                 model.OpponentPlayers = oponentPlayers;
-                model.GameTypes = _gamesService.List(new AllGameTypes())
-                    .Select(type => new SelectListItem(type.DisplayName, type.Code));
-                model.Venues = _gamesService.List(new AllVenues())
-                    .Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.GameTypes = _gamesService.List(new AllGameTypes()) .Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesService.List(new AllVenues()) .Select(type => new SelectListItem(type.DisplayName, type.Code));
                 model.Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)};
+
                 return View(model);
             }
 
@@ -171,6 +170,7 @@ namespace Rankings.Web.Controllers
                 Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
                 Score1 = model.ScoreFirstPlayer,
                 Score2 = model.ScoreSecondPlayer,
+                RegistrationDate = DateTime.Parse(model.RegistrationDate)//.ToString("yyyy/MM/dd H:mm"))
             };
 
             _gamesService.RegisterGame(game);

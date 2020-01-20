@@ -56,7 +56,7 @@ namespace Rankings.UnitTests
         public void CalculateDeltaPlayerTests(decimal eloPlayerOne, decimal eloPlayerTwo, int scorePlayerOne, int scorePlayerTwo, decimal expectedDelta)
         {
             var logger = new Mock<ILogger<EloCalculatorVersion2019>>().Object;
-            var config = new EloConfiguration(50, 400, true, 1200);
+            var config = new EloConfiguration(50, 400, true, 1200, null);
             var actualDelta = new EloCalculatorVersion2019().CalculateDeltaPlayer(eloPlayerOne, eloPlayerTwo, scorePlayerOne, scorePlayerTwo);
 
             actualDelta.Should().BeApproximately(expectedDelta, 0.001m);

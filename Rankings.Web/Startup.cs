@@ -64,7 +64,8 @@ namespace Rankings.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             // TODO retrieve from app settings/or admin settings page/object
-            services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200, 0));
+            services.AddSingleton<IRankingsClock, RankingsClock>();
+            services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200, 7));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();

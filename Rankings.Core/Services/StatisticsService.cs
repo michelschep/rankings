@@ -26,7 +26,7 @@ namespace Rankings.Core.Services
         public IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
-            return CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
+            return CalculateRanking(eloStatsPlayers, 0);// _eloConfiguration.NumberOfGames ?? 1);
         }
 
         private Dictionary<Profile, EloStatsPlayer> CalculateRanking(Dictionary<Profile, EloStatsPlayer> eloStatsPlayers, int numberOfGames)
@@ -446,7 +446,7 @@ namespace Rankings.Core.Services
                 player2.EloScore += eloGame.Player2Delta;
                 player2.NumberOfGames += 1;
 
-                var ranking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames);
+                var ranking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames ?? 1);
                 if (ranking.Any())
                 {
                     var diff = eloGame.Game.RegistrationDate - lastGameRegistrationDate;
@@ -510,36 +510,6 @@ namespace Rankings.Core.Services
 
                 yield return eloGames;
             }
-        }
-    }
-
-    internal class RankingCalculator
-    {
-        public Dictionary<Profile, EloStatsPlayer> Ranking { get; }
-
-        public RankingCalculator()
-        {
-            Ranking = new Dictionary<Profile, EloStatsPlayer>();
-        }
-
-        public void Push(KeyValuePair<Profile, EloStatsPlayer> item)
-        {
-            var lastPlayer = Ranking.LastOrDefault();
-            Ranking.Add(item.Key, item.Value);
-
-            if (lastPlayer.Key == null)
-            {
-                item.Value.Ranking = 1;
-                return;
-            }
-
-            if (lastPlayer.Value.EloScore == item.Value.EloScore)
-            {
-                item.Value.Ranking = lastPlayer.Value.Ranking;
-                return;
-            }
-
-            item.Value.Ranking = Ranking.Count;
         }
     }
 }

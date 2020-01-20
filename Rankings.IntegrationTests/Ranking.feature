@@ -8,6 +8,7 @@ Background:
 	And the current user is Michel with role Admin
 	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	And margin of victory active
+	And only in ranking with a minimum of 0 games
 
 Scenario: No games played yet
 	Given no games played
@@ -15,7 +16,7 @@ Scenario: No games played yet
 	Then we have the following tafeltennis ranking with precision 0:
 		| Ranking | NamePlayer | Points |
 		| 1       | Geale      | 1200   |
-		| 1       | Michel     | 1200   |
+		| 2       | Michel     | 1200   |
 
 Scenario: First ever game played
 	Given no games played
@@ -46,6 +47,6 @@ Scenario: Two games played between the same players but registered by different 
 		| 2019-11-23 17:04  | Geale        | Michel        | 2  | 1  |
 	Then we have the following tafeltennis ranking with precision 0:
 		| Ranking | NamePlayer | Points |
-		| 1       | Geale      | 1202   |
-		| 2       | Michel     | 1198   |
+		|1| Geale      | 1202   |
+		|2| Michel     | 1198   |
 
