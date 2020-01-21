@@ -35,7 +35,7 @@ namespace Rankings.Web
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"Cannot activate user {context.User.Identity.Name}");
+                _logger.LogWarning($"Cannot activate user {context.User.Identity.Name}", ex);
             }
 
             await _next(context);
