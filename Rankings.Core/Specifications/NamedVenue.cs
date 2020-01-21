@@ -6,7 +6,7 @@ namespace Rankings.Core.Specifications
 {
     public class NamedVenue : BaseSpecification<Venue>
     {
-        public NamedVenue(string name) : base(g => g.DisplayName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+        public NamedVenue(string name) : base(g => g.DisplayName.ToLower() == name.ToLower())
         {
         }
     }
