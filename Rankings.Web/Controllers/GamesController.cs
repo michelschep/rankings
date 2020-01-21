@@ -109,7 +109,7 @@ namespace Rankings.Web.Controllers
 
         private IEnumerable<SelectListItem> OponentPlayers(string nameCurrentUser)
         {
-            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new Oponents(nameCurrentUser);
+            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>) new AllProfiles() : new Oponents(nameCurrentUser);
 
             return _gamesService.List(query)
                 .OrderBy(profile => profile.DisplayName)
@@ -118,7 +118,7 @@ namespace Rankings.Web.Controllers
 
         private IEnumerable<SelectListItem> FirstPlayers(string nameCurrentUser)
         {
-            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new SpecificProfile(nameCurrentUser);
+            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>) new AllProfiles() : new SpecificProfile(nameCurrentUser);
 
             return _gamesService.List(query)
                 .OrderBy(profile => profile.DisplayName)
@@ -154,8 +154,8 @@ namespace Rankings.Web.Controllers
                     .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
 
                 model.OpponentPlayers = oponentPlayers;
-                model.GameTypes = _gamesService.List(new AllGameTypes()) .Select(type => new SelectListItem(type.DisplayName, type.Code));
-                model.Venues = _gamesService.List(new AllVenues()) .Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
                 model.Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)};
 
                 return View(model);
@@ -170,26 +170,28 @@ namespace Rankings.Web.Controllers
                 Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
                 Score1 = model.ScoreFirstPlayer,
                 Score2 = model.ScoreSecondPlayer,
-                RegistrationDate = DateTime.Parse(model.RegistrationDate)//.ToString("yyyy/MM/dd H:mm"))
+                RegistrationDate = DateTime.Parse(model.RegistrationDate) //.ToString("yyyy/MM/dd H:mm"))
             };
 
             _gamesService.RegisterGame(game);
 
             // TODO improve way of handling caching
             _memoryCache.Remove("ranking-" + game.GameType.Code);
-            _memoryCache.Remove("ranking-tafeltennis-2020");
-            _memoryCache.Remove("ranking-tafeltennis-eternal");
-            _memoryCache.Remove("homepage");
+            ClearCache();
 
             return RedirectToAction("Index");
         }
 
-        public IActionResult ResetCache()
+        private void ClearCache()
         {
             _memoryCache.Remove("ranking-tafeltennis-2020");
             _memoryCache.Remove("ranking-tafeltennis-eternal");
             _memoryCache.Remove("homepage");
+        }
 
+        public IActionResult ResetCache()
+        {
+            ClearCache();
             return RedirectToAction("Index");
         }
 
@@ -252,6 +254,7 @@ namespace Rankings.Web.Controllers
         public IActionResult Delete(int id)
         {
             _gamesService.DeleteGame(id);
+            ClearCache();
             return RedirectToAction("AdminIndex");
         }
     }
