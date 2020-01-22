@@ -80,7 +80,7 @@ namespace Rankings.Web
                 var connectionFactory = new SqLiteDatabaseConnectionFactory();
                 var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetRequiredService<ILoggerFactory>(), config.Value);
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
-                return repositoryFactory.Create(config.Value.Database);
+                return repositoryFactory.Create();
 
             });
             services.AddTransient<IGamesService, GamesService>();

@@ -9,7 +9,8 @@ namespace Rankings.Infrastructure.Data
         public RankingContext(DbContextOptions<RankingContext> options) : base(options)
         {
             // TODO get rid of
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
+            Database.Migrate();
         }
 
         // EF needs these properties!

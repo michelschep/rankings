@@ -14,10 +14,9 @@ namespace Rankings.Infrastructure.Data
             _rankingContextFactory = rankingContextFactory ?? throw new ArgumentNullException(nameof(rankingContextFactory));
         }
 
-        public IRepository Create(string connectionString)
+        public IRepository Create()
         {
-            // TODO why null?
-            var context = _rankingContextFactory.CreateDbContext(null);
+            var context = _rankingContextFactory.CreateDbContext(args: null);
 
             return new EfRepository(context);
         }
