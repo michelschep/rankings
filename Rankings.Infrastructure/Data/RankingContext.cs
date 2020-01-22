@@ -4,13 +4,10 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Infrastructure.Data
 {
-    public sealed class RankingContext : DbContext
+    public abstract class RankingContext : DbContext
     {
-        public RankingContext(DbContextOptions<RankingContext> options) : base(options)
+        protected RankingContext(DbContextOptions options) : base(options)
         {
-            // TODO get rid of
-            //Database.EnsureCreated();
-            Database.Migrate();
         }
 
         // EF needs these properties!
@@ -18,5 +15,20 @@ namespace Rankings.Infrastructure.Data
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<GameType> GameTypes { get; set; }
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Game> Games { get; set; }
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Venue> Venues { get; set; }
+    }
+
+    public sealed class PersistantRankingContext : RankingContext
+    {
+        public PersistantRankingContext(DbContextOptions<RankingContext> options) : base(options)
+        {
+            Database.Migrate();
+        }
+    }
+
+    public sealed class InMemoryRankingContext : RankingContext
+    {
+        public InMemoryRankingContext(DbContextOptions<RankingContext> options) : base(options)
+        {
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace Rankings.Infrastructure.Data.InMemory
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
             optionsBuilder.UseInMemoryDatabase(connectionString);
 
-            var rankingContext = new RankingContext(optionsBuilder.Options);
+            var rankingContext = new InMemoryRankingContext(optionsBuilder.Options);
             rankingContext.Database.EnsureDeleted();
             rankingContext.Database.EnsureCreated();
 
