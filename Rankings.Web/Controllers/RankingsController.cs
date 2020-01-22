@@ -119,11 +119,11 @@ namespace Rankings.Web.Controllers
 
         private int NumberOfGames(DateTime startDate)
         {
-            if (_eloConfiguration.NumberOfGames.HasValue)
-                return _eloConfiguration.NumberOfGames.Value;
-
             if (startDate.Year == 2020)
                 return 1;
+
+            if (_eloConfiguration.NumberOfGames.HasValue)
+                return _eloConfiguration.NumberOfGames.Value;
 
             return 7;
         }

@@ -248,6 +248,7 @@ namespace Rankings.Web.Controllers
             game.Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer));
 
             _gamesService.Save(game);
+            ClearCache();
 
             return RedirectToAction("Index");
         }
