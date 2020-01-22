@@ -32,7 +32,7 @@ namespace Rankings.Core.Services
         private Dictionary<Profile, EloStatsPlayer> CalculateRanking(Dictionary<Profile, EloStatsPlayer> eloStatsPlayers, int numberOfGames)
         {
             var rankedPlayers = eloStatsPlayers
-                .Where(pair => pair.Value.NumberOfGames >= numberOfGames)
+                //.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.EloScore).ThenBy(pair => pair.Key.DisplayName);
 
             var orderedRanking = new Dictionary<Profile, EloStatsPlayer>(rankedPlayers);
