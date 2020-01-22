@@ -1,4 +1,4 @@
-﻿namespace Rankings.Web
+﻿namespace Rankings.Infrastructure
 {
     public class RepositoryConfiguration
     {

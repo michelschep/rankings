@@ -1,38 +1,55 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Rankings.Infrastructure.Data.SqLite
 {
-    public class SqLiteRankingContextFactory : IRankingContextFactory
+    public interface IRankingContextFactory : IDesignTimeDbContextFactory<RankingContext>
     {
-        private readonly ISqLiteConnectionFactory _connectionFactory;
-        private readonly ILoggerFactory _loggerFactory;
 
-        //private static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
-        //{
-        //    builder
-        //        .AddFilter((category, level) =>
-        //            category == DbLoggerCategory.Database.Command.Name
-        //            && level == LogLevel.Information)
-        //        .AddConsole();
-        //});
+    }
 
-        public SqLiteRankingContextFactory(ISqLiteConnectionFactory connectionFactory, ILoggerFactory loggerFactory)
+    public class SqLiteRankingContextFactory :IRankingContextFactory 
+    {
+        //private readonly ISqLiteConnectionFactory _connectionFactory;
+        //private readonly ILoggerFactory _loggerFactory;
+        //private readonly RepositoryConfiguration _repositoryConfiguration;
+
+        public SqLiteRankingContextFactory()
         {
-            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
-            _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            
+        }
+        public SqLiteRankingContextFactory(ISqLiteConnectionFactory connectionFactory, ILoggerFactory loggerFactory, RepositoryConfiguration repositoryConfiguration)
+        {
+            //_connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            //_loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            //_repositoryConfiguration = repositoryConfiguration ?? throw new ArgumentNullException(nameof(repositoryConfiguration));
         }
 
-        public RankingContext Create(string connectionString)
+        public RankingContext CreateDbContext(string[] args)
         {
-            var connection = _connectionFactory.CreateSqliteConnection(connectionString);
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            IConfiguration config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{environment}.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
+            var repositoryConfiguration = new RepositoryConfiguration();
+            config.GetSection("Repository").Bind(repositoryConfiguration);
+            var connection = new SqliteConnection(repositoryConfiguration.Database); 
             optionsBuilder.UseSqlite(connection);
-            optionsBuilder.UseLoggerFactory(_loggerFactory);
+            //optionsBuilder.UseLoggerFactory(_loggerFactory);
 
             var rankingContext = new RankingContext(optionsBuilder.Options);
-            rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
+            //rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
 
             return rankingContext;
         }

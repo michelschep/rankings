@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
+using Rankings.Infrastructure;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.SqLite;
 using Serilog;
@@ -75,10 +76,10 @@ namespace Rankings.Web
 
             services.AddTransient(provider =>
             {
-                var connectionFactory = new SqLiteDatabaseConnectionFactory();
-                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetRequiredService<ILoggerFactory>());
-                var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
                 var config = provider.GetRequiredService<IOptions<RepositoryConfiguration>>();
+                var connectionFactory = new SqLiteDatabaseConnectionFactory();
+                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetRequiredService<ILoggerFactory>(), config.Value);
+                var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
                 return repositoryFactory.Create(config.Value.Database);
 
             });

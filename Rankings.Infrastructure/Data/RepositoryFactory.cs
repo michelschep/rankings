@@ -1,5 +1,6 @@
 ﻿using System;
 using Rankings.Core.Interfaces;
+using Rankings.Infrastructure.Data.SqLite;
 
 namespace Rankings.Infrastructure.Data
 {
@@ -14,7 +15,8 @@ namespace Rankings.Infrastructure.Data
 
         public IRepository Create(string connectionString)
         {
-            var context = _rankingContextFactory.Create(connectionString);
+            // TODO why null?
+            var context = _rankingContextFactory.CreateDbContext(null);
 
             return new EfRepository(context);
         }
