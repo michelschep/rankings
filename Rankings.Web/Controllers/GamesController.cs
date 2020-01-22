@@ -245,6 +245,8 @@ namespace Rankings.Web.Controllers
             game.Venue = _gamesService.Item(new SpecificVenue(model.Venue));
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
+            game.Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer));
+
             _gamesService.Save(game);
 
             return RedirectToAction("Index");
