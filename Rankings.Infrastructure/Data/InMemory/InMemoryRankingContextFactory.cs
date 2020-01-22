@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Rankings.Infrastructure.Data.SqLite;
 
 namespace Rankings.Infrastructure.Data.InMemory
 {
-    public class InMemoryRankingContextFactory : IRankingContextFactory
+    public class InMemoryRankingContextFactory 
     {
         public RankingContext CreateDbContext(string connectionString)
         {
@@ -15,11 +14,6 @@ namespace Rankings.Infrastructure.Data.InMemory
             rankingContext.Database.EnsureCreated();
 
             return rankingContext;
-        }
-
-        public RankingContext CreateDbContext(string[] args)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -45,7 +45,8 @@ namespace Rankings.IntegrationTests
             var logger = _factory.CreateLogger<GamesController>();
 
             var rankingContextFactory = new InMemoryRankingContextFactory();
-            var repositoryFactory = new RepositoryFactory(rankingContextFactory);
+            var repositoryFactory = new InMemoryRepositoryFactory(rankingContextFactory);
+
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
             _gamesService = new GamesService(repository, new RankingsClock());
             var options = new MemoryCacheOptions();
