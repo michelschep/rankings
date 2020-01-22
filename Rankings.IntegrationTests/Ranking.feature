@@ -9,6 +9,8 @@ Background:
 	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	And margin of victory active
 	And only in ranking with a minimum of 0 games
+	And with year dependent elo calculator
+	And with 2019 elo calculator
 
 Scenario: No games played yet
 	Given no games played

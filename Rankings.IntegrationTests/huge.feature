@@ -30,6 +30,7 @@ Background:
 	And elo system with k-factor 50 and n is 400 and initial elo is 1200
 	And margin of victory active
 	And only in ranking with a minimum of 7 games
+	And with 2019 elo calculator
 
 Scenario: Really many games
 	Given no games played
@@ -422,7 +423,7 @@ Scenario: Really many games
 		| 3       | Hans       | 1493   | 78            |
 		| 4       | Michel     | 1368   | 55            |
 		| 5       | Bertus     | 1362   | 63            |
-		| 6       | Remco      | 1298   | 62            |
+		| 6       | Remco      | 1299   | 62            |
 		| 7       | Harro      | 1265   | 58            |
 		| 8       | Geale      | 1259   | 48            |
 		| 9       | Arnold1    | 1182   | 48            |
@@ -430,7 +431,7 @@ Scenario: Really many games
 		| 11      | Ricky      | 1115   | 28            |
 		| 12      | Eduard     | 1107   | 48            |
 		| 13      | Jeroen     | 1090   | 20            |
-		| 14      | Matthias   | 1074   | 23            |
+		| 14      | Matthias   | 1073   | 23            |
 		| 15      | Enrico     | 1022   | 11            |
 		| 16      | Tarik      | 988    | 14            |
 		| 17      | Eltjo      | 971    | 18            |

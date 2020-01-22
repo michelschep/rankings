@@ -8,5 +8,6 @@
         public int? N { get; set; }
         public int? InitialElo { get; set; }
         public int? MinimumRankingGames { get; set; }
+        public TypeEloCalculator? TypeEloCalculator { get; set; }
     }
 }

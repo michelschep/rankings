@@ -170,7 +170,7 @@ namespace Rankings.Web.Controllers
                 Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
                 Score1 = model.ScoreFirstPlayer,
                 Score2 = model.ScoreSecondPlayer,
-                RegistrationDate = DateTime.Parse(model.RegistrationDate) //.ToString("yyyy/MM/dd H:mm"))
+//                RegistrationDate = DateTime.Parse(model.RegistrationDate) //.ToString("yyyy/MM/dd H:mm"))
             };
 
             _gamesService.RegisterGame(game);

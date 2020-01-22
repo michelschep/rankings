@@ -1,6 +1,6 @@
 namespace Rankings.Core.Services
 {
-    public class EloCalculatorFactory : IEloCalculatorFactory
+    public class YearDependentEloCalculatorFactory : IEloCalculatorFactory
     {
         public IEloCalculator Create(int year)
         {

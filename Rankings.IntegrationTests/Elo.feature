@@ -11,6 +11,7 @@ Background:
 	And elo system with k-factor 5 and n is 50 and initial elo is 100
 	And margin of victory is not active
 	And only in ranking with a minimum of 0 games
+	And with the default elo calculator
 
 Scenario: At the start of the ranking
 	Given no games played

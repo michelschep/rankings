@@ -166,6 +166,9 @@ namespace Rankings.IntegrationTests
 #line 32
  testRunner.And("only in ranking with a minimum of 7 games", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
+#line 33
+ testRunner.And("with 2019 elo calculator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
         }
         
         void System.IDisposable.Dispose()
@@ -180,7 +183,7 @@ namespace Rankings.IntegrationTests
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Really many games", null, ((string[])(null)));
-#line 34
+#line 35
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -203,7 +206,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line hidden
-#line 35
+#line 36
  testRunner.Given("no games played", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
@@ -2492,7 +2495,7 @@ this.FeatureBackground();
                             "Hans",
                             "3",
                             "1"});
-#line 36
+#line 37
  testRunner.When("the following tafeltennis games are played in Amsterdam:", ((string)(null)), table8, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
@@ -2528,7 +2531,7 @@ this.FeatureBackground();
                 table9.AddRow(new string[] {
                             "6",
                             "Remco",
-                            "1298",
+                            "1299",
                             "62"});
                 table9.AddRow(new string[] {
                             "7",
@@ -2568,7 +2571,7 @@ this.FeatureBackground();
                 table9.AddRow(new string[] {
                             "14",
                             "Matthias",
-                            "1074",
+                            "1073",
                             "23"});
                 table9.AddRow(new string[] {
                             "15",
@@ -2595,7 +2598,7 @@ this.FeatureBackground();
                             "Tjardo",
                             "875",
                             "0"});
-#line 418
+#line 419
  testRunner.Then("we have the following tafeltennis ranking with precision 0:", ((string)(null)), table9, "Then ");
 #line hidden
             }

@@ -69,7 +69,7 @@ namespace Rankings.Web
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();
-            services.AddSingleton<IEloCalculatorFactory, EloCalculatorFactory>();
+            services.AddSingleton<IEloCalculatorFactory, YearDependentEloCalculatorFactory>();
             services.AddSingleton<IStatisticsService, StatisticsService>();
             services.Configure<RepositoryConfiguration>(Configuration.GetSection("Repository"));
 

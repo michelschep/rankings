@@ -177,6 +177,29 @@ namespace Rankings.IntegrationTests
             _featureContext.MinimumRankingGames = p0;
         }
 
+        [Given(@"with year dependent elo calculator")]
+        public void GivenWithYearDependentEloCalculator()
+        {
+            _featureContext.TypeEloCalculator = TypeEloCalculator.YearDependent;
+        }
+
+        [Given(@"with the default elo calculator")]
+        public void GivenWithEloCalculator()
+        {
+            _featureContext.TypeEloCalculator = TypeEloCalculator.DefaultEloCalculator;
+        }
+
+        [Given(@"with (.*) elo calculator")]
+        public void GivenWithEloCalculator(int year)
+        {
+            _featureContext.TypeEloCalculator = year switch
+            {
+                2019 => TypeEloCalculator.Elo2019,
+                2020 => TypeEloCalculator.Elo2020,
+                _ => TypeEloCalculator.YearDependent
+            };
+        }
+
         [Given(@"margin of victory is not active")]
         public void GivenMarginOfVictoryIsNotActive()
         {
@@ -220,13 +243,15 @@ namespace Rankings.IntegrationTests
             var context = _featureContext;
             if (!context.Kfactor.HasValue || !context.N.HasValue || !context.MarginOfVictory.HasValue || !context.InitialElo.HasValue)
                 throw new Exception("Calculator config missing");
-            
+
             Output.Information($"***** Calculate ranking with k={context.Kfactor} n={context.N}");
             var eloConfiguration = new EloConfiguration(context.Kfactor.Value, context.N.Value, context.MarginOfVictory.Value, context.InitialElo.Value, context.MinimumRankingGames)
             {
+                // TODO get rid of this
                 JustNumbersForRanking = true
             };
-            var rankingController = CreateRankingController(eloConfiguration);
+
+            var rankingController = CreateRankingController(eloConfiguration, context.TypeEloCalculator);
             var viewResult = (ViewResult) rankingController.EternalRanking(precision);
             var viewModel = (IEnumerable<RankingViewModel>) viewResult.Model;
             var actualRanking = viewModel.ToList();
@@ -234,12 +259,20 @@ namespace Rankings.IntegrationTests
             var expectedRanking = table.CreateSet<RankingViewModel>().ToList();
 
             actualRanking.Should().BeEquivalentTo(expectedRanking, options => options
-                    .WithStrictOrdering()
-                    .Including(model => model.Ranking)
-                    .Including(model => model.NamePlayer)
-                    .Including(model => model.Points)
-                );
+                .WithStrictOrdering()
+                .Including(model => model.Ranking)
+                .Including(model => model.NamePlayer)
+                .Including(model => model.Points)
+            );
         }
+    }
+
+    public enum TypeEloCalculator
+    {
+        Elo2019,
+        Elo2020,
+        DefaultEloCalculator,
+        YearDependent
     }
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]

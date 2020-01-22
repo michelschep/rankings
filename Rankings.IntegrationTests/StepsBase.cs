@@ -52,7 +52,6 @@ namespace Rankings.IntegrationTests
             var optionsAccessor = Options.Create(options);
             _memoryCache = new MemoryCache(optionsAccessor);
 
-            var httpContextAccessor = new Mock<IHttpContextAccessor>();
             var authorizationService = new Mock<IAuthorizationService>();
             authorizationService.Setup(foo => foo.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), "ProfileEditPolicy"))
                 .ReturnsAsync(AuthorizationResult.Success());
@@ -64,43 +63,26 @@ namespace Rankings.IntegrationTests
             GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache, logger);
         }
 
-        protected RankingsController CreateRankingController(EloConfiguration eloConfiguration)
+        protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, TypeEloCalculator? typeEloCalculator)
         {
-            //IEloCalculatorFactory eloCalculatorFactory = new AdHocEloCalculatorFactory(() => new EloCalculatorVersion2019());
-            IEloCalculatorFactory eloCalculatorFactory = new EloCalculatorFactory();
+            var eloCalculatorFactory = CreateEloCalculatorFactory(typeEloCalculator);
             var rankingService = new StatisticsService(_gamesService, eloConfiguration, _factory.CreateLogger<IStatisticsService>(), eloCalculatorFactory);
 
             return new RankingsController(rankingService, _memoryCache, eloConfiguration);
         }
-    }
 
-    public class AdhocClock : IRankingsClock
-    {
-        private readonly Func<DateTime> _now;
-
-        public AdhocClock(Func<DateTime> now)
+        private static IEloCalculatorFactory CreateEloCalculatorFactory(TypeEloCalculator? typeEloCalculator)
         {
-            _now = now;
-        }
+            if (!typeEloCalculator.HasValue)
+                return new AdHocEloCalculatorFactory(() => new DefaultEloCalculator());
 
-        public DateTime Now()
-        {
-            return _now();
-        }
-    }
-
-    public class AdHocEloCalculatorFactory : IEloCalculatorFactory
-    {
-        private readonly Func<IEloCalculator> _create;
-
-        public AdHocEloCalculatorFactory(Func<IEloCalculator> create)
-        {
-            _create = create;
-        }
-
-        public IEloCalculator Create(int year)
-        {
-            return _create();
+            return typeEloCalculator.Value switch
+            {
+                TypeEloCalculator.Elo2019 => new AdHocEloCalculatorFactory(() => new EloCalculatorVersion2019()),
+                TypeEloCalculator.Elo2020 => new AdHocEloCalculatorFactory(() => new EloCalculatorVersion2020()),
+                TypeEloCalculator.YearDependent => new YearDependentEloCalculatorFactory(),
+                _ => new AdHocEloCalculatorFactory(() => new DefaultEloCalculator())
+            };
         }
     }
 }
