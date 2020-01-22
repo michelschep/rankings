@@ -21,7 +21,6 @@ namespace Rankings.Infrastructure.Data
     {
         public PersistantRankingContext(DbContextOptions<RankingContext> options) : base(options)
         {
-            Database.Migrate();
         }
     }
 
