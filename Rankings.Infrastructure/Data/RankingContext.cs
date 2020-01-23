@@ -4,9 +4,9 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Infrastructure.Data
 {
-    public abstract class RankingContext : DbContext
+    public sealed class RankingContext : DbContext
     {
-        protected RankingContext(DbContextOptions options) : base(options)
+        public RankingContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -15,19 +15,5 @@ namespace Rankings.Infrastructure.Data
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<GameType> GameTypes { get; set; }
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Game> Games { get; set; }
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Venue> Venues { get; set; }
-    }
-
-    public sealed class PersistantRankingContext : RankingContext
-    {
-        public PersistantRankingContext(DbContextOptions<RankingContext> options) : base(options)
-        {
-        }
-    }
-
-    public sealed class InMemoryRankingContext : RankingContext
-    {
-        public InMemoryRankingContext(DbContextOptions<RankingContext> options) : base(options)
-        {
-        }
     }
 }

@@ -7,5 +7,7 @@ namespace Rankings.Core.Entities
         public string EmailAddress { get; set; }
 
         public string DisplayName { get; set;  }
+
+        public bool IsActive { get; set; }
     }
 }

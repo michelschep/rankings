@@ -48,7 +48,7 @@ namespace Rankings.Infrastructure.Data.SqLite
             optionsBuilder.UseSqlite(connection);
             //optionsBuilder.UseLoggerFactory(_loggerFactory);
 
-            var rankingContext = new PersistantRankingContext(optionsBuilder.Options);
+            var rankingContext = new RankingContext(optionsBuilder.Options);
             //rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
 
             return rankingContext;
