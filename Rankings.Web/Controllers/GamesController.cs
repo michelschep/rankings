@@ -112,6 +112,7 @@ namespace Rankings.Web.Controllers
             BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>) new AllProfiles() : new Oponents(nameCurrentUser);
 
             return _gamesService.List(query)
+                .Where(profile => profile.IsActive)
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
         }

@@ -14,6 +14,7 @@ namespace Rankings.Core.Interfaces
         // Profiles
         void ActivateProfile(string email, string displayName);
         void CreateProfile(Profile profile);
+        void DeactivateProfile(int id);
         void UpdateDisplayName(string emailAddress, string displayName);
 
         // Games

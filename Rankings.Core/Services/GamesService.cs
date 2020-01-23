@@ -57,6 +57,13 @@ namespace Rankings.Core.Services
             _repository.Add(profile);
         }
 
+        public void DeactivateProfile(int id)
+        {
+            var profile = Item(new SpecificProfile(id));
+            profile.IsActive = !profile.IsActive;
+            _repository.Update(profile);
+        }
+
         public void UpdateDisplayName(string emailAddress, string displayName)
         {
             var profile = Item(new SpecificProfile(emailAddress));

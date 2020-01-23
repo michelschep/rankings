@@ -4,35 +4,44 @@
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.EmailAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DisplayName)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </th>
+        <th></th>
+        @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+        {
+            <th>Deactivate</th>
+        }
+    </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmailAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DisplayName)
-                </td>
-                <td>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, item, "ProfileEditPolicy")).Succeeded)
-                    {
-                        @Html.ActionLink("Edit", "Edit", new { id=item.Id }) 
-                        @Html.Raw(" | ")
-                    }
-                    @Html.ActionLink("Details", "Details", new { id=item.Id }) 
-                </td>
-            </tr>
-        }
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayName)
+            </td>
+            <td>
+                @if ((await AuthorizationService.AuthorizeAsync(User, item, "ProfileEditPolicy")).Succeeded)
+                {
+                    @Html.ActionLink("Edit", "Edit", new {id = item.Id})
+                    @Html.Raw(" | ")
+                }
+                @Html.ActionLink("Details", "Details", new {id = item.Id})
+            </td>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+            {
+                <td>@Html.ActionLink("Deactivate", "Deactivate", new {id = item.Id})</td>
+            }
+        </tr>
+    }
     </tbody>
 </table>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -80,6 +81,22 @@ namespace Rankings.Web.Controllers
             }
 
             return View(profileViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Deactivate(int id)
+        {
+            if (IsAdmin())
+                _gamesService.DeactivateProfile(id);
+
+            return RedirectToAction("Index");
+        }
+
+        // TODO duplicated code. Improve
+        private bool IsAdmin()
+        {
+            var isAdmin = User.Claims.Any(claim => claim.Type == ClaimTypes.Role && claim.Value == Roles.Admin);
+            return isAdmin;
         }
 
         public IActionResult Details(int id)
