@@ -176,8 +176,6 @@ namespace Rankings.Web.Controllers
 
             _gamesService.RegisterGame(game);
 
-            // TODO improve way of handling caching
-            _memoryCache.Remove("ranking-" + game.GameType.Code);
             ClearCache();
 
             return RedirectToAction("Index");
