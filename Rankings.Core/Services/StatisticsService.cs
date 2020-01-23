@@ -26,13 +26,12 @@ namespace Rankings.Core.Services
         public IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
-            return CalculateRanking(eloStatsPlayers, 0);// _eloConfiguration.NumberOfGames ?? 1);
+            return CalculateRanking(eloStatsPlayers);// _eloConfiguration.NumberOfGames ?? 1);
         }
 
-        private Dictionary<Profile, EloStatsPlayer> CalculateRanking(Dictionary<Profile, EloStatsPlayer> eloStatsPlayers, int numberOfGames)
+        private Dictionary<Profile, EloStatsPlayer> CalculateRanking(Dictionary<Profile, EloStatsPlayer> eloStatsPlayers)
         {
             var rankedPlayers = eloStatsPlayers
-                //.Where(pair => pair.Value.NumberOfGames >= numberOfGames)
                 .OrderByDescending(pair => pair.Value.EloScore).ThenBy(pair => pair.Key.DisplayName);
 
             var orderedRanking = new Dictionary<Profile, EloStatsPlayer>(rankedPlayers);
@@ -438,6 +437,8 @@ namespace Rankings.Core.Services
 
             foreach (var eloGame in eloGames)
             {
+                var oldRanking = CalculateRanking(eloStatsPlayers);
+
                 var player1 = eloStatsPlayers[eloGame.Game.Player1];
                 var player2 = eloStatsPlayers[eloGame.Game.Player2];
 
@@ -446,22 +447,14 @@ namespace Rankings.Core.Services
                 player2.EloScore += eloGame.Player2Delta;
                 player2.NumberOfGames += 1;
 
-                var ranking = CalculateRanking(eloStatsPlayers, _eloConfiguration.NumberOfGames ?? 1);
-                if (ranking.Any())
+                if (oldRanking.Any())
                 {
                     var diff = eloGame.Game.RegistrationDate - lastGameRegistrationDate;
 
-                    foreach (var player in ranking.Where(pair => pair.Value.Ranking == 1).Select(pair => pair.Key))
+                    foreach (var player in oldRanking.Where(pair => pair.Value.Ranking == 1).Select(pair => pair.Key))
                     {
                         eloStatsPlayers[player].TimeNumberOne += diff;
                     }
-
-                    // if (lastNumberOne != currentNumberOne)
-                    // {
-                    //     _logger.LogInformation( $" New nr1: {currentNumberOne.EmailAddress} {eloGame.Game.RegistrationDate} ==> {eloStatsPlayers[currentNumberOne].TimeNumberOne}");
-                    //     if (lastNumberOne != null)
-                    //      _logger.LogInformation( $" Old nr1: {lastNumberOne.EmailAddress} ==> {eloStatsPlayers[lastNumberOne].TimeNumberOne}");
-                    // }
                 }
 
                 lastGameRegistrationDate = eloGame.Game.RegistrationDate;

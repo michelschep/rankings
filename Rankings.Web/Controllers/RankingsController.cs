@@ -28,13 +28,7 @@ namespace Rankings.Web.Controllers
         public IActionResult YearRanking(int year)
         {
             ViewBag.Title = $"The {year} Ranking";
-            ViewBag.Message = "You need at least 7 games to be in the ranking";
-
-            if (year == 2019)
-                ViewBag.Message = " ";
-
-            if (year == 2020)
-                ViewBag.Message += " (but for January everybody who played at least one game will be shown)";
+            ViewBag.Message = "";
 
             var gameType = "tafeltennis";
             var beginEnd = new DateTime(year, 1, 1);
@@ -71,7 +65,7 @@ namespace Rankings.Web.Controllers
             });
 
             this.ViewBag.Title = "The Eternal Ranking";
-            this.ViewBag.Message = "You need at least 7 games to be in the ranking";
+            this.ViewBag.Message = "";
 
             return View("Index", cacheEntry);
         }
