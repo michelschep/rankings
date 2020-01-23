@@ -54,6 +54,7 @@ namespace Rankings.Core.Services
             if (IsNullOrEmpty(profile.DisplayName))
                 throw new Exception("New profile should have valid display name");
 
+            profile.IsActive = true;
             _repository.Add(profile);
         }
 
