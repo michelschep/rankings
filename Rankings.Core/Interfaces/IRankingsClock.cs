@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rankings.Core.Services
+namespace Rankings.Core.Interfaces
 {
     public interface IRankingsClock
     {
