@@ -13,9 +13,11 @@ namespace Rankings.Core.Interfaces
         Dictionary<Profile, decimal> RecordEloStreak(DateTime startDate, DateTime endDate);
         Dictionary<Profile, decimal> GoatScore(DateTime startDate, DateTime endDate);
         Dictionary<Profile, decimal> StrengthGamesPerPlayer(in DateTime startDate, in DateTime endDate);
-        public Dictionary<Profile, decimal> StrengthOponentPerPlayer(in DateTime startDate, in DateTime endDate);
-        public Dictionary<Profile, decimal> StrengthWinsPerPlayer(in DateTime startDate, in DateTime endDate);
-        public Dictionary<Profile, decimal> StrengthLostsPerPlayer(in DateTime startDate, in DateTime endDate);
+        Dictionary<Profile, decimal> StrengthOponentPerPlayer(in DateTime startDate, in DateTime endDate);
+        Dictionary<Profile, decimal> StrengthWinsPerPlayer(in DateTime startDate, in DateTime endDate);
+        Dictionary<Profile, decimal> StrengthLostsPerPlayer(in DateTime startDate, in DateTime endDate);
+
+        Dictionary<Profile, Dictionary<string, decimal>> TotalElo(string gameType, DateTime startDate, DateTime endDate);
 
         IEnumerable<char> History(string emailAddress, DateTime startDate, DateTime endDate);
         decimal WinPercentage(string emailAddress, DateTime startDate, DateTime endDate);

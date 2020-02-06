@@ -4,6 +4,7 @@ using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Rankings.Core.Services
@@ -26,7 +27,7 @@ namespace Rankings.Core.Services
         public IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate)
         {
             var eloStatsPlayers = EloStatsPlayers(gameType, startDate, endDate);
-            return CalculateRanking(eloStatsPlayers);// _eloConfiguration.NumberOfGames ?? 1);
+            return CalculateRanking(eloStatsPlayers);
         }
 
         private Dictionary<Profile, EloStatsPlayer> CalculateRanking(Dictionary<Profile, EloStatsPlayer> eloStatsPlayers)
@@ -47,7 +48,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, decimal> StrengthGamesPerPlayer(in DateTime startDate, in DateTime endDate)
         {
-            return EloGames("tafeltennis", startDate, endDate)
+            return EloGames(GameTypes.TableTennis, startDate, endDate)
                 .Select(game => new {game.Game.Player1, game.Game.Player2, Elo = (game.EloPlayer1 + game.EloPlayer2) / 2m})
                 .SelectMany(arg => new[]
                 {
@@ -62,7 +63,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, decimal> StrengthOponentPerPlayer(in DateTime startDate, in DateTime endDate)
         {
-            return EloGames("tafeltennis", startDate, endDate)
+            return EloGames(GameTypes.TableTennis, startDate, endDate)
                 .SelectMany(arg => new[]
                 {
                     new {Player = arg.Game.Player1, Elo = arg.EloPlayer2},
@@ -76,7 +77,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, decimal> StrengthWinsPerPlayer(in DateTime startDate, in DateTime endDate)
         {
-            return EloGames("tafeltennis", startDate, endDate)
+            return EloGames(GameTypes.TableTennis, startDate, endDate)
                 .SelectMany(arg => new[]
                 {
                     new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, Score1 = arg.Game.Score1, Score2 = arg.Game.Score2},
@@ -91,7 +92,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, decimal> StrengthLostsPerPlayer(in DateTime startDate, in DateTime endDate)
         {
-            return EloGames("tafeltennis", startDate, endDate)
+            return EloGames(GameTypes.TableTennis, startDate, endDate)
                 .SelectMany(arg => new[]
                 {
                     new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, Score1 = arg.Game.Score1, Score2 = arg.Game.Score2},
@@ -107,7 +108,7 @@ namespace Rankings.Core.Services
         public IEnumerable<char> History(string emailAddress, DateTime startDate, DateTime endDate)
         {
             return _gamesService
-                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
+                .List(new GamesForPlayerInPeriodSpecification(GameTypes.TableTennis, emailAddress, startDate, endDate))
                 .TakeLast(7)
                 .Select(game => new
                 {
@@ -314,7 +315,7 @@ namespace Rankings.Core.Services
 
         public IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate)
         {
-            return _gamesService.List<Game>(new GamesForPeriodSpecification("tafeltennis", startDate, endDate)).ToList()
+            return _gamesService.List<Game>(new GamesForPeriodSpecification(GameTypes.TableTennis, startDate, endDate)).ToList()
                 .Select(game =>
                 {
                     if (game.Player1.Id < game.Player2.Id)
@@ -374,10 +375,10 @@ namespace Rankings.Core.Services
                     }
                     : new
                     {
-                        Score1 = game.Game.Score2, 
-                        Score2 = game.Game.Score1, 
+                        Score1 = game.Game.Score2,
+                        Score2 = game.Game.Score1,
                         Delta1 = game.Player2Delta,
-                        Delta2 = game.Player1Delta, 
+                        Delta2 = game.Player1Delta,
                         game.Game.RegistrationDate,
                         EloPlayer2 = game.EloPlayer1
                     })
@@ -468,6 +469,64 @@ namespace Rankings.Core.Services
             }
 
             return eloStatsPlayers;
+        }
+
+        public Dictionary<Profile, Dictionary<string, decimal>> TotalElo(string gameType, DateTime startDate, DateTime endDate)
+        {
+            var decay = 100;
+            var lines = new List<string>();
+            var eloGames = EloGames(gameType, startDate, endDate);
+            var eloGamesPerPlayer = eloGames.SelectMany(game => new[]
+            {
+                new {Player = game.Game.Player1, Delta = game.Player1Delta, game.Game.RegistrationDate},
+                new {Player = game.Game.Player2, Delta = game.Player2Delta, game.Game.RegistrationDate}
+            }).GroupBy(arg => arg.Player);
+
+            var result = new Dictionary<Profile, Dictionary<string, decimal>>();
+            foreach (var playerGames in eloGamesPerPlayer)
+            {
+                var prevGame = startDate;
+                var currentElo = 1200m;
+                var totalElo = 0m;
+                var totalTime = 0m;
+                var newElo = 0m;
+                TimeSpan diffTime;
+                var deltaTime = 0m;
+                var penalty = 0m;
+
+                foreach (var game in playerGames)
+                {
+                    newElo = currentElo + game.Delta;
+                    diffTime = game.RegistrationDate.Subtract(prevGame);
+                    deltaTime = (decimal) diffTime.TotalDays;
+                    penalty = deltaTime > decay ? deltaTime - decay : 0;
+                    totalElo += (((currentElo + newElo) / 2) - penalty) * deltaTime;
+                    totalTime += deltaTime;
+
+                    //lines.Add($@"{game.Player.DisplayName};{game.RegistrationDate};{newElo}");
+
+                    prevGame = game.RegistrationDate;
+                    currentElo = newElo;
+                }
+
+                diffTime = DateTime.Now.AddDays(0).Subtract(prevGame);
+                deltaTime = (decimal) diffTime.TotalDays;
+                newElo = currentElo;
+                penalty = deltaTime > decay ? deltaTime - decay : 0;
+                totalElo += (((currentElo + newElo) / 2) - penalty) * deltaTime;
+                totalTime += deltaTime;
+
+                var item = new Dictionary<string, decimal>
+                {
+                    {"avg elo", totalElo / totalTime}, 
+                    {"total elo", totalElo},
+                    {"current elo", currentElo},
+                    {"elo/h", currentElo/24}
+                };
+                result.Add(playerGames.Key, item);
+            }
+
+            return result;
         }
 
         public IEnumerable<EloGame> EloGames(string gameType, DateTime startDate, DateTime endDate)

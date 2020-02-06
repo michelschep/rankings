@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Interfaces;
@@ -139,6 +140,32 @@ namespace Rankings.Web.Controllers
             return View("Index", viewModel);
         }
 
+        [HttpGet("/rankings/playeroftheyear")]
+        public IActionResult PlayerOfTheYear()
+        {
+            var result = _statisticsService
+                .TotalElo(GameTypes.TableTennis, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31))
+                .OrderByDescending(pair => pair.Value.First().Value).ToList();
+
+            var index = 1;
+            var viewModel = new ViewItems
+            {
+                Headers = new List<string>() {"Total Elo", "Avg Elo", "Elo", "Elo/h"},
+                Values = result.Select(pair =>
+                {
+                    var viewItem = new ViewItem {Index = (index++).ToString(), Name = pair.Key.DisplayName,};
+                    viewItem.Scores.Add(pair.Value["total elo"].Round().ToString());
+                    viewItem.Scores.Add(pair.Value["avg elo"].Round().ToString());
+                    viewItem.Scores.Add(pair.Value["current elo"].Round().ToString());
+                    viewItem.Scores.Add(pair.Value["elo/h"].Round().ToString());
+                    return viewItem;
+                })
+            };
+
+            ViewBag.Title = "Player of the Year";
+            return View("MultiValues", viewModel);
+        }
+
         [HttpGet("/Profiles/Details/Stats/PlayerHeatmapData/{profile}")]
         public IActionResult PlayerHeatmapData(string profile)
         {
@@ -150,16 +177,15 @@ namespace Rankings.Web.Controllers
             //    .ToList();
 
             var result = statGames
-                .GroupBy(game => new {Month = game.RegistrationDate.Month, Variable = 50 * (int)(game.EloPlayer2 / 50)})
-                .Select(game => new Item {Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString()
-                    , Value = (int)100* game.Count(statGame => statGame.Score1>statGame.Score2)/game.Count()})
+                .GroupBy(game => new {Month = game.RegistrationDate.Month, Variable = 50 * (int) (game.EloPlayer2 / 50)})
+                .Select(game => new Item {Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString(), Value = (int) 100 * game.Count(statGame => statGame.Score1 > statGame.Score2) / game.Count()})
                 .ToList();
             return new JsonResult(result);
         }
 
         private int DetermineVariable(decimal gameEloPlayer)
         {
-            return 100 * (int)(gameEloPlayer / 100);
+            return 100 * (int) (gameEloPlayer / 100);
         }
 
         public class Item
@@ -168,6 +194,23 @@ namespace Rankings.Web.Controllers
             public string Variable { get; set; }
             public int Value { get; set; }
         }
+    }
+
+    public class ViewItems
+    {
+        public List<string> Headers { get; set; }
+        public IEnumerable<ViewItem> Values { get; set; }
+    }
+    public class ViewItem
+    {
+        public ViewItem()
+        {
+            Scores = new List<string>();
+        }
+
+        public string Index { get; set; }
+        public string Name { get; set; }
+        public List<string> Scores { get; set; }
     }
 
     public class RankingViewItem

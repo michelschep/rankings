@@ -81,8 +81,10 @@ namespace Rankings.Web.Controllers
 
         private Summary Top3TimeNumberOne(string title, DateTime startDate, DateTime endDate)
         {
-            var ranking = _statisticsService.Ranking("tafeltennis", startDate, endDate);
-            var list =  new Dictionary<Profile, EloStatsPlayer>(ranking.OrderByDescending(pair => pair.Value.TimeNumberOne).ThenByDescending(pair => pair.Value.EloScore)).ToList();
+            var ranking = _statisticsService.Ranking(GameTypes.TableTennis, startDate, endDate);
+            var list = new Dictionary<Profile, EloStatsPlayer>(ranking
+                .OrderByDescending(pair => pair.Value.TimeNumberOne)
+                .ThenByDescending(pair => pair.Value.EloScore)).ToList();
 
             return CreateSummary(list, i => i.TimeNumberOne.ToString(@"d\.hh\:mm"), title);
         }
@@ -90,7 +92,7 @@ namespace Rankings.Web.Controllers
         private Summary Top3Elo(string title, DateTime startDate, DateTime endDate)
         {
             var ranking = _statisticsService.Ranking("tafeltennis", startDate, endDate);
-            var list =  new Dictionary<Profile, EloStatsPlayer>(ranking.OrderByDescending(pair => pair.Value.EloScore)).ToList();
+            var list = new Dictionary<Profile, EloStatsPlayer>(ranking.OrderByDescending(pair => pair.Value.EloScore)).ToList();
 
             return CreateSummary(list, i => i.EloScore.Round().ToString(), title);
         }
