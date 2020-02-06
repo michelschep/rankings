@@ -2,32 +2,16 @@
 using System.IO;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Rankings.Infrastructure.Data.SqLite
 {
-    public interface IRankingContextFactory : IDesignTimeDbContextFactory<RankingContext>
-    {
-
-    }
-
     public class SqLiteRankingContextFactory :IRankingContextFactory 
     {
-        //private readonly ISqLiteConnectionFactory _connectionFactory;
-        //private readonly ILoggerFactory _loggerFactory;
-        //private readonly RepositoryConfiguration _repositoryConfiguration;
-
+        // ReSharper disable once EmptyConstructor
         public SqLiteRankingContextFactory()
         {
             
-        }
-        public SqLiteRankingContextFactory(ISqLiteConnectionFactory connectionFactory, ILoggerFactory loggerFactory, RepositoryConfiguration repositoryConfiguration)
-        {
-            //_connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
-            //_loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-            //_repositoryConfiguration = repositoryConfiguration ?? throw new ArgumentNullException(nameof(repositoryConfiguration));
         }
 
         public RankingContext CreateDbContext(string[] args)
@@ -46,12 +30,8 @@ namespace Rankings.Infrastructure.Data.SqLite
             config.GetSection("Repository").Bind(repositoryConfiguration);
             var connection = new SqliteConnection(repositoryConfiguration.Database); 
             optionsBuilder.UseSqlite(connection);
-            //optionsBuilder.UseLoggerFactory(_loggerFactory);
 
-            var rankingContext = new RankingContext(optionsBuilder.Options);
-            //rankingContext.Database.EnsureCreated(); // TODO this is on two places now. WHy??
-
-            return rankingContext;
+            return new RankingContext(optionsBuilder.Options);
         }
     }
 }

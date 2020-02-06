@@ -76,9 +76,7 @@ namespace Rankings.Web
 
             services.AddTransient(provider =>
             {
-                var config = provider.GetRequiredService<IOptions<RepositoryConfiguration>>();
-                var connectionFactory = new SqLiteDatabaseConnectionFactory();
-                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(connectionFactory, provider.GetRequiredService<ILoggerFactory>(), config.Value);
+                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory();
                 var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
                 return repositoryFactory.Create();
 
