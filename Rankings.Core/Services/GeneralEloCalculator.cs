@@ -1,6 +1,6 @@
 using System;
 
-namespace Rankings.Core.Services.ToBeObsolete
+namespace Rankings.Core.Services
 {
     public static class GeneralEloCalculator
     {

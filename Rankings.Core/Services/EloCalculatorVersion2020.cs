@@ -1,5 +1,4 @@
 using System;
-using Rankings.Core.Services.ToBeObsolete;
 
 namespace Rankings.Core.Services
 {
