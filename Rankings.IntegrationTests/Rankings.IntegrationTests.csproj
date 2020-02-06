@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Sinks.XUnit" Version="1.0.21" />
