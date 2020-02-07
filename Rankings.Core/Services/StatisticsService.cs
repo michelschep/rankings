@@ -473,7 +473,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, Dictionary<string, decimal>> TotalElo(string gameType, DateTime startDate, DateTime endDate)
         {
-            var decay = 100;
+            var decay = 21;
             var lines = new List<string>();
             var eloGames = EloGames(gameType, startDate, endDate);
             var eloGamesPerPlayer = eloGames.SelectMany(game => new[]
@@ -518,14 +518,15 @@ namespace Rankings.Core.Services
 
                 var item = new Dictionary<string, decimal>
                 {
-                    {"avg elo", totalElo / totalTime}, 
+                    {"avg elo", totalElo / totalTime},
                     {"total elo", totalElo},
                     {"current elo", currentElo},
-                    {"elo/h", currentElo/24}
+                    {"elo/h", currentElo / 24}
                 };
                 result.Add(playerGames.Key, item);
             }
 
+    
             return result;
         }
 

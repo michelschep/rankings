@@ -147,14 +147,17 @@ namespace Rankings.Web.Controllers
                 .TotalElo(GameTypes.TableTennis, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31))
                 .OrderByDescending(pair => pair.Value.First().Value).ToList();
 
+            var maxEloTotalScore = result.Max(pair => pair.Value["total elo"]).Round();
+
             var index = 1;
             var viewModel = new ViewItems
             {
-                Headers = new List<string>() {"Total Elo", "Avg Elo", "Elo", "Elo/h"},
+                Headers = new List<string>() {"Total Elo", "Diff", "Avg Elo", "Elo", "Elo/h"},
                 Values = result.Select(pair =>
                 {
                     var viewItem = new ViewItem {Index = (index++).ToString(), Name = pair.Key.DisplayName,};
                     viewItem.Scores.Add(pair.Value["total elo"].Round().ToString());
+                    viewItem.Scores.Add((pair.Value["total elo"].Round() - maxEloTotalScore).ToString());
                     viewItem.Scores.Add(pair.Value["avg elo"].Round().ToString());
                     viewItem.Scores.Add(pair.Value["current elo"].Round().ToString());
                     viewItem.Scores.Add(pair.Value["elo/h"].Round().ToString());
