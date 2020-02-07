@@ -526,7 +526,6 @@ namespace Rankings.Core.Services
                 result.Add(playerGames.Key, item);
             }
 
-    
             return result;
         }
 

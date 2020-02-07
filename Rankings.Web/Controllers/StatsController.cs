@@ -148,23 +148,37 @@ namespace Rankings.Web.Controllers
                 .OrderByDescending(pair => pair.Value.First().Value).ToList();
 
             var maxEloTotalScore = result.Max(pair => pair.Value["total elo"]).Round();
+            var speedNumberOne = result.First().Value["elo/h"];
 
             var index = 1;
             var viewModel = new ViewItems
             {
-                Headers = new List<string>() {"Total Elo", "Diff", "Avg Elo", "Elo", "Elo/h"},
+                Headers = new List<string>() {"Total Elo", "Diff", "Time in hours", "Avg Elo", "Elo", "Elo/h"},
                 Values = result.Select(pair =>
                 {
                     var viewItem = new ViewItem {Index = (index++).ToString(), Name = pair.Key.DisplayName,};
                     viewItem.Scores.Add(pair.Value["total elo"].Round().ToString());
-                    viewItem.Scores.Add((pair.Value["total elo"].Round() - maxEloTotalScore).ToString());
+                    var diffScore = (pair.Value["total elo"].Round() - maxEloTotalScore);
+                    viewItem.Scores.Add(diffScore.ToString());
+
+                    var thisSpeed = pair.Value["elo/h"].Round();
+                    if (thisSpeed > speedNumberOne)
+                    {
+                        var timeNeeded = -1 * diffScore / (thisSpeed - speedNumberOne);
+                        viewItem.Scores.Add(timeNeeded.Round().ToString());
+                    }
+                    else
+                    {
+                        viewItem.Scores.Add("");
+                    }
+
                     viewItem.Scores.Add(pair.Value["avg elo"].Round().ToString());
                     viewItem.Scores.Add(pair.Value["current elo"].Round().ToString());
+
                     viewItem.Scores.Add(pair.Value["elo/h"].Round().ToString());
                     return viewItem;
                 })
             };
-
             ViewBag.Title = "Player of the Year";
             return View("MultiValues", viewModel);
         }
@@ -204,6 +218,7 @@ namespace Rankings.Web.Controllers
         public List<string> Headers { get; set; }
         public IEnumerable<ViewItem> Values { get; set; }
     }
+
     public class ViewItem
     {
         public ViewItem()
