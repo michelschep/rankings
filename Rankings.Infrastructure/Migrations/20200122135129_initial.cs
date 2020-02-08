@@ -7,8 +7,6 @@ namespace Rankings.Infrastructure.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            return;
-
             migrationBuilder.CreateTable(
                 name: "GameTypes",
                 columns: table => new
