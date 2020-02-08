@@ -12,7 +12,7 @@ namespace Rankings.Core.Entities
 
         public GameType GameType { get; set; }
 
-        public DateTime RegistrationDate { get; set; }
+        public DateTimeOffset RegistrationDate { get; set; }
 
         public int Score1 { get; set; }
         
