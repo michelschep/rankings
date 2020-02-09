@@ -48,6 +48,14 @@ namespace Rankings.Web.Controllers
             return View(model);
         }
 
+        [HttpGet("/games/doubles")]
+        public IActionResult IndexDoubles(string gameType)
+        {
+            var model = CreateDoubleGameSummaryViewModels(gameType);
+
+            return View(model);
+        }
+
         [Authorize(Policy = "AdminPolicy")]
         [HttpGet("/adminindex")]
         [HttpGet("/adminindex/{gametype}")]
@@ -56,6 +64,29 @@ namespace Rankings.Web.Controllers
             var model = CreateGameSummaryViewModels(gameType);
 
             return View(model);
+        }
+
+        private List<DoubleGameViewModel> CreateDoubleGameSummaryViewModels(string gameType)
+        {
+            var games = _gamesService
+                .List(new DoubleGamesForPeriodSpecification())
+                .ToList();
+
+            var model = games.Select(game => new DoubleGameViewModel
+            {
+                Id = game.Id,
+                GameType = game.GameType.DisplayName,
+                Venue = game.Venue?.DisplayName ?? "Unknown",
+                NameFirstPlayerFirstTeam = game.Score1 > game.Score2 ? game.Player1Team1.DisplayName : game.Player1Team2.DisplayName,
+                NameSecondPlayerFirstTeam = game.Score1 > game.Score2 ? game.Player2Team1.DisplayName : game.Player2Team2.DisplayName,
+                NameFirstPlayerSecondTeam = game.Score1 < game.Score2 ? game.Player1Team1.DisplayName : game.Player1Team2.DisplayName,
+                NameSecondPlayerSecondTeam = game.Score1 < game.Score2 ? game.Player2Team1.DisplayName : game.Player2Team2.DisplayName,
+                RegistrationDate = RegistrationDate(game.RegistrationDate),
+                ScoreFirstTeam = game.Score1 > game.Score2 ? game.Score1 : game.Score2,
+                ScoreSecondTeam = game.Score1 > game.Score2 ? game.Score2 : game.Score1,
+            }).ToList();
+
+            return model;
         }
 
         private List<GameViewModel> CreateGameSummaryViewModels(string gameType)
@@ -77,16 +108,22 @@ namespace Rankings.Web.Controllers
                 NameFirstPlayer = type.Score1 > type.Score2 ? type.Player1.DisplayName : type.Player2.DisplayName,
                 NameSecondPlayer = type.Score1 > type.Score2 ? type.Player2.DisplayName : type.Player1.DisplayName,
                 // TODO fix issue with dates. Add timezone
-                RegistrationDate = RegistrationDate(type),
+                RegistrationDate = RegistrationDate(type.RegistrationDate),
                 ScoreFirstPlayer = type.Score1 > type.Score2 ? type.Score1 : type.Score2,
                 ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
             }).ToList();
             return model;
         }
 
-        private static string RegistrationDate(Game game)
+        private static string RegistrationDate(DateTimeOffset gameRegistrationDate)
         {
-            var registrationDate = game.RegistrationDate;
+            var registrationDate = gameRegistrationDate;
+            return registrationDate.ToString("yyyy/MM/dd H:mm");
+        }
+
+        private static string RegistrationDate(DateTime gameRegistrationDate)
+        {
+            var registrationDate = gameRegistrationDate;
             var correction = registrationDate > new DateTime(2019, 10, 31) ? 1 : 2;
             return registrationDate.AddHours(correction).ToString("yyyy/MM/dd H:mm");
         }
@@ -122,6 +159,16 @@ namespace Rankings.Web.Controllers
             BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>) new AllProfiles() : new SpecificProfile(nameCurrentUser);
 
             return _gamesService.List(query)
+                .OrderBy(profile => profile.DisplayName)
+                .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
+        }
+
+        private IEnumerable<SelectListItem> AllActivePlayers()
+        {
+            BaseSpecification<Profile> query = new AllProfiles();
+
+            return _gamesService.List(query)
+                .Where((profile, i) => profile.IsActive)
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
         }
@@ -179,6 +226,46 @@ namespace Rankings.Web.Controllers
             ClearCache();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet("/games/createdouble")]
+        public IActionResult CreateDouble()
+        {
+            return View(new DoubleGameViewModel
+            {
+                Players = AllActivePlayers(),
+                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
+            });
+        }
+
+        [HttpPost]
+        public IActionResult CreateDouble(DoubleGameViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Players = AllActivePlayers();
+                model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+
+                return View(model);
+            }
+
+            var game = new DoubleGame
+            {
+                GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
+                Venue = _gamesService.Item(new SpecificVenue(model.Venue)),
+                Player1Team1 = _gamesService.Item(new SpecificProfile(model.NameFirstPlayerFirstTeam)),
+                Player2Team1 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayerFirstTeam)),
+                Player1Team2 = _gamesService.Item(new SpecificProfile(model.NameFirstPlayerSecondTeam)),
+                Player2Team2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayerSecondTeam)),
+                Score1 = model.ScoreFirstTeam,
+                Score2 = model.ScoreSecondTeam
+            };
+
+            _gamesService.RegisterDoubleGame(game);
+
+            return RedirectToAction("IndexDoubles");
         }
 
         private void ClearCache()

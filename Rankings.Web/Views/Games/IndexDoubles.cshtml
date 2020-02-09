@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Rankings.Web.Models.DoubleGameViewModel>
+
+@{
+    ViewData["Title"] = "IndexDoubles";
+}
+<table class="table table-striped table-dark">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistrationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GameType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Venue)
+            </th>
+            <th>Winners</th>
+            <th>Losers</th>
+            <th>Result</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Venue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NameFirstPlayerFirstTeam)/@Html.DisplayFor(modelItem => item.NameSecondPlayerFirstTeam)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NameFirstPlayerSecondTeam)/@Html.DisplayFor(modelItem => item.NameSecondPlayerSecondTeam)
+            </td>
+            <td> @Html.DisplayFor(modelItem => item.ScoreFirstTeam)- @Html.DisplayFor(modelItem => item.ScoreSecondTeam) </td>
+            <td>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

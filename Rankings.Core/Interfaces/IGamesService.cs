@@ -19,6 +19,7 @@ namespace Rankings.Core.Interfaces
 
         // Games
         void RegisterGame(Game game);
+        void RegisterDoubleGame(DoubleGame game);
         void Save(Game entity);
         void DeleteGame(int registrationDate);
 

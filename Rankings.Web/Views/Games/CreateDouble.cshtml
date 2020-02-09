@@ -1,0 +1,75 @@
+﻿@model Rankings.Web.Models.DoubleGameViewModel
+
+@{
+    ViewData["Title"] = "CreateDouble";
+}
+
+<h4>BETA!!!! Register Double Game</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="CreateDouble">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="GameType" class="control-label"></label>
+                <select asp-for="GameType" class="form-control" asp-items="@Model.GameTypes">
+                </select>
+                <span asp-validation-for="GameType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Venue" class="control-label"></label>
+                <select asp-for="Venue" class="form-control" asp-items="@Model.Venues">
+                </select>
+                <span asp-validation-for="Venue" class="text-danger"></span>
+            </div>
+
+            <label class="control-label">First Team</label>
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <select readonly="readonly" asp-for="NameFirstPlayerFirstTeam" class="form-control" asp-items="@Model.Players">
+                    </select>
+                    <span asp-validation-for="NameFirstPlayerFirstTeam" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-5">
+                    <select readonly="readonly" asp-for="NameSecondPlayerFirstTeam" class="form-control" asp-items="@Model.Players">
+                    </select>
+                    <span asp-validation-for="NameSecondPlayerFirstTeam" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-2">
+                    <input asp-for="ScoreFirstTeam" class="form-control"/>
+                    <span asp-validation-for="ScoreFirstTeam" class="text-danger"></span>
+                </div>
+            </div>
+
+            <label class="control-label">Second Team</label>
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <select readonly="readonly" asp-for="NameFirstPlayerSecondTeam" class="form-control" asp-items="@Model.Players">
+                    </select>
+                    <span asp-validation-for="NameFirstPlayerSecondTeam" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-5">
+                    <select readonly="readonly" asp-for="NameSecondPlayerSecondTeam" class="form-control" asp-items="@Model.Players">
+                    </select>
+                    <span asp-validation-for="NameSecondPlayerSecondTeam" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-2">
+                    <input asp-for="ScoreSecondTeam" class="form-control"/>
+                    <span asp-validation-for="ScoreSecondTeam" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" value="CreateDouble">Register Game</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="IndexDoubles">Overview Double Games</a>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -113,6 +113,13 @@ namespace Rankings.Core.Services
             _repository.Add(game);
         }
 
+        public void RegisterDoubleGame(DoubleGame game)
+        {
+            game.RegistrationDate = _clock.Now();
+
+            _repository.Add(game);
+        }
+
         public void Save(Game entity)
         {
             _repository.Update(entity);
