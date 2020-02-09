@@ -235,7 +235,7 @@ namespace Rankings.Web.Controllers
             {
                 Players = AllActivePlayers(),
                 GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
+                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
             });
         }
 

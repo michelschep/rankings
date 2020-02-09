@@ -26,12 +26,14 @@
             <label class="control-label">First Team</label>
             <div class="form-row">
                 <div class="form-group col-md-5">
-                    <select readonly="readonly" asp-for="NameFirstPlayerFirstTeam" class="form-control" asp-items="@Model.Players">
+                    <select readonly="readonly" asp-for="NameFirstPlayerFirstTeam" class="form-control"  asp-items="@Model.Players">
+                        <option value="" selected disabled>Please select player</option>
                     </select>
                     <span asp-validation-for="NameFirstPlayerFirstTeam" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-5">
                     <select readonly="readonly" asp-for="NameSecondPlayerFirstTeam" class="form-control" asp-items="@Model.Players">
+                        <option value="" selected disabled>Please select player</option>
                     </select>
                     <span asp-validation-for="NameSecondPlayerFirstTeam" class="text-danger"></span>
                 </div>
@@ -45,11 +47,13 @@
             <div class="form-row">
                 <div class="form-group col-md-5">
                     <select readonly="readonly" asp-for="NameFirstPlayerSecondTeam" class="form-control" asp-items="@Model.Players">
+                        <option value="" selected disabled>Please select player</option>
                     </select>
                     <span asp-validation-for="NameFirstPlayerSecondTeam" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-5">
                     <select readonly="readonly" asp-for="NameSecondPlayerSecondTeam" class="form-control" asp-items="@Model.Players">
+                        <option value="" selected disabled>Please select player</option>
                     </select>
                     <span asp-validation-for="NameSecondPlayerSecondTeam" class="text-danger"></span>
                 </div>

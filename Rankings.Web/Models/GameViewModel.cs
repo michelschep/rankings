@@ -84,9 +84,11 @@ namespace Rankings.Web.Models
         public string NameSecondPlayerSecondTeam { get; set; }
 
         [Required]
+        [Range(0, 100)]
         public int ScoreFirstTeam { get; set; }
 
         [Required]
+        [Range(0, 100)]
         public int ScoreSecondTeam{ get; set; }
 
         public IEnumerable<SelectListItem> Players { get; set; }
