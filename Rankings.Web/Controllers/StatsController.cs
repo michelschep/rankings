@@ -153,11 +153,12 @@ namespace Rankings.Web.Controllers
             var index = 1;
             var viewModel = new ViewItems
             {
-                Headers = new List<string>() {"Total Elo", "Diff", "Time in hours", "Avg Elo", "Elo", "Elo/h"},
+                Headers = new List<string>() {"Total Elo", "Penalty", "Diff", "Time in hours", "Avg Elo", "Elo", "Elo/h"},
                 Values = result.Select(pair =>
                 {
                     var viewItem = new ViewItem {Index = (index++).ToString(), Name = pair.Key.DisplayName,};
                     viewItem.Scores.Add(pair.Value["total elo"].Round().ToString());
+                    viewItem.Scores.Add(pair.Value["penalty"].Round().ToString());
                     var diffScore = (pair.Value["total elo"].Round() - maxEloTotalScore);
                     viewItem.Scores.Add(diffScore.ToString());
 

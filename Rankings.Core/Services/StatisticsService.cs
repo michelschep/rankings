@@ -473,7 +473,7 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, Dictionary<string, decimal>> TotalElo(string gameType, DateTime startDate, DateTime endDate)
         {
-            var decay = 21;
+            var decay = 28;
             var lines = new List<string>();
             var eloGames = EloGames(gameType, startDate, endDate);
             var eloGamesPerPlayer = eloGames.SelectMany(game => new[]
@@ -491,18 +491,23 @@ namespace Rankings.Core.Services
                 var totalTime = 0m;
                 var newElo = 0m;
                 TimeSpan diffTime;
-                var deltaTime = 0m;
-                var penalty = 0m;
+                var totalPotElo = 0m;
 
                 foreach (var game in playerGames)
                 {
                     newElo = currentElo + game.Delta;
                     diffTime = game.RegistrationDate.Subtract(prevGame);
-                    deltaTime = (decimal) diffTime.TotalDays;
-                    penalty = deltaTime > decay ? deltaTime - decay : 0;
-                    totalElo += (((currentElo + newElo) / 2) - penalty) * deltaTime;
-                    totalTime += deltaTime;
 
+                    var deltaTime = (decimal) diffTime.TotalDays;
+                    var penaltyTime = deltaTime > decay ? deltaTime - decay : 0;
+                    var nonPenaltyTime = deltaTime - penaltyTime;
+
+                    var totalEloWithoutPenalty = currentElo * nonPenaltyTime;
+                    var totalEloPenalty = ((currentElo + currentElo - penaltyTime) / 2) * penaltyTime;
+                    totalPotElo += currentElo * deltaTime;
+
+                    totalElo += totalEloPenalty + totalEloWithoutPenalty;
+                    totalTime += deltaTime;
                     //lines.Add($@"{game.Player.DisplayName};{game.RegistrationDate};{newElo}");
 
                     prevGame = game.RegistrationDate;
@@ -510,16 +515,22 @@ namespace Rankings.Core.Services
                 }
 
                 diffTime = DateTime.Now.AddDays(0).Subtract(prevGame);
-                deltaTime = (decimal) diffTime.TotalDays;
-                newElo = currentElo;
-                penalty = deltaTime > decay ? deltaTime - decay : 0;
-                totalElo += (((currentElo + newElo) / 2) - penalty) * deltaTime;
-                totalTime += deltaTime;
+                var deltaTime2 = (decimal) diffTime.TotalDays;
+                var penaltyTime2 = deltaTime2 > decay ? deltaTime2 - decay : 0;
+                var nonPenaltyTime2 = deltaTime2 - penaltyTime2;
 
+                var totalEloWithoutPenalty2 = currentElo * nonPenaltyTime2;
+                var totalEloPenalty2 = ((currentElo + currentElo - penaltyTime2) / 2) * penaltyTime2;
+
+                totalElo += totalEloPenalty2 + totalEloWithoutPenalty2;
+                totalPotElo += currentElo * deltaTime2;
+
+                totalTime += deltaTime2;
                 var item = new Dictionary<string, decimal>
                 {
                     {"avg elo", totalElo / totalTime},
                     {"total elo", totalElo},
+                    {"penalty", totalPotElo - totalElo},
                     {"current elo", currentElo},
                     {"elo/h", currentElo / 24}
                 };
