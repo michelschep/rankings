@@ -103,8 +103,8 @@ namespace Rankings.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
+
             if (env.IsDevelopment())
             {
                 app.UseMiddleware(typeof(DevelopmentAuthenticationMiddleware));
