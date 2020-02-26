@@ -158,7 +158,6 @@ namespace Rankings.Web.Controllers
                 {
                     var viewItem = new ViewItem {Index = (index++).ToString(), Name = pair.Key.DisplayName,};
                     viewItem.Scores.Add(pair.Value["total elo"].Round().ToString());
-//                    viewItem.Scores.Add(pair.Value["penalty"].Round().ToString());
                     var diffScore = (pair.Value["total elo"].Round() - maxEloTotalScore);
                     viewItem.Scores.Add(diffScore.ToString());
 

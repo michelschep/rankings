@@ -64,6 +64,7 @@ namespace Rankings.Web.Controllers
             endDate = new DateTime(2020, 12, 31);
             mainStats.RunningBattles = new List<Summary>
             {
+                PlayerOfTheYear("Average Elo Score", startDate, endDate),
                 Top3Elo("Vitas 2020 Ranking", startDate, endDate),
                 Top3TimeNumberOne("Vitas 2020 Time Number One", startDate, endDate),
                 Top3GoatScores("Goat 2020", startDate, endDate),
@@ -72,9 +73,9 @@ namespace Rankings.Web.Controllers
                 Top3Fibonacci("Fibonacci 2020", startDate, endDate)
             };
 
-            mainStats.GameSummaries = _statisticsService.GameSummaries(DateTime.MinValue, DateTime.MaxValue)
-                .Where((summary, i) => summary.TotalGames >= 15)
-                .OrderBy(summary => Math.Abs(summary.PercentageSet1 - summary.PercentageSet2));
+            mainStats.GameSummaries = _statisticsService.GameSummaries(new DateTime(2020, 1, 1), DateTime.MaxValue)
+                .OrderByDescending(summary => summary.Score1 + summary.Score2)
+                .Take(10);
 
             return mainStats;
         }
@@ -87,6 +88,17 @@ namespace Rankings.Web.Controllers
                 .ThenByDescending(pair => pair.Value.EloScore)).ToList();
 
             return CreateSummary(list, i => i.TimeNumberOne.ToString(@"d\.hh\:mm"), title);
+        }
+
+        private Summary PlayerOfTheYear(string title, DateTime startDate, DateTime endDate)
+        {
+            var result = _statisticsService
+                .TotalElo(GameTypes.TableTennis, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31))
+                .OrderByDescending(pair => pair.Value["avg elo"])
+                .ToDictionary(pair => pair.Key, pair => pair.Value["avg elo"])
+                .ToList();
+
+            return CreateSummary<decimal>(result, i => i.Round().ToString(), title);
         }
 
         private Summary Top3Elo(string title, DateTime startDate, DateTime endDate)
