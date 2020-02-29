@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Models;
 using Rankings.Core.Services;
 using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;

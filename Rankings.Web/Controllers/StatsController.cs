@@ -35,6 +35,34 @@ namespace Rankings.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet("/stats/winning-streaks")]
+        public IActionResult WinningStreaks()
+        {
+            var streaks = _statisticsService
+                .WinningStreaks(DateTime.MinValue, DateTime.MaxValue)
+                .Where((streak, i) => streak.NumberOfGames >= 5)
+                .OrderByDescending(streak => streak.NumberOfGames * streak.AverageElo)
+                .ThenByDescending(streak => streak.NumberOfGames)
+                .ThenByDescending(streak => streak.AverageElo);
+
+            var streakViewModels = streaks.Select(streak => new StreakViewModel
+            {
+                NumberOfGames = streak.NumberOfGames.ToString(),
+                EndDate = streak.EndDate.ToString("yyyy/MM/dd H:mm"),
+                Player = streak.Player.DisplayName,
+                StartDate = streak.StartDate.ToString("yyyy/MM/dd H:mm"),
+                AverageElo = streak.AverageElo.Round().ToString(),
+                Volume = (streak.AverageElo * streak.NumberOfGames).Round().ToString()
+            });
+
+            var winningStreaksViewModel = new WinningStreaksViewModel
+            {
+                Streaks = streakViewModels
+            };
+
+            return View(winningStreaksViewModel);
+        }
+
         [HttpGet("/stats/goat/{year}")]
         public IActionResult Goat(int year)
         {
@@ -211,6 +239,24 @@ namespace Rankings.Web.Controllers
             public string Variable { get; set; }
             public int Value { get; set; }
         }
+    }
+
+    public class StreakViewModel
+    {
+        public string Player { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string Details { get; set; }
+        public string StreakTerminator { get; set; }
+        public string NumberOfGames { get; set; }
+        public string NumberOfEloPints { get; set; }
+        public string AverageElo { get; set; }
+        public string Volume { get; set; }
+    }
+
+    public class WinningStreaksViewModel
+    {
+        public IEnumerable<StreakViewModel> Streaks { get; set; }
     }
 
     public class ViewItems

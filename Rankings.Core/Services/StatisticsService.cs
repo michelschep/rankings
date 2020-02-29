@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Rankings.Core.Models;
 
 namespace Rankings.Core.Services
 {
@@ -156,6 +157,45 @@ namespace Rankings.Core.Services
             var totalSets = gamesByPlayer.Sum(arg => arg.Score1 + arg.Score2);
 
             return (decimal) won / totalSets;
+        }
+
+        public IEnumerable<Streak> WinningStreaks(DateTime startDate, DateTime endDate)
+        {
+            var players = _gamesService.List<Profile>(new AllProfiles());
+
+            foreach (var profile in players)
+            {
+                foreach (var streak in WinningStreaksPlayer(profile, startDate, endDate))
+                {
+                    yield return streak;
+                };
+            }
+        }
+
+        private IEnumerable<Streak> WinningStreaksPlayer(Profile profile, DateTime startDate, DateTime endDate)
+        {
+            var gamesByPlayer = GamesByPlayer(profile.EmailAddress, startDate, endDate);
+
+            if (gamesByPlayer.Count == 0)
+                return new List<Streak>();
+
+            var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
+            if (!series.Any())
+                return new List<Streak>();
+
+            return series.Select(games =>
+            {
+                var ordered = games.OrderBy(game => game.RegistrationDate).ToList();
+
+                return new Streak
+                {
+                    Player = profile, 
+                    StartDate = ordered.First().RegistrationDate,
+                    EndDate = ordered.Last().RegistrationDate,
+                    NumberOfGames = ordered.Count,
+                    AverageElo = ordered.Average(game => game.EloPlayer2)
+                };
+            });
         }
 
         public int RecordWinningStreak(string emailAddress, DateTime startDate, DateTime endDate)
@@ -369,12 +409,19 @@ namespace Rankings.Core.Services
                     StringComparison.CurrentCultureIgnoreCase)
                     ? new
                     {
-                        Score1 = game.Game.Score1, Score2 = game.Game.Score2, Delta1 = game.Player1Delta,
-                        Delta2 = game.Player2Delta, game.Game.RegistrationDate,
+                        Player1 = game.Game.Player1.EmailAddress,
+                        Player2 = game.Game.Player2.EmailAddress,
+                        Score1 = game.Game.Score1, 
+                        Score2 = game.Game.Score2, 
+                        Delta1 = game.Player1Delta,
+                        Delta2 = game.Player2Delta, 
+                        game.Game.RegistrationDate,
                         EloPlayer2 = game.EloPlayer2
                     }
                     : new
                     {
+                        Player1 = game.Game.Player2.EmailAddress,
+                        Player2 = game.Game.Player1.EmailAddress,
                         Score1 = game.Game.Score2,
                         Score2 = game.Game.Score1,
                         Delta1 = game.Player2Delta,
@@ -384,6 +431,8 @@ namespace Rankings.Core.Services
                     })
                 .Select(arg => new StatGame
                 {
+                    Player1 = arg.Player1,
+                    Player2 = arg.Player2,
                     Score1 = arg.Score1,
                     Score2 = arg.Score2,
                     Delta1 = arg.Delta1,
@@ -395,19 +444,35 @@ namespace Rankings.Core.Services
 
         private List<StatGame> GamesByPlayer(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            return _gamesService
-                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
+//            return _gamesService
+//                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
+//                .Select(game =>
+//                    string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
+//                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress, game.RegistrationDate}
+//                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress, game.RegistrationDate})
+//                .Select(arg => new StatGame
+//                {
+//                    Player1 = arg.Player1,
+//                    Player2 = arg.Player2,
+//                    Score1 = arg.Score1,
+//                    Score2 = arg.Score2,
+//                    RegistrationDate = arg.RegistrationDate
+//                })
+//                .ToList();
+
+            return EloGamesByPlayer(emailAddress, startDate, endDate) 
                 .Select(game =>
-                    string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
-                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress, game.RegistrationDate}
-                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress, game.RegistrationDate})
+                    string.Equals(game.Player1, emailAddress, StringComparison.CurrentCultureIgnoreCase)
+                        ? new {game.Score1, game.Score2, Player1 = game.Player1, Player2 = game.Player2, game.RegistrationDate, game.EloPlayer2}
+                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2, Player2 = game.Player1, game.RegistrationDate, game.EloPlayer2})
                 .Select(arg => new StatGame
                 {
                     Player1 = arg.Player1,
                     Player2 = arg.Player2,
                     Score1 = arg.Score1,
                     Score2 = arg.Score2,
-                    RegistrationDate = arg.RegistrationDate
+                    RegistrationDate = arg.RegistrationDate,
+                    EloPlayer2 = arg.EloPlayer2
                 })
                 .ToList();
         }
@@ -574,5 +639,14 @@ namespace Rankings.Core.Services
                 yield return eloGames;
             }
         }
+    }
+
+    public class Streak
+    {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public Profile Player { get; set; }
+        public int NumberOfGames { get; set; }
+        public decimal AverageElo { get; set; }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Models;
 using Rankings.Core.Services;
 using Rankings.Infrastructure;
 using Rankings.Infrastructure.Data;

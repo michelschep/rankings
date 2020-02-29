@@ -1,4 +1,4 @@
-﻿namespace Rankings.Core.Services
+﻿namespace Rankings.Core.Models
 {
     public class EloConfiguration
     {

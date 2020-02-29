@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Models;
 using Rankings.Core.Services;
 using Rankings.Web.Models;
 
@@ -123,7 +124,10 @@ namespace Rankings.Web.Controllers
 
         private Summary Top3RecordWinningStreak(string title, DateTime startDate, DateTime endDate)
         {
-            var winningStreaks = _statisticsService.RecordWinningStreak(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
+            var winningStreaks = _statisticsService
+                .RecordWinningStreak(startDate, endDate)
+                .OrderByDescending(pair => pair.Value).ToList();
+
             return CreateSummary(winningStreaks, i => i.ToString(), title);
         }
 

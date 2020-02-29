@@ -1,0 +1,9 @@
+﻿@model Rankings.Web.Controllers.WinningStreaksViewModel
+
+@{
+    ViewData["Title"] = "WinningStreaks";
+}
+
+<h1>Winning Streaks</h1>
+
+<partial name="WinningStreaksTable" for="@Model.Streaks"/>

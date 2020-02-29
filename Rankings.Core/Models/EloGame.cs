@@ -1,6 +1,6 @@
 ﻿using Rankings.Core.Entities;
 
-namespace Rankings.Core.Services
+namespace Rankings.Core.Models
 {
     public class EloGame
     {

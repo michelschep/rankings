@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Rankings.Core.Models;
 using Rankings.Core.Services;
 using Xunit;
 

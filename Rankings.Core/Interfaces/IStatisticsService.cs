@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Rankings.Core.Entities;
+using Rankings.Core.Models;
 using Rankings.Core.Services;
 
 namespace Rankings.Core.Interfaces
@@ -29,6 +30,7 @@ namespace Rankings.Core.Interfaces
         decimal CurrentEloStreak(string emailAddress, DateTime startDate, DateTime endDate);
         IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate);
         IEnumerable<StatGame> EloGames(string emailAddress);
+        IEnumerable<Streak> WinningStreaks(DateTime startDate, DateTime endDate);
     }
 
     public class GameSummary

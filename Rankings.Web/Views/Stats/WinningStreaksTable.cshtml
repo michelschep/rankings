@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Rankings.Web.Controllers.StreakViewModel>
+
+<table class="table table-striped table-dark">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Player)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Volume)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumberOfGames)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AverageElo)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Volume)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOfGames)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AverageElo)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

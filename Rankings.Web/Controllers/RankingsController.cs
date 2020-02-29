@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Models;
 using Rankings.Core.Services;
 using Rankings.Web.Models;
 
