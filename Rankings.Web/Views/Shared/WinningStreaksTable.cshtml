@@ -13,13 +13,16 @@
             @Html.DisplayNameFor(model => model.EndDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Volume)
+            @Html.DisplayNameFor(model => model.NumberOfDays)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.NumberOfGames)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.AverageElo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Volume)
         </th>
     </tr>
     </thead>
@@ -37,13 +40,16 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Volume)
+                @Html.DisplayFor(modelItem => item.NumberOfDays)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NumberOfGames)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AverageElo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Volume)
             </td>
         </tr>
     }

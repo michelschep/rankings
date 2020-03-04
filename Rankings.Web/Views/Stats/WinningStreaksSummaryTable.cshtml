@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Rankings.Web.Controllers.StreakSummaryViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Player)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AverageWinningStreak)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AverageWinningStreak)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

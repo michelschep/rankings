@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Services;
 using Rankings.Core.Specifications;
 using Rankings.Web.Models;
 using Profile = Rankings.Core.Entities.Profile;
@@ -16,12 +17,14 @@ namespace Rankings.Web.Controllers
     public class ProfilesController : Controller
     {
         private readonly IGamesService _gamesService;
+        private readonly IStatisticsService _statisticsService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public ProfilesController(IGamesService gamesService, IAuthorizationService authorizationService)
+        public ProfilesController(IGamesService gamesService, IStatisticsService statisticsService, IAuthorizationService authorizationService)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             // TODO inject?
             _mapper = CreateMapper();
@@ -103,7 +106,22 @@ namespace Rankings.Web.Controllers
         {
             var profile = _gamesService.Item(new SpecificProfile(id));
             var viewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
+            var streaks = _statisticsService
+                .WinningStreaksPlayer(profile, DateTime.MinValue, DateTime.MaxValue)
+                .OrderByDescending(streak=>streak.NumberOfGames);
 
+            var streakViewModels = streaks.Select(streak => new StreakViewModel
+            {
+                NumberOfGames = streak.NumberOfGames.ToString(),
+                EndDate = streak.EndDate.ToString("yyyy/MM/dd H:mm"),
+                Player = streak.Player.DisplayName,
+                StartDate = streak.StartDate.ToString("yyyy/MM/dd H:mm"),
+                NumberOfDays = Math.Round((streak.EndDate - streak.StartDate).TotalDays,0),
+                AverageElo = streak.AverageElo.Round().ToString(),
+                Volume = (streak.AverageElo * streak.NumberOfGames).Round().ToString()
+            });
+
+            viewModel.Streaks = streakViewModels;
             ViewBag.Profile = profile.EmailAddress;
 
             return View(viewModel);

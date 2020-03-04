@@ -30,7 +30,10 @@ namespace Rankings.Core.Interfaces
         decimal CurrentEloStreak(string emailAddress, DateTime startDate, DateTime endDate);
         IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate);
         IEnumerable<StatGame> EloGames(string emailAddress);
+        IEnumerable<Streak> WinningStreaksPlayer(Profile profile, DateTime startDate, DateTime endDate);
         IEnumerable<Streak> WinningStreaks(DateTime startDate, DateTime endDate);
+        IEnumerable<Streak> LosingStreaksPlayer(Profile profile, DateTime startDate, DateTime endDate);
+        IEnumerable<Streak> LosingStreaks(DateTime startDate, DateTime endDate);
     }
 
     public class GameSummary

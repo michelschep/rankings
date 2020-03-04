@@ -66,11 +66,17 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels">Eternal Classics</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="WinningStreaksSummaries">Winning Streaks Summaries</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="LosingStreaksSummaries">Losing Streaks Summaries</a>
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="WinningStreaks">Winning Streaks</a>
                             <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="AverageElo" asp-route-year="2019" >2019 Average Elo</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Goat" asp-route-year="2019" >2019 Goat</a>
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2019">2019 Classics</a>
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2019">2019 Fibonacci</a>
                             <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="AverageElo" asp-route-year="2020" >2020 Average Elo</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Goat" asp-route-year="2020" >2020 Goat</a>
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2020">2020 Classics</a>
                             <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2020">2020 Fibonacci</a>
                         </div>

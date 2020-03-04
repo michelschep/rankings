@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using Rankings.Web.Controllers;
 
 namespace Rankings.Web.Models
 {
@@ -22,5 +24,7 @@ namespace Rankings.Web.Models
         [DataType(DataType.Text)]
         [UniqueDisplayName]
         public string DisplayName { get; set; }
+
+        public IEnumerable<StreakViewModel> Streaks { get; set; }
     }
 }

@@ -67,7 +67,7 @@ namespace Rankings.Web
 
             // TODO retrieve from app settings/or admin settings page/object
             services.AddSingleton<IRankingsClock, RankingsClock>();
-            services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200, 7));
+            services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200, 15));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, GameEditAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ProfileEditAuthorizationHandler>();

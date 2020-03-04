@@ -4,7 +4,6 @@ using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Rankings.Core.Models;
 
@@ -23,6 +22,22 @@ namespace Rankings.Core.Services
             _eloConfiguration = eloConfiguration ?? throw new ArgumentNullException(nameof(eloConfiguration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _eloCalculatorFactory = eloCalculatorFactory ?? throw new ArgumentNullException(nameof(eloCalculatorFactory));
+        }
+
+        public Report<Profile> GenerateReportForPlayers(RealGameTypes gameType, Period period, Properties properties)
+        {
+            var playersInScope = _gamesService.List<Profile>(new AllProfiles());
+
+            var playerReports = ReportForPlayers(playersInScope, gameType, period, properties);
+            return new Report<Profile>(gameType, period, properties);
+        }
+
+        private static IEnumerable<ReportDetails> ReportForPlayers(IEnumerable<Profile> playersInScope, RealGameTypes gameType, Period period, Properties properties)
+        {
+            foreach (var profile in playersInScope)
+            {
+                yield return new ReportDetails(profile, gameType, period, properties);
+            }
         }
 
         public IDictionary<Profile, EloStatsPlayer> Ranking(string gameType, DateTime startDate, DateTime endDate)
@@ -161,7 +176,7 @@ namespace Rankings.Core.Services
 
         public IEnumerable<Streak> WinningStreaks(DateTime startDate, DateTime endDate)
         {
-            var players = _gamesService.List<Profile>(new AllProfiles());
+            var players = AllEternalPlayers(startDate, endDate);
 
             foreach (var profile in players)
             {
@@ -172,14 +187,42 @@ namespace Rankings.Core.Services
             }
         }
 
-        private IEnumerable<Streak> WinningStreaksPlayer(Profile profile, DateTime startDate, DateTime endDate)
+        private IEnumerable<Profile> AllEternalPlayers(DateTime startDate, DateTime endDate)
+        {
+            return _gamesService.List<Profile>(new AllProfiles()).Where((profile, i) => _gamesService.List<Game>(new GamesForPlayerInPeriodSpecification("tafeltennis", profile.EmailAddress, startDate, endDate)).Count() >= 21);
+        }
+
+        public IEnumerable<Streak> LosingStreaks(DateTime startDate, DateTime endDate)
+        {
+            var players = AllEternalPlayers(startDate, endDate);
+
+            foreach (var profile in players)
+            {
+                foreach (var streak in LosingStreaksPlayer(profile, startDate, endDate))
+                {
+                    yield return streak;
+                };
+            }
+        }
+
+        public IEnumerable<Streak> WinningStreaksPlayer(Profile profile, DateTime startDate, DateTime endDate)
+        {
+            return DetermineStreaks(profile, startDate, endDate, game => game.Score1 > game.Score2);
+        }
+
+        public IEnumerable<Streak> LosingStreaksPlayer(Profile profile, DateTime startDate, DateTime endDate)
+        {
+            return DetermineStreaks(profile, startDate, endDate, game => game.Score1 < game.Score2);
+        }
+
+        private IEnumerable<Streak> DetermineStreaks(Profile profile, DateTime startDate, DateTime endDate, Predicate<StatGame> predicate)
         {
             var gamesByPlayer = GamesByPlayer(profile.EmailAddress, startDate, endDate);
 
             if (gamesByPlayer.Count == 0)
                 return new List<Streak>();
 
-            var series = gamesByPlayer.Split(game => game.Score1 > game.Score2).ToList();
+            var series = gamesByPlayer.Split(predicate).ToList();
             if (!series.Any())
                 return new List<Streak>();
 
@@ -189,7 +232,7 @@ namespace Rankings.Core.Services
 
                 return new Streak
                 {
-                    Player = profile, 
+                    Player = profile,
                     StartDate = ordered.First().RegistrationDate,
                     EndDate = ordered.Last().RegistrationDate,
                     NumberOfGames = ordered.Count,
@@ -638,6 +681,48 @@ namespace Rankings.Core.Services
 
                 yield return eloGames;
             }
+        }
+    }
+
+    internal class ReportDetails
+    {
+        public Profile Profile { get; }
+        public RealGameTypes GameType { get; }
+        public Period Period { get; }
+        public Properties Properties { get; }
+
+        public ReportDetails(Profile profile, RealGameTypes gameType, Period period, Properties properties)
+        {
+            Profile = profile;
+            GameType = gameType;
+            Period = period;
+            Properties = properties;
+        }
+    }
+
+    public enum RealGameTypes
+    {
+    }
+
+    public class Period
+    {
+    }
+
+    public class Properties
+    {
+    }
+
+    public class Report<T>
+    {
+        public RealGameTypes GameType { get; }
+        public Period Period { get; }
+        public Properties Properties { get; }
+
+        public Report(RealGameTypes gameType, Period period, Properties properties)
+        {
+            GameType = gameType;
+            Period = period;
+            Properties = properties;
         }
     }
 

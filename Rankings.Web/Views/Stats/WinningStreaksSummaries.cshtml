@@ -1,0 +1,10 @@
+﻿@model Rankings.Web.Controllers.WinningStreaksSummaryViewModel
+
+@{
+    ViewData["Title"] = "WinningStreaksSummary";
+}
+
+<h1>Streaks</h1>
+
+
+<partial name="WinningStreaksSummaryTable" for="@Model.Items"/>

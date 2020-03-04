@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 
@@ -14,6 +16,81 @@ namespace Rankings.Web.Controllers
         public StatsController(IStatisticsService rankingService)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
+        }
+
+        [HttpGet("/stats/average-elo")]
+        public IActionResult AverageElo(int year)
+        {
+            var result = _statisticsService
+                .TotalElo(GameTypes.TableTennis, new DateTime(year, 1, 1), new DateTime(year, 12, 31))
+                .OrderByDescending(pair => pair.Value["avg elo"])
+                .ToDictionary(pair => pair.Key, pair => pair.Value["avg elo"])
+                .ToList();
+
+            var index = 1;
+            var viewModel = result.Select(pair => new RankingViewItem
+            {
+                Index = (index++).ToString(),
+                Name = pair.Key.DisplayName,
+                Score = pair.Value.Round().ToString()
+            });
+
+            ViewBag.Title = "Average Elo Score " + year;
+            return View("Index", viewModel);
+        }
+
+        [HttpGet("/stats/duel-league")]
+        public IActionResult DuelLeague()
+        {
+            var result = _statisticsService.GameSummaries(new DateTime(2020, 1, 1), new DateTime(2020, 12, 31)).ToList();
+            var map = result
+                .SelectMany(summary => new[] {summary.Player1, summary.Player2})
+                .Distinct()
+                .ToDictionary(s => s, s => new LeagueScore(s));
+
+            foreach (var gameSummary in result)
+            {
+                map[gameSummary.Player1].Played += 1;
+                map[gameSummary.Player2].Played += 1;
+                map[gameSummary.Player1].Percentage1 += gameSummary.PercentageScore1;
+                map[gameSummary.Player1].Percentage2 += gameSummary.PercentageScore2;
+                map[gameSummary.Player2].Percentage1 += gameSummary.PercentageScore2;
+                map[gameSummary.Player2].Percentage2 += gameSummary.PercentageScore1;
+
+                var max = 1; //gameSummary.Score1 + gameSummary.Score2 >= 5 ? 5 : gameSummary.Score1 + gameSummary.Score2;
+
+                if (gameSummary.Score1 > gameSummary.Score2)
+                {
+                    map[gameSummary.Player1].Score += 3 * max;
+                    map[gameSummary.Player1].Won += 1;
+                    map[gameSummary.Player2].Lost += 1;
+                }
+
+                if (gameSummary.Score1 < gameSummary.Score2)
+                {
+                    map[gameSummary.Player2].Score += 3 * max;
+                    map[gameSummary.Player2].Won += 1;
+                    map[gameSummary.Player1].Lost += 1;
+                }
+
+                if (gameSummary.Score1 == gameSummary.Score2)
+                {
+                    map[gameSummary.Player1].Score += max;
+                    map[gameSummary.Player2].Score += max;
+                    map[gameSummary.Player1].Draw += 1;
+                    map[gameSummary.Player2].Draw += 1;
+                }
+            }
+
+            var ranking = 1;
+            foreach (var leagueScore in map.OrderByDescending(pair => pair.Value.Score))
+            {
+                leagueScore.Value.Percentage1 /= leagueScore.Value.Played;
+                leagueScore.Value.Percentage2 /= leagueScore.Value.Played;
+                leagueScore.Value.Ranking = ranking++;
+            }
+
+            return View(map.Select(pair => pair.Value).OrderByDescending(score => score.Score));
         }
 
         [HttpGet("/stats/{year}")]
@@ -35,6 +112,64 @@ namespace Rankings.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet("/stats/winning-streaks-summaries")]
+        public IActionResult WinningStreaksSummaries()
+        {
+            var winningStreaks = _statisticsService
+                .WinningStreaks(DateTime.MinValue, DateTime.MaxValue)
+                .GroupBy(streak => streak.Player)
+                .Select(grouping => new
+                {
+                    Profile = grouping.Key,
+                    AverageStreak = (decimal) grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
+                }).OrderByDescending(arg => arg.AverageStreak);
+
+            var losingStreaks = _statisticsService
+                .LosingStreaks(DateTime.MinValue, DateTime.MaxValue)
+                .GroupBy(streak => streak.Player)
+                .Select(grouping => new
+                {
+                    Profile = grouping.Key,
+                    AverageStreak = (decimal) grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
+                }).OrderBy(arg => arg.AverageStreak);
+
+
+            var winningStreaksViewModel = new WinningStreaksSummaryViewModel
+            {
+                Items = winningStreaks.Select(arg => new StreakSummaryViewModel
+                {
+                    Player = arg.Profile.DisplayName,
+                    AverageWinningStreak = arg.AverageStreak.Round(1).ToString()
+                })
+            };
+
+            return View(winningStreaksViewModel);
+        }
+
+        [HttpGet("/stats/losing-streaks-summaries")]
+        public IActionResult LosingStreaksSummaries()
+        {
+            var losingStreaks = _statisticsService
+                .LosingStreaks(DateTime.MinValue, DateTime.MaxValue)
+                .GroupBy(streak => streak.Player)
+                .Select(grouping => new
+                {
+                    Profile = grouping.Key,
+                    AverageStreak = (decimal) grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
+                }).OrderBy(arg => arg.AverageStreak);
+
+            var winningStreaksViewModel = new WinningStreaksSummaryViewModel
+            {
+                Items = losingStreaks.Select(arg => new StreakSummaryViewModel
+                {
+                    Player = arg.Profile.DisplayName,
+                    AverageWinningStreak = arg.AverageStreak.Round(1).ToString()
+                })
+            };
+
+            return View("WinningStreaksSummaries", winningStreaksViewModel);
+        }
+
         [HttpGet("/stats/winning-streaks")]
         public IActionResult WinningStreaks()
         {
@@ -51,6 +186,7 @@ namespace Rankings.Web.Controllers
                 EndDate = streak.EndDate.ToString("yyyy/MM/dd H:mm"),
                 Player = streak.Player.DisplayName,
                 StartDate = streak.StartDate.ToString("yyyy/MM/dd H:mm"),
+                NumberOfDays = Math.Round((streak.EndDate - streak.StartDate).TotalDays, 0),
                 AverageElo = streak.AverageElo.Round().ToString(),
                 Volume = (streak.AverageElo * streak.NumberOfGames).Round().ToString()
             });
@@ -241,6 +377,36 @@ namespace Rankings.Web.Controllers
         }
     }
 
+    public class LeagueScore
+    {
+        public int Ranking { get; set; }
+        public string EmailAdress { get; }
+        public int Score { get; set; }
+        public int Draw { get; set; }
+        public int Won { get; set; }
+        public int Lost { get; set; }
+        public int Played { get; set; }
+        public int Percentage1 { get; set; }
+        public int Percentage2 { get; set; }
+
+        public LeagueScore(string emailAdress)
+        {
+            EmailAdress = emailAdress;
+        }
+    }
+
+    public class StreakSummaryViewModel
+    {
+        public string Player { get; set; }
+        public string AverageWinningStreak { get; set; }
+        public string AverageLosingStreak { get; set; }
+    }
+
+    public class WinningStreaksSummaryViewModel
+    {
+        public IEnumerable<StreakSummaryViewModel> Items { get; set; }
+    }
+
     public class StreakViewModel
     {
         public string Player { get; set; }
@@ -252,6 +418,7 @@ namespace Rankings.Web.Controllers
         public string NumberOfEloPints { get; set; }
         public string AverageElo { get; set; }
         public string Volume { get; set; }
+        public double NumberOfDays { get; set; }
     }
 
     public class WinningStreaksViewModel

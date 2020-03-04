@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Rankings.Web.Controllers.LeagueScore>
+
+@{
+    ViewData["Title"] = "DuelLeague";
+}
+
+<h1>Duels League</h1>
+
+<table class="table table-striped table-dark">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ranking)
+            </th>
+            <th>Player</th>
+            <th>Running Duels</th>
+            <th>Winning</th>
+            <th>Drawing</th>
+            <th>Losing</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Score)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ranking)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailAdress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Played)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Won)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Draw)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Score)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

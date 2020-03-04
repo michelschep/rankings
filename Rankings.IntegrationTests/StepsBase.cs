@@ -58,7 +58,7 @@ namespace Rankings.IntegrationTests
             authorizationService.Setup(foo => foo.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), "ProfileEditPolicy"))
                 .ReturnsAsync(AuthorizationResult.Success());
 
-            ProfilesController = new ProfilesController(_gamesService, authorizationService.Object);
+            ProfilesController = new ProfilesController(_gamesService, null, authorizationService.Object);
             VenuesController = new VenuesController(_gamesService);
             GameTypesController = new GameTypesController(_gamesService);
 
