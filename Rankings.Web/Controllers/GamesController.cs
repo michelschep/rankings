@@ -128,7 +128,7 @@ namespace Rankings.Web.Controllers
                 ScoreFirstPlayer = game.Score1 > game.Score2 ? game.Score1 : game.Score2,
                 ScoreSecondPlayer = game.Score1 > game.Score2 ? game.Score2 : game.Score1,
             }).ToList();
-            return model.Union(model2).OrderByDescending(viewModel => viewModel.RegistrationDate).ToList();
+            return model.Union(model2).OrderByDescending(viewModel => viewModel.Id).ToList();
         }
 
         private static string RegistrationDate(DateTimeOffset gameRegistrationDate)
