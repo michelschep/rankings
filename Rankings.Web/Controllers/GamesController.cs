@@ -112,7 +112,23 @@ namespace Rankings.Web.Controllers
                 ScoreFirstPlayer = type.Score1 > type.Score2 ? type.Score1 : type.Score2,
                 ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
             }).ToList();
-            return model;
+
+            var doubles  = _gamesService
+                .List(new DoubleGamesForPeriodSpecification())
+                .ToList();
+
+            var model2 = doubles.Select(game => new GameViewModel
+            {
+                Id = game.Id,
+                GameType = game.GameType.DisplayName,
+                Venue = game.Venue?.DisplayName ?? "Unknown",
+                NameFirstPlayer = game.Score1 > game.Score2 ? game.Player1Team1.DisplayName + "/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
+                NameSecondPlayer = game.Score1 < game.Score2 ? game.Player1Team1.DisplayName +"/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
+                RegistrationDate = RegistrationDate(game.RegistrationDate),
+                ScoreFirstPlayer = game.Score1 > game.Score2 ? game.Score1 : game.Score2,
+                ScoreSecondPlayer = game.Score1 > game.Score2 ? game.Score2 : game.Score1,
+            }).ToList();
+            return model.Union(model2).OrderByDescending(viewModel => viewModel.RegistrationDate).ToList();
         }
 
         private static string RegistrationDate(DateTimeOffset gameRegistrationDate)

@@ -24,12 +24,12 @@ namespace Rankings.Core.Services
             _eloCalculatorFactory = eloCalculatorFactory ?? throw new ArgumentNullException(nameof(eloCalculatorFactory));
         }
 
-        public Report<Profile> GenerateReportForPlayers(RealGameTypes gameType, Period period, Properties properties)
+        public Report GenerateReportForPlayers(RealGameTypes gameType, Period period, Properties properties)
         {
             var playersInScope = _gamesService.List<Profile>(new AllProfiles());
 
             var playerReports = ReportForPlayers(playersInScope, gameType, period, properties);
-            return new Report<Profile>(gameType, period, properties);
+            return new Report(gameType, period, properties);
         }
 
         private static IEnumerable<ReportDetails> ReportForPlayers(IEnumerable<Profile> playersInScope, RealGameTypes gameType, Period period, Properties properties)
@@ -712,7 +712,7 @@ namespace Rankings.Core.Services
     {
     }
 
-    public class Report<T>
+    public class Report
     {
         public RealGameTypes GameType { get; }
         public Period Period { get; }
