@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Rankings.Core.Entities;
+﻿using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 using System;
@@ -13,14 +12,12 @@ namespace Rankings.Core.Services
     {
         private readonly IGamesService _gamesService;
         private readonly EloConfiguration _eloConfiguration;
-        private readonly ILogger<IStatisticsService> _logger;
         private readonly IEloCalculatorFactory _eloCalculatorFactory;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, ILogger<IStatisticsService> logger, IEloCalculatorFactory eloCalculatorFactory)
+        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, IEloCalculatorFactory eloCalculatorFactory)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _eloConfiguration = eloConfiguration ?? throw new ArgumentNullException(nameof(eloConfiguration));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _eloCalculatorFactory = eloCalculatorFactory ?? throw new ArgumentNullException(nameof(eloCalculatorFactory));
         }
 
@@ -96,7 +93,7 @@ namespace Rankings.Core.Services
             return EloGames(GameTypes.TableTennis, startDate, endDate)
                 .SelectMany(arg => new[]
                 {
-                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, Score1 = arg.Game.Score1, Score2 = arg.Game.Score2},
+                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, arg.Game.Score1, arg.Game.Score2},
                     new {Player = arg.Game.Player2, Elo = arg.EloPlayer1, Score1 = arg.Game.Score2, Score2 = arg.Game.Score1},
                 })
                 .GroupBy(arg => arg.Player)
@@ -111,7 +108,7 @@ namespace Rankings.Core.Services
             return EloGames(GameTypes.TableTennis, startDate, endDate)
                 .SelectMany(arg => new[]
                 {
-                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, Score1 = arg.Game.Score1, Score2 = arg.Game.Score2},
+                    new {Player = arg.Game.Player1, Elo = arg.EloPlayer2, arg.Game.Score1, arg.Game.Score2},
                     new {Player = arg.Game.Player2, Elo = arg.EloPlayer1, Score1 = arg.Game.Score2, Score2 = arg.Game.Score1},
                 })
                 .GroupBy(arg => arg.Player)
@@ -183,13 +180,13 @@ namespace Rankings.Core.Services
                 foreach (var streak in WinningStreaksPlayer(profile, startDate, endDate))
                 {
                     yield return streak;
-                };
+                }
             }
         }
 
         private IEnumerable<Profile> AllEternalPlayers(DateTime startDate, DateTime endDate)
         {
-            return _gamesService.List<Profile>(new AllProfiles()).Where((profile, i) => _gamesService.List<Game>(new GamesForPlayerInPeriodSpecification("tafeltennis", profile.EmailAddress, startDate, endDate)).Count() >= 21);
+            return _gamesService.List(new AllProfiles()).Where((profile, i) => _gamesService.List(new GamesForPlayerInPeriodSpecification("tafeltennis", profile.EmailAddress, startDate, endDate)).Count() >= 21);
         }
 
         public IEnumerable<Streak> LosingStreaks(DateTime startDate, DateTime endDate)
@@ -201,7 +198,7 @@ namespace Rankings.Core.Services
                 foreach (var streak in LosingStreaksPlayer(profile, startDate, endDate))
                 {
                     yield return streak;
-                };
+                }
             }
         }
 
@@ -398,17 +395,17 @@ namespace Rankings.Core.Services
 
         public IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate)
         {
-            return _gamesService.List<Game>(new GamesForPeriodSpecification(GameTypes.TableTennis, startDate, endDate)).ToList()
+            return _gamesService.List(new GamesForPeriodSpecification(GameTypes.TableTennis, startDate, endDate)).ToList()
                 .Select(game =>
                 {
                     if (game.Player1.Id < game.Player2.Id)
-                        return new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, Score1 = game.Score1, Score2 = game.Score2};
+                        return new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2};
                     return new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1};
                 }).GroupBy(arg => new {arg.Player1, arg.Player2})
                 .Select(grouping => new
                 {
-                    Player1 = grouping.Key.Player1,
-                    Player2 = grouping.Key.Player2,
+                    grouping.Key.Player1,
+                    grouping.Key.Player2,
                     TotalGames = grouping.Count(),
                     TotalSets = grouping.Sum(g => g.Score1 + g.Score2),
                     Score1 = grouping.Count(g => g.Score1 > g.Score2),
@@ -421,7 +418,7 @@ namespace Rankings.Core.Services
                         return new {arg.Player1, arg.Player2, arg.Score1, arg.Score2, arg.Set1, arg.Set2, arg.TotalGames, arg.TotalSets};
                     return new {Player1 = arg.Player2, Player2 = arg.Player1, Score1 = arg.Score2, Score2 = arg.Score1, Set1 = arg.Set2, Set2 = arg.Set1, arg.TotalGames, arg.TotalSets};
                 })
-                .Select(summary => new GameSummary()
+                .Select(summary => new GameSummary
                 {
                     Player1 = summary.Player1,
                     Player2 = summary.Player2,
@@ -454,12 +451,12 @@ namespace Rankings.Core.Services
                     {
                         Player1 = game.Game.Player1.EmailAddress,
                         Player2 = game.Game.Player2.EmailAddress,
-                        Score1 = game.Game.Score1, 
-                        Score2 = game.Game.Score2, 
+                        game.Game.Score1,
+                        game.Game.Score2, 
                         Delta1 = game.Player1Delta,
                         Delta2 = game.Player2Delta, 
                         game.Game.RegistrationDate,
-                        EloPlayer2 = game.EloPlayer2
+                        game.EloPlayer2
                     }
                     : new
                     {
@@ -506,7 +503,7 @@ namespace Rankings.Core.Services
             return EloGamesByPlayer(emailAddress, startDate, endDate) 
                 .Select(game =>
                     string.Equals(game.Player1, emailAddress, StringComparison.CurrentCultureIgnoreCase)
-                        ? new {game.Score1, game.Score2, Player1 = game.Player1, Player2 = game.Player2, game.RegistrationDate, game.EloPlayer2}
+                        ? new {game.Score1, game.Score2, game.Player1, game.Player2, game.RegistrationDate, game.EloPlayer2}
                         : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2, Player2 = game.Player1, game.RegistrationDate, game.EloPlayer2})
                 .Select(arg => new StatGame
                 {
@@ -661,7 +658,7 @@ namespace Rankings.Core.Services
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                var eloCalculator = _eloCalculatorFactory.Create(game.RegistrationDate.Year);
+                var eloCalculator = _eloCalculatorFactory.Create(game.RegistrationDate);
 
                 // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
                 // It should not be possible to enter these games.
