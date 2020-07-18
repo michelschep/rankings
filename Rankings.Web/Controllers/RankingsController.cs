@@ -28,7 +28,7 @@ namespace Rankings.Web.Controllers
         [HttpGet("/rankings/{year}")]
         public IActionResult YearRanking(int year)
         {
-            ViewBag.Title = $"The {year} Ranking!";
+            ViewBag.Title = $"The {year} Ranking";
             ViewBag.Message = "";
 
             var gameType = "tafeltennis";

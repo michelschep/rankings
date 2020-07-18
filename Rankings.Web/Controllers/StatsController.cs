@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Services;
 
@@ -23,20 +21,36 @@ namespace Rankings.Web.Controllers
         {
             var result = _statisticsService
                 .TotalElo(GameTypes.TableTennis, new DateTime(year, 1, 1), new DateTime(year, 12, 31))
-                .OrderByDescending(pair => pair.Value["avg elo"])
-                .ToDictionary(pair => pair.Key, pair => pair.Value["avg elo"])
+                .OrderByDescending(pair => pair.Value["prognose elo"])
                 .ToList();
 
             var index = 1;
-            var viewModel = result.Select(pair => new RankingViewItem
+            var viewModel = new ViewItems
             {
-                Index = (index++).ToString(),
-                Name = pair.Key.DisplayName,
-                Score = pair.Value.Round().ToString()
-            });
+                Headers = new List<string>() { "Avg 31/12", "Avg Now", "Cur Elo", "Elo Needed" },
+                Values = result.Select(pair =>
+                {
+                    var viewItem = new ViewItem
+                    {
+                        Index = (index++).ToString(),
+                        Name = pair.Key.DisplayName,
+                    };
+
+                    viewItem.Scores.Add(pair.Value["prognose elo"].Round().ToString());
+
+                    viewItem.Scores.Add(pair.Value["avg elo"].Round().ToString());
+                    viewItem.Scores.Add(pair.Value["current elo"].Round().ToString());
+                    viewItem.Scores.Add(pair.Value["needed"].Round().ToString());
+
+                    return viewItem;
+                })
+            };
+
+
 
             ViewBag.Title = "Average Elo Score " + year;
-            return View("Index", viewModel);
+            //return View("PlayerOfTheYear", viewModel);
+            return View("MultiValues", viewModel);
         }
 
         [HttpGet("/stats/duel-league")]
@@ -44,7 +58,7 @@ namespace Rankings.Web.Controllers
         {
             var result = _statisticsService.GameSummaries(new DateTime(2020, 1, 1), new DateTime(2020, 12, 31)).ToList();
             var map = result
-                .SelectMany(summary => new[] {summary.Player1, summary.Player2})
+                .SelectMany(summary => new[] { summary.Player1, summary.Player2 })
                 .Distinct()
                 .ToDictionary(s => s, s => new LeagueScore(s));
 
@@ -121,7 +135,7 @@ namespace Rankings.Web.Controllers
                 .Select(grouping => new
                 {
                     Profile = grouping.Key,
-                    AverageStreak = (decimal) grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
+                    AverageStreak = (decimal)grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
                 }).OrderByDescending(arg => arg.AverageStreak);
 
             var losingStreaks = _statisticsService
@@ -130,7 +144,7 @@ namespace Rankings.Web.Controllers
                 .Select(grouping => new
                 {
                     Profile = grouping.Key,
-                    AverageStreak = (decimal) grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
+                    AverageStreak = (decimal)grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
                 }).OrderBy(arg => arg.AverageStreak);
 
 
@@ -155,7 +169,7 @@ namespace Rankings.Web.Controllers
                 .Select(grouping => new
                 {
                     Profile = grouping.Key,
-                    AverageStreak = (decimal) grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
+                    AverageStreak = (decimal)grouping.Sum(streak => streak.NumberOfGames) / grouping.Count()
                 }).OrderBy(arg => arg.AverageStreak);
 
             var winningStreaksViewModel = new WinningStreaksSummaryViewModel
@@ -317,10 +331,10 @@ namespace Rankings.Web.Controllers
             var index = 1;
             var viewModel = new ViewItems
             {
-                Headers = new List<string>() {"Total Elo", "Diff", "Behind in hours", "Elo/day", "Elo/hour"},
+                Headers = new List<string>() { "Total Elo", "Diff", "Behind in hours", "Elo/day", "Elo/hour" },
                 Values = result.Select(pair =>
                 {
-                    var viewItem = new ViewItem {Index = (index++).ToString(), Name = pair.Key.DisplayName,};
+                    var viewItem = new ViewItem { Index = (index++).ToString(), Name = pair.Key.DisplayName, };
                     viewItem.Scores.Add(pair.Value["total elo"].Round().ToString());
                     var diffScore = (pair.Value["total elo"].Round() - maxEloTotalScore);
                     viewItem.Scores.Add(diffScore.ToString());
@@ -358,15 +372,15 @@ namespace Rankings.Web.Controllers
             //    .ToList();
 
             var result = statGames
-                .GroupBy(game => new {Month = game.RegistrationDate.Month, Variable = 50 * (int) (game.EloPlayer2 / 50)})
-                .Select(game => new Item {Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString(), Value = (int) 100 * game.Count(statGame => statGame.Score1 > statGame.Score2) / game.Count()})
+                .GroupBy(game => new { Month = game.RegistrationDate.Month, Variable = 50 * (int)(game.EloPlayer2 / 50) })
+                .Select(game => new Item { Group = game.Key.Month.ToString(), Variable = game.Key.Variable.ToString(), Value = (int)100 * game.Count(statGame => statGame.Score1 > statGame.Score2) / game.Count() })
                 .ToList();
             return new JsonResult(result);
         }
 
         private int DetermineVariable(decimal gameEloPlayer)
         {
-            return 100 * (int) (gameEloPlayer / 100);
+            return 100 * (int)(gameEloPlayer / 100);
         }
 
         public class Item
@@ -449,5 +463,8 @@ namespace Rankings.Web.Controllers
         public string Index { get; set; }
         public string Name { get; set; }
         public string Score { get; set; }
+        public string CurrentElo { get; set; }
+        public string Goat { get; set; }
+        public string PrognoseElo { get; set; }
     }
 }

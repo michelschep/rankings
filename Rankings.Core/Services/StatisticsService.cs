@@ -1,10 +1,11 @@
-﻿using Rankings.Core.Entities;
+using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rankings.Core.Models;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace Rankings.Core.Services
 {
@@ -62,7 +63,7 @@ namespace Rankings.Core.Services
         public Dictionary<Profile, decimal> StrengthGamesPerPlayer(in DateTime startDate, in DateTime endDate)
         {
             return EloGames(GameTypes.TableTennis, startDate, endDate)
-                .Select(game => new {game.Game.Player1, game.Game.Player2, Elo = (game.EloPlayer1 + game.EloPlayer2) / 2m})
+                .Select(game => new { game.Game.Player1, game.Game.Player2, Elo = (game.EloPlayer1 + game.EloPlayer2) / 2m })
                 .SelectMany(arg => new[]
                 {
                     new {arg.Player1, arg.Elo},
@@ -70,7 +71,7 @@ namespace Rankings.Core.Services
                 })
                 .GroupBy(arg => arg.Player1)
                 .Where((grouping, i) => grouping.Count() >= 7)
-                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count()})
+                .Select(grouping => new { Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count() })
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
         }
 
@@ -84,7 +85,7 @@ namespace Rankings.Core.Services
                 })
                 .GroupBy(arg => arg.Player)
                 .Where((grouping, i) => grouping.Count() >= 7)
-                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count()})
+                .Select(grouping => new { Player = grouping.Key, Elo = grouping.Sum(arg => arg.Elo) / grouping.Count() })
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
         }
 
@@ -99,7 +100,7 @@ namespace Rankings.Core.Services
                 .GroupBy(arg => arg.Player)
                 .Where((grouping, i) => grouping.Count() >= 7)
                 .Where(grouping => grouping.Count(arg => arg.Score1 > arg.Score2) > 0)
-                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 > arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 > arg.Score2)})
+                .Select(grouping => new { Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 > arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 > arg.Score2) })
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
         }
 
@@ -114,7 +115,7 @@ namespace Rankings.Core.Services
                 .GroupBy(arg => arg.Player)
                 .Where((grouping, i) => grouping.Count() >= 7)
                 .Where(grouping => grouping.Count(arg => arg.Score1 < arg.Score2) > 0)
-                .Select(grouping => new {Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 < arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 < arg.Score2)})
+                .Select(grouping => new { Player = grouping.Key, Elo = grouping.Where(arg => arg.Score1 < arg.Score2).Sum(arg => arg.Elo) / grouping.Count(arg => arg.Score1 < arg.Score2) })
                 .ToDictionary(arg => arg.Player, arg => arg.Elo);
         }
 
@@ -153,7 +154,7 @@ namespace Rankings.Core.Services
             var won = gamesByPlayer
                 .Count(arg => arg.Score1 > arg.Score2);
 
-            return (decimal) won / gamesByPlayer.Count;
+            return (decimal)won / gamesByPlayer.Count;
         }
 
         public decimal SetWinPercentage(string emailAddress, DateTime startDate, DateTime endDate)
@@ -168,7 +169,7 @@ namespace Rankings.Core.Services
 
             var totalSets = gamesByPlayer.Sum(arg => arg.Score1 + arg.Score2);
 
-            return (decimal) won / totalSets;
+            return (decimal)won / totalSets;
         }
 
         public IEnumerable<Streak> WinningStreaks(DateTime startDate, DateTime endDate)
@@ -269,14 +270,14 @@ namespace Rankings.Core.Services
             if (gamesByPlayer.Count == 0)
                 return 0;
 
-            var totals = gamesByPlayer.GroupBy(game => game.Player2).Select(games => new {Opponent = games.Key, Count = games.Count()}).ToDictionary(arg => arg.Opponent, arg => arg.Count);
+            var totals = gamesByPlayer.GroupBy(game => game.Player2).Select(games => new { Opponent = games.Key, Count = games.Count() }).ToDictionary(arg => arg.Opponent, arg => arg.Count);
 
             var fibonacciScore = 0m;
             while (true)
             {
                 var numberOfPlayers = totals.Count;
                 fibonacciScore += Fibonacci(numberOfPlayers);
-                totals = totals.Select(pair => new {Player = pair.Key, Count = pair.Value - 1}).Where(arg => arg.Count > 0).ToDictionary(arg => arg.Player, arg => arg.Count);
+                totals = totals.Select(pair => new { Player = pair.Key, Count = pair.Value - 1 }).Where(arg => arg.Count > 0).ToDictionary(arg => arg.Player, arg => arg.Count);
 
                 if (totals.Count == 0)
                     break;
@@ -399,9 +400,9 @@ namespace Rankings.Core.Services
                 .Select(game =>
                 {
                     if (game.Player1.Id < game.Player2.Id)
-                        return new {Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2};
-                    return new {Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1};
-                }).GroupBy(arg => new {arg.Player1, arg.Player2})
+                        return new { Player1 = game.Player1.DisplayName, Player2 = game.Player2.DisplayName, game.Score1, game.Score2 };
+                    return new { Player1 = game.Player2.DisplayName, Player2 = game.Player1.DisplayName, Score1 = game.Score2, Score2 = game.Score1 };
+                }).GroupBy(arg => new { arg.Player1, arg.Player2 })
                 .Select(grouping => new
                 {
                     grouping.Key.Player1,
@@ -415,8 +416,8 @@ namespace Rankings.Core.Services
                 }).Select(arg =>
                 {
                     if (arg.Score1 > arg.Score2)
-                        return new {arg.Player1, arg.Player2, arg.Score1, arg.Score2, arg.Set1, arg.Set2, arg.TotalGames, arg.TotalSets};
-                    return new {Player1 = arg.Player2, Player2 = arg.Player1, Score1 = arg.Score2, Score2 = arg.Score1, Set1 = arg.Set2, Set2 = arg.Set1, arg.TotalGames, arg.TotalSets};
+                        return new { arg.Player1, arg.Player2, arg.Score1, arg.Score2, arg.Set1, arg.Set2, arg.TotalGames, arg.TotalSets };
+                    return new { Player1 = arg.Player2, Player2 = arg.Player1, Score1 = arg.Score2, Score2 = arg.Score1, Set1 = arg.Set2, Set2 = arg.Set1, arg.TotalGames, arg.TotalSets };
                 })
                 .Select(summary => new GameSummary
                 {
@@ -427,10 +428,10 @@ namespace Rankings.Core.Services
                     Score2 = summary.Score2,
                     Set1 = summary.Set1,
                     Set2 = summary.Set2,
-                    PercentageScore1 = (int) (100m * summary.Score1 / summary.TotalGames).Round(),
-                    PercentageScore2 = (int) (100m * summary.Score2 / summary.TotalGames).Round(),
-                    PercentageSet1 = (int) (100m * summary.Set1 / summary.TotalSets).Round(),
-                    PercentageSet2 = (int) (100m * summary.Set2 / summary.TotalSets).Round(),
+                    PercentageScore1 = (int)(100m * summary.Score1 / summary.TotalGames).Round(),
+                    PercentageScore2 = (int)(100m * summary.Score2 / summary.TotalGames).Round(),
+                    PercentageSet1 = (int)(100m * summary.Set1 / summary.TotalSets).Round(),
+                    PercentageSet2 = (int)(100m * summary.Set2 / summary.TotalSets).Round(),
                 });
         }
 
@@ -452,9 +453,9 @@ namespace Rankings.Core.Services
                         Player1 = game.Game.Player1.EmailAddress,
                         Player2 = game.Game.Player2.EmailAddress,
                         game.Game.Score1,
-                        game.Game.Score2, 
+                        game.Game.Score2,
                         Delta1 = game.Player1Delta,
-                        Delta2 = game.Player2Delta, 
+                        Delta2 = game.Player2Delta,
                         game.Game.RegistrationDate,
                         game.EloPlayer2
                     }
@@ -484,27 +485,27 @@ namespace Rankings.Core.Services
 
         private List<StatGame> GamesByPlayer(string emailAddress, DateTime startDate, DateTime endDate)
         {
-//            return _gamesService
-//                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
-//                .Select(game =>
-//                    string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
-//                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress, game.RegistrationDate}
-//                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress, game.RegistrationDate})
-//                .Select(arg => new StatGame
-//                {
-//                    Player1 = arg.Player1,
-//                    Player2 = arg.Player2,
-//                    Score1 = arg.Score1,
-//                    Score2 = arg.Score2,
-//                    RegistrationDate = arg.RegistrationDate
-//                })
-//                .ToList();
+            //            return _gamesService
+            //                .List(new GamesForPlayerInPeriodSpecification("tafeltennis", emailAddress, startDate, endDate))
+            //                .Select(game =>
+            //                    string.Equals(game.Player1.EmailAddress, emailAddress, StringComparison.CurrentCultureIgnoreCase)
+            //                        ? new {game.Score1, game.Score2, Player1 = game.Player1.EmailAddress, Player2 = game.Player2.EmailAddress, game.RegistrationDate}
+            //                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2.EmailAddress, Player2 = game.Player1.EmailAddress, game.RegistrationDate})
+            //                .Select(arg => new StatGame
+            //                {
+            //                    Player1 = arg.Player1,
+            //                    Player2 = arg.Player2,
+            //                    Score1 = arg.Score1,
+            //                    Score2 = arg.Score2,
+            //                    RegistrationDate = arg.RegistrationDate
+            //                })
+            //                .ToList();
 
-            return EloGamesByPlayer(emailAddress, startDate, endDate) 
+            return EloGamesByPlayer(emailAddress, startDate, endDate)
                 .Select(game =>
                     string.Equals(game.Player1, emailAddress, StringComparison.CurrentCultureIgnoreCase)
-                        ? new {game.Score1, game.Score2, game.Player1, game.Player2, game.RegistrationDate, game.EloPlayer2}
-                        : new {Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2, Player2 = game.Player1, game.RegistrationDate, game.EloPlayer2})
+                        ? new { game.Score1, game.Score2, game.Player1, game.Player2, game.RegistrationDate, game.EloPlayer2 }
+                        : new { Score1 = game.Score2, Score2 = game.Score1, Player1 = game.Player2, Player2 = game.Player1, game.RegistrationDate, game.EloPlayer2 })
                 .Select(arg => new StatGame
                 {
                     Player1 = arg.Player1,
@@ -532,7 +533,8 @@ namespace Rankings.Core.Services
                 .ToDictionary(player => player,
                     player => new EloStatsPlayer
                     {
-                        EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0,
+                        EloScore = _eloConfiguration.InitialElo,
+                        NumberOfGames = 0,
                         TimeNumberOne = new TimeSpan(0, 0, 0)
                     });
 
@@ -578,8 +580,10 @@ namespace Rankings.Core.Services
 
         public Dictionary<Profile, Dictionary<string, decimal>> TotalElo(string gameType, DateTime startDate, DateTime endDate)
         {
-            var decay = 100;
-            var lines = new List<string>();
+            // TODO HACK
+            var dateTimeNow = startDate.Year == 2020 ? DateTime.Now : new DateTime(2019, 12, 31, 23, 59, 59);
+
+            var decay = 1000;
             var eloGames = EloGames(gameType, startDate, endDate);
             var eloGamesPerPlayer = eloGames.SelectMany(game => new[]
             {
@@ -597,13 +601,14 @@ namespace Rankings.Core.Services
                 var newElo = 0m;
                 TimeSpan diffTime;
                 var totalPotElo = 0m;
+                var goat = 0m;
 
                 foreach (var game in playerGames)
                 {
                     newElo = currentElo + game.Delta;
                     diffTime = game.RegistrationDate.Subtract(prevGame);
 
-                    var deltaTime = (decimal) diffTime.TotalDays;
+                    var deltaTime = (decimal)diffTime.TotalDays;
                     var penaltyTime = deltaTime > decay ? deltaTime - decay : 0;
                     var nonPenaltyTime = deltaTime - penaltyTime;
 
@@ -617,10 +622,13 @@ namespace Rankings.Core.Services
 
                     prevGame = game.RegistrationDate;
                     currentElo = newElo;
+                    if (currentElo > goat)
+                        goat = currentElo;
                 }
 
-                diffTime = DateTime.Now.AddDays(0).Subtract(prevGame);
-                var deltaTime2 = (decimal) diffTime.TotalDays;
+               
+                diffTime = dateTimeNow.AddDays(0).Subtract(prevGame);
+                var deltaTime2 = (decimal)diffTime.TotalDays;
                 var penaltyTime2 = deltaTime2 > decay ? deltaTime2 - decay : 0;
                 var nonPenaltyTime2 = deltaTime2 - penaltyTime2;
 
@@ -631,34 +639,70 @@ namespace Rankings.Core.Services
                 totalPotElo += currentElo * deltaTime2;
 
                 totalTime += deltaTime2;
+
+                var timeRest = new DateTime(dateTimeNow.Year, 12, 31, 23, 59, 59).Subtract(dateTimeNow);
+                var totalEloPrognose = totalElo + (decimal)timeRest.TotalDays * currentElo;
+                var totalTimePrognose = totalTime + (decimal)timeRest.TotalDays;
+
                 var item = new Dictionary<string, decimal>
                 {
                     {"avg elo", totalElo / totalTime},
                     {"total elo", totalElo},
                     {"penalty", totalPotElo - totalElo},
                     {"current elo", currentElo},
-                    {"elo/h", currentElo / 24}
+                    {"elo/h", currentElo / 24},
+                    {"goat", goat},
+                    {"prognose elo", totalEloPrognose / totalTimePrognose}
                 };
                 result.Add(playerGames.Key, item);
             }
 
+            var maxEloPrognose = result.Select(pair => pair.Value)
+                .Select(p => p["prognose elo"]).Max();
+
+            foreach (var p in result)
+            {
+                //var dateTimeNow = DateTime.Now;
+                var timeRest = new DateTime(dateTimeNow.Year, 12, 31, 23, 59, 59).Subtract(dateTimeNow);
+                var timePlayed = dateTimeNow.Subtract(new DateTime(dateTimeNow.Year, 1, 1, 0, 0, 0));
+
+                var total = p.Value["avg elo"] * (decimal) timePlayed.TotalDays;
+                var totalNeeded = maxEloPrognose * (decimal)(timePlayed.TotalDays + timeRest.TotalDays);
+                var diff = totalNeeded - total;
+                if (timeRest.TotalDays >= 1)
+                {
+                    var needed = diff / (decimal) timeRest.TotalDays;
+                    p.Value["needed"] = needed - p.Value["current elo"];
+                }
+                else
+                {
+                    if (diff > 0)
+                    {
+                        p.Value["needed"] = 9999;
+                    }
+                    else
+                    {
+                        p.Value["needed"] = 0;
+                    }
+                }
+            }
             return result;
         }
 
         public IEnumerable<EloGame> EloGames(string gameType, DateTime startDate, DateTime endDate)
         {
-            // All players should be in the ranking. Not restrictions (not yet :-))
+            // All players should be in the ranking. No restrictions (not yet :-))
             var allPlayers = _gamesService.List(new AllProfiles()).ToList();
 
             // All players have an initial elo score
             var ranking = allPlayers
-                .ToDictionary(player => player, player => new EloStatsPlayer {EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0});
+                .ToDictionary(player => player, player => new EloStatsPlayer { EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0 });
 
             // Now calculate current elo score based on all games played
             var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
-                var eloCalculator = _eloCalculatorFactory.Create(game.RegistrationDate);
+                var eloCalculator = _eloCalculatorFactory.Create(game.RegistrationDate.Year);
 
                 // TODO ignore games between the same player. This is a hack to solve the consequences of the issue
                 // It should not be possible to enter these games.
