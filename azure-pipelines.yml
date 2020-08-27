@@ -8,9 +8,6 @@ trigger:
   branches:
     include:
       - master
-  paths:
-    include:
-      - Rankings.**/*
 
 pool:
   vmImage: 'windows-latest'
