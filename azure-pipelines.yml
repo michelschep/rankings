@@ -10,7 +10,7 @@ trigger:
       - master
   paths:
     include:
-      - Rankings.*
+      - Rankings.*/*
 
 pool:
   vmImage: 'windows-latest'
