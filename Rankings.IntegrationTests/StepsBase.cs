@@ -69,7 +69,7 @@ namespace Rankings.IntegrationTests
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, TypeEloCalculator? typeEloCalculator)
         {
             var eloCalculatorFactory = CreateEloCalculatorFactory(typeEloCalculator);
-            var rankingService = new StatisticsService(_gamesService, eloConfiguration, _factory.CreateLogger<IStatisticsService>(), eloCalculatorFactory);
+            var rankingService = new StatisticsService(_gamesService, eloConfiguration, eloCalculatorFactory);
 
             return new RankingsController(rankingService, _memoryCache, eloConfiguration);
         }
