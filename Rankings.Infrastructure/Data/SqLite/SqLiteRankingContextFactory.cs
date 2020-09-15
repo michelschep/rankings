@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -18,16 +16,6 @@ namespace Rankings.Infrastructure.Data.SqLite
 
         public RankingContext CreateDbContext(string[] args)
         {
-            // var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            //
-            // IConfiguration config = new ConfigurationBuilder()
-            // .SetBasePath(Directory.GetCurrentDirectory())
-            // .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            // .AddJsonFile($"appsettings.{environment}.json", optional: true)
-            // .AddJsonFile($"secrets.json", optional: true)
-            // .AddEnvironmentVariables()
-            // .Build();
-
             var optionsBuilder = new DbContextOptionsBuilder<RankingContext>();
             var repositoryConfiguration = new RepositoryConfiguration();
             _configuration.GetSection("Repository").Bind(repositoryConfiguration);

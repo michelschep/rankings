@@ -1,9 +1,9 @@
-﻿using System.Data.Common;
+﻿using System.Data;
 
 namespace Rankings.Infrastructure.Data.SqLite
 {
     public interface ISqLiteConnectionFactory
     {
-        DbConnection CreateSqliteConnection(string connectionString);
+        IDbConnection CreateSqliteConnection(string connectionString);
     }
 }
