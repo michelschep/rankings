@@ -57,11 +57,13 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    ArtifactName: drop
   condition: succeededOrFailed()
   
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    ArtifactName: tests
   condition: succeededOrFailed()
   name: Tests
   displayName: Publish Tests
