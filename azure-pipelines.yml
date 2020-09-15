@@ -9,6 +9,14 @@ trigger:
     include:
       - master
 
+schedules:
+- cron: "25 16 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - master
+  always: true
+
 pool:
   vmImage: 'windows-latest'
 
