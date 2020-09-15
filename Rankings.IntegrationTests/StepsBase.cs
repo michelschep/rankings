@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,6 @@ using Moq;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Models;
 using Rankings.Core.Services;
-using Rankings.Infrastructure.Data;
 using Rankings.Infrastructure.Data.InMemory;
 using Rankings.Web.Controllers;
 using Serilog;
