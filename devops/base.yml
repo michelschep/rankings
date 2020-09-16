@@ -27,8 +27,8 @@ stages:
   displayName: 'BUILD'
 
   jobs:
-  - job: 'BUILD-JOB'
-    displayName: 'BUILD-JOB'
+  - job: 'BUILDJOB'
+    displayName: 'BUILDJOB'
     pool:
       vmImage: 'windows-latest'
     steps:
