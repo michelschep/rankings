@@ -33,19 +33,19 @@ stages:
       vmImage: 'windows-latest'
     steps:
     - powershell: |
-    $SEARCH_PATH=$Env:Path
-    Write-Host "##[debug] Found directories"
-    ForEach ($Dir in $SEARCH_PATH -split ";") {
-      Write-Host "$Dir"
-    }
-    Write-Host ""
-    Write-Host ""
-    Write-Host "##[debug] Found files"
-    ForEach ($Dir in $SEARCH_PATH -split ";") {
-      Get-ChildItem $Dir -File -ErrorAction Continue | ForEach-Object -Process {
-        Write-Host $_.FullName
-      }
-    }
+        $SEARCH_PATH=$Env:Path
+        Write-Host "##[debug] Found directories"
+        ForEach ($Dir in $SEARCH_PATH -split ";") {
+          Write-Host "$Dir"
+        }
+        Write-Host ""
+        Write-Host ""
+        Write-Host "##[debug] Found files"
+        ForEach ($Dir in $SEARCH_PATH -split ";") {
+          Get-ChildItem $Dir -File -ErrorAction Continue | ForEach-Object -Process {
+            Write-Host $_.FullName
+          }
+        }
     - task: DotNetCoreCLI@2
       displayName: Restore
       inputs:
