@@ -20,5 +20,5 @@ steps:
 resources:
   pipelines:
   - pipeline: ThisPipeline
-    source: Rankings-ASP.NET Core-CI-windows
+    source: michelschep.rankings
     branch: master
