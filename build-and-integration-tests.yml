@@ -7,8 +7,8 @@ trigger:
 parameters:
   - name: TestProjects
     type: string
-    default: '**/*IntegrationTests/*.csproj'
+    default: '**/*IntegrationTests.csproj'
     
 extends:
-  template: base.yml
+  template: devops/base.yml
 

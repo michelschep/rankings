@@ -15,7 +15,7 @@ parameters:
     default: '**/*.csproj'
   - name: TestProjects
     type: string
-    default: '**/*[Tt]ests/*.csproj'
+    default: '**/*[Tt]ests.csproj'
     
 variables:
   solution: '**/*.sln'
