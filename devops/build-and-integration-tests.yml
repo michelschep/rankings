@@ -10,6 +10,6 @@ parameters:
     default: '**/*IntegrationTests/*.csproj'
     
 extends:
-  template: devops/base.yml
+  template: base.yml
   parameters:
     useDotNetCoreSdk: true
