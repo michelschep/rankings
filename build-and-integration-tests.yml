@@ -3,7 +3,15 @@ trigger:
   branches:
     include:
       - master
- 
+
+schedules:
+- cron: "10 16 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - master
+  always: true
+  
 parameters:
   - name: TestProjects
     type: string
