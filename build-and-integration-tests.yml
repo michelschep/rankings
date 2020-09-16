@@ -12,10 +12,7 @@ schedules:
     - master
   always: true
   
-parameters:
-  - name: TestProjects
-    type: string
-    default: '**/*IntegrationTests.csproj'
+
     
 extends:
   template: devops/base.yml
