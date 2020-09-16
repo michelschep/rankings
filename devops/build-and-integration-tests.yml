@@ -11,5 +11,4 @@ parameters:
     
 extends:
   template: base.yml
-  parameters:
-    useDotNetCoreSdk: true
+
