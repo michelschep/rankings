@@ -1,0 +1,15 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+ 
+ parameters:
+  - name: TestProjects
+    type: string
+    default: '**/*IntegrationTests/*.csproj'
+    
+extends:
+  template: devops/base.yml
+  parameters:
+    useDotNetCoreSdk: true
