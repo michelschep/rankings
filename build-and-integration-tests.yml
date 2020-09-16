@@ -11,23 +11,6 @@ schedules:
     include:
     - master
   always: true
-
-steps:
-- checkout: none
-- powershell: |
-    $SEARCH_PATH=$Env:Path
-    Write-Host "##[debug] Found directories"
-    ForEach ($Dir in $SEARCH_PATH -split ";") {
-      Write-Host "$Dir"
-    }
-    Write-Host ""
-    Write-Host ""
-    Write-Host "##[debug] Found files"
-    ForEach ($Dir in $SEARCH_PATH -split ";") {
-      Get-ChildItem $Dir -File -ErrorAction Continue | ForEach-Object -Process {
-        Write-Host $_.FullName
-      }
-    }
       
 extends:
   template: devops/base.yml
