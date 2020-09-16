@@ -10,7 +10,7 @@ trigger:
       - master
 
 schedules:
-- cron: "16 16 * * *"
+- cron: "30 16 * * *"
   displayName: Daily midnight build
   branches:
     include:
