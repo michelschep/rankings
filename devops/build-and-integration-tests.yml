@@ -4,7 +4,7 @@ trigger:
     include:
       - master
  
- parameters:
+parameters:
   - name: TestProjects
     type: string
     default: '**/*IntegrationTests/*.csproj'
