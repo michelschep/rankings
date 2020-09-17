@@ -2,7 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-      - none
+      - ignore-commit-triggers
 
 schedules:
 - cron: "30 6 * * *"
