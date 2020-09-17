@@ -1,11 +1,11 @@
 trigger:
   batch: true
   branches:
-    include:
-      - ignore-commit-triggers
+    exclude:
+        - master
 
 schedules:
-- cron: "30 6 * * *"
+- cron: "55 7 * * *"
   displayName: Daily midnight build
   branches:
     include:
