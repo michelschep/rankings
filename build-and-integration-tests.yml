@@ -1,11 +1,5 @@
-trigger:
-  batch: true
-  branches:
-    include:
-      - master
-
 schedules:
-- cron: "54 14 * * *"
+- cron: "30 6 * * *"
   displayName: Daily midnight build
   branches:
     include:
