@@ -1,6 +1,5 @@
 ﻿using System;
 using Rankings.Core.Interfaces;
-using Rankings.Core.Services;
 
 namespace Rankings.IntegrationTests
 {
