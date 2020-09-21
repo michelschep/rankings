@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rankings.Core.Models;
-using Rankings.Core.Services;
 using Rankings.Web.Models;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rankings.Core.Models;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace Rankings.Core.Services
 {

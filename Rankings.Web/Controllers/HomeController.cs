@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -107,19 +108,19 @@ namespace Rankings.Web.Controllers
             var ranking = _statisticsService.Ranking("tafeltennis", startDate, endDate);
             var list = new Dictionary<Profile, EloStatsPlayer>(ranking.OrderByDescending(pair => pair.Value.EloScore)).ToList();
 
-            return CreateSummary(list, i => i.EloScore.Round().ToString(), title);
+            return CreateSummary(list, i => i.EloScore.Round().ToString(CultureInfo.InvariantCulture), title);
         }
 
         private Summary Top3GoatScores(string title, DateTime startDate, DateTime endDate)
         {
             var goatScores = _statisticsService.GoatScore(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
-            return CreateSummary(goatScores, i => i.Round().ToString(), title);
+            return CreateSummary(goatScores, i => i.Round().ToString(CultureInfo.InvariantCulture), title);
         }
 
         private Summary Top3Fibonacci(string title, DateTime startDate, DateTime endDate)
         {
             var winningStreaks = _statisticsService.FibonacciScore(startDate, endDate).OrderByDescending(pair => pair.Value).ToList();
-            return CreateSummary(winningStreaks, i => i.Round().ToString(), title);
+            return CreateSummary(winningStreaks, i => i.Round().ToString(CultureInfo.InvariantCulture), title);
         }
 
         private Summary Top3RecordWinningStreak(string title, DateTime startDate, DateTime endDate)
