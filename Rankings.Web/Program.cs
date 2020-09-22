@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
-using Serilog.Filters;
-using Serilog.Formatting.Json;
 
 namespace Rankings.Web
 {

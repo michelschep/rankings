@@ -1,5 +1,4 @@
-﻿using System;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Rankings.Core.Entities;
 
 namespace Rankings.Core.Specifications
