@@ -111,8 +111,6 @@ namespace Rankings.Web.Models
             {
                 yield return new ValidationResult("Game result for table tennis cannot be 0-0");
             }
-
-            yield break;
         }
     }
 }

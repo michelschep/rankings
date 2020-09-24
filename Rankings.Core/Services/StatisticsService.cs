@@ -597,14 +597,13 @@ namespace Rankings.Core.Services
                 var currentElo = 1200m;
                 var totalElo = 0m;
                 var totalTime = 0m;
-                var newElo = 0m;
                 TimeSpan diffTime;
                 var totalPotElo = 0m;
                 var goat = 0m;
 
                 foreach (var game in playerGames)
                 {
-                    newElo = currentElo + game.Delta;
+                    var newElo = currentElo + game.Delta;
                     diffTime = game.RegistrationDate.Subtract(prevGame);
 
                     var deltaTime = (decimal)diffTime.TotalDays;
