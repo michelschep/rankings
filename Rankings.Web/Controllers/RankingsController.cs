@@ -118,7 +118,7 @@ namespace Rankings.Web.Controllers
                 return 7;
 
             if (startDate.Year == 2020)
-                return 2;
+                return 7;
 
             if (_eloConfiguration.NumberOfGames.HasValue)
                 return _eloConfiguration.NumberOfGames.Value;
