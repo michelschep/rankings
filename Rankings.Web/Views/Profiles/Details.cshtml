@@ -80,8 +80,6 @@
 //Read the data
     d3.json("Stats/PlayerHeatmapData/@ViewBag.Profile",
         function(data) {
-            console.log('==>', data);
-
             var tooltip = d3.select("#my_dataviz")
                 .append("div")
                 .style("opacity", 0)
