@@ -225,7 +225,7 @@ namespace Rankings.Web.Controllers
             {
                 Index = (index++).ToString(),
                 Name = pair.Key.DisplayName,
-                Score = pair.Value.Round().ToString()
+                Score = pair.Value.Round(2).ToString()
             });
 
             ViewBag.Title = $"Goat Ranking {year}";
