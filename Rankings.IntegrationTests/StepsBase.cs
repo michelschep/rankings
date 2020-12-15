@@ -25,7 +25,6 @@ namespace Rankings.IntegrationTests
         protected readonly GamesController GamesController;
         private readonly GamesService _gamesService;
         private readonly IMemoryCache _memoryCache;
-        private readonly ILoggerFactory _factory;
         protected readonly ILogger Output;
 
         protected StepsBase(ITestOutputHelper output)
@@ -40,8 +39,8 @@ namespace Rankings.IntegrationTests
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder.AddSerilog(Output))
                 .BuildServiceProvider();
-            _factory = serviceProvider.GetService<ILoggerFactory>();
-            var logger = _factory.CreateLogger<GamesController>();
+            var factory = serviceProvider.GetService<ILoggerFactory>();
+            var logger = factory.CreateLogger<GamesController>();
 
             var rankingContextFactory = new InMemoryRankingContextFactory();
             var repositoryFactory = new InMemoryRepositoryFactory(rankingContextFactory);
