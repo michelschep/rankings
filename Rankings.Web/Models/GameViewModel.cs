@@ -29,7 +29,6 @@ namespace Rankings.Web.Models
 
         [Display(Name = "Score First Player")]
         [Required]
-        [Range(0, 100)]
         [NoPointsDrawIsNotAllowed]
         public int ScoreFirstPlayer { get; set; }
 
