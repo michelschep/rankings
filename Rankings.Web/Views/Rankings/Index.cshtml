@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Rankings.Web.Models.RankingViewModel>
 
 <h1>@ViewBag.Title</h1>
-<p>@ViewBag.Message</p>
+<p>@Html.Raw(@ViewBag.Message)</p>
 
 <table class="table table-striped table-dark" style="table-layout: fixed;">
     <thead>

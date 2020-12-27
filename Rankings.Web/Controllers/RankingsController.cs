@@ -31,6 +31,21 @@ namespace Rankings.Web.Controllers
             ViewBag.Title = $"The {year} Ranking";
             ViewBag.Message = "";
 
+            if (year == 2021)
+            {
+                ViewBag.Message = "Vanaf (ongeveer) 1 februari is de ranking voor 2021 te zien!";
+                ViewBag.Message += "<br>Aantal nieuwe features/regels";
+                ViewBag.Message += "<ol>";
+                ViewBag.Message += "<li>Ranking zal zichtbaar zijn wanneer we minimaal een podium (top 3) hebben</li>";
+                ViewBag.Message += "<li>Na 7 wedstrijden ben je zichtbaar in de ranking</li>";
+                ViewBag.Message += "<li>Door te spelen tegen meer verschillende tegenstanders kun je harder stijgen (bij winst) en minder hard dalen (bij verlies)</li>";
+                ViewBag.Message += "<li>Speel je gemiddeld tegen minder tegenstanders kun minder snel stijgen maar wel sneller dalen</li>";
+                ViewBag.Message += "<li>Voor de echte tafeltennis nerds: ook set standen binnenkort in te voeren</li>";
+                ViewBag.Message += "</ol>";
+                ViewBag.Message += "<br>";
+            }
+
+
             var gameType = "tafeltennis";
             var beginEnd = new DateTime(year, 1, 1);
             var endDate = new DateTime(year, 12, 31);
@@ -71,13 +86,14 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int precision = 0)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int precision = 1)
         {
             return NewRankingViewModels(gameType, startDate, endDate, precision);
         }
 
         private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
         {
+            precision = 2;
             // Determine list of players with elo score
             var eloScores = _statisticsService.Ranking(gameType, startDate, endDate);
 
