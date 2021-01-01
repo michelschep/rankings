@@ -42,7 +42,10 @@
                                 <div style="color: red">Double game</div>
                             </a>
                         </li>
-
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Rankings" asp-action="YearRanking" asp-route-year="2019">2019</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Rankings" asp-action="YearRanking" asp-route-year="2020">2020</a>
                         </li>
@@ -53,11 +56,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Games" asp-action="Index" asp-route-gameType="tafeltennis">Games</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Stats" asp-action="Duels">Battles</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Profiles" asp-action="Index">Players</a>
                         </li>
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Matrix">Matrix</a> *@
-                        @* </li> *@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Archive</a>
@@ -67,24 +70,30 @@
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Goat" asp-route-year="2019">2019 Goat</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2019">2019 Classics</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2019">2019 Fibonacci</a>
-                            </div>
-                        <li />
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rankings</a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels">Eternal Classics</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="WinningStreaksSummaries">Winning Streaks Summaries</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="LosingStreaksSummaries">Losing Streaks Summaries</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="WinningStreaks">Winning Streaks</a>
-                               
                                 <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-area="" asp-controller="Rankings" asp-action="YearRanking" asp-route-year="2020">2020 Ranking</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="AverageElo" asp-route-year="2020">2020 Average Elo</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Goat" asp-route-year="2020">2020 Goat</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2020">2020 Classics</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2020">2020 Fibonacci</a>
                             </div>
-                        </li>
+                        <li />
+
+                        @* <li class="nav-item dropdown"> *@
+                        @*     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Matches</a> *@
+                        @*     <div class="dropdown-menu" aria-labelledby="navbarDropdown"> *@
+                        @*          *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="WinningStreaksSummaries">Winning Streaks Summaries</a> #1# *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="LosingStreaksSummaries">Losing Streaks Summaries</a> #1# *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="WinningStreaks">Winning Streaks</a> #1# *@
+                        @*         $1$ #1# *@
+                        @*         $1$ <div class="dropdown-divider"></div> #1# *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="AverageElo" asp-route-year="2020">2020 Average Elo</a> #1# *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Goat" asp-route-year="2020">2020 Goat</a> #1# *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Duels" asp-route-year="2020">2020 Classics</a> #1# *@
+                        @*         $1$ <a class="dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index" asp-route-year="2020">2020 Fibonacci</a> #1# *@
+                        @*     </div> *@
+                        @* </li> *@
 
                         @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
                         {
