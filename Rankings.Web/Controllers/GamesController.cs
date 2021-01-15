@@ -330,6 +330,7 @@ namespace Rankings.Web.Controllers
             }
 
             var game = _gamesService.Item(new SpecificGame(id));
+
             // TODO use auto mapper
 
             var sets1 = (game.SetScores1 ?? "").Split(';').ToList();
@@ -346,6 +347,7 @@ namespace Rankings.Web.Controllers
                     .Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
+                Identifier = game.Identifier.ToString(),
                 RegistrationDate = game.RegistrationDate.ToString(CultureInfo.InvariantCulture),
                 NameFirstPlayer = game.Player1.EmailAddress,
                 NameSecondPlayer = game.Player2.EmailAddress,

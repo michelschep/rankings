@@ -4,18 +4,20 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edit Game</h1>
 
-<h4>Edit Game</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="Identifier" class="control-label"></label>
+                <input readonly="readonly" asp-for="Identifier" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label asp-for="RegistrationDate" class="control-label"></label>
                 <input readonly="readonly" asp-for="RegistrationDate" class="form-control" />
-                <span asp-validation-for="RegistrationDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GameType" class="control-label"></label>

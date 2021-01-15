@@ -109,6 +109,7 @@ namespace Rankings.Core.Services
                 throw new Exception("Cannot register game because player2 is not registered");
 
             game.RegistrationDate = _clock.Now();
+            game.Identifier = Guid.NewGuid();
 
             _repository.Add(game);
         }
