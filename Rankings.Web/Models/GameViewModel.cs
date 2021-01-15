@@ -127,9 +127,10 @@ namespace Rankings.Web.Models
                 var win2 = 0;
                 for (var set = 0; set < numberOfSets; ++set)
                 {
-                    if (int.Parse(sets1[set]) > int.Parse(sets2[set]))
+                    if (int.Parse(sets1[set]) > int.Parse(sets2[set])+1)
                         ++win1;
-                    else 
+
+                    if (int.Parse(sets2[set]) > int.Parse(sets1[set])+1)
                         ++win2;
                 }
 

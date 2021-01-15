@@ -229,14 +229,6 @@ namespace Rankings.Web.Controllers
                 return View(model);
             }
 
-            var sets1 = new List<string> {model.ScoreFirstPlayerSet1, model.ScoreFirstPlayerSet2, model.ScoreFirstPlayerSet3, model.ScoreFirstPlayerSet4, model.ScoreFirstPlayerSet5}
-                .Take(model.ScoreFirstPlayer + model.ScoreSecondPlayer)
-                .Select(int.Parse);
-
-            var sets2 = new List<string> {model.ScoreSecondPlayerSet1, model.ScoreSecondPlayerSet2, model.ScoreSecondPlayerSet3, model.ScoreSecondPlayerSet4, model.ScoreSecondPlayerSet5}
-                .Take(model.ScoreFirstPlayer + model.ScoreSecondPlayer)
-                .Select(int.Parse);
-
             var game = new Game
             {
                 GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
@@ -245,8 +237,8 @@ namespace Rankings.Web.Controllers
                 Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
                 Score1 = model.ScoreFirstPlayer,
                 Score2 = model.ScoreSecondPlayer,
-                SetScores1 = string.Join(';', sets1),
-                SetScores2 = string.Join(';', sets2)
+                SetScores1 = SerializeSets1(model),
+                SetScores2 = SerializeSets2(model)
             };
 
             _gamesService.RegisterGame(game);
@@ -255,6 +247,26 @@ namespace Rankings.Web.Controllers
 
             return RedirectToAction("Index");
         }
+
+        private string SerializeSets1(GameViewModel model)
+        {
+            var sets = new List<string> {model.ScoreFirstPlayerSet1, model.ScoreFirstPlayerSet2, model.ScoreFirstPlayerSet3, model.ScoreFirstPlayerSet4, model.ScoreFirstPlayerSet5}
+                .TakeWhile(s => !string.IsNullOrEmpty(s))
+                .Select(int.Parse);
+
+            return string.Join(';', sets);
+        }
+
+        private string SerializeSets2(GameViewModel model)
+        {
+           
+            var sets = new List<string> {model.ScoreSecondPlayerSet1, model.ScoreSecondPlayerSet2, model.ScoreSecondPlayerSet3, model.ScoreSecondPlayerSet4, model.ScoreSecondPlayerSet5}
+                .TakeWhile(s => !string.IsNullOrEmpty(s))
+                .Select(int.Parse);
+
+            return string.Join(';', sets);
+        }
+
 
         [HttpGet("/games/createdouble")]
         public IActionResult CreateDouble()
