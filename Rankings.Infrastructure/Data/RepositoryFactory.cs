@@ -16,7 +16,7 @@ namespace Rankings.Infrastructure.Data
 
         public IRepository Create()
         {
-            var context = _rankingContextFactory.CreateDbContext(args: null);
+            var context = _rankingContextFactory.CreateDbContext1();
             context.Database.Migrate();
 
             return new EfRepository(context);

@@ -4,6 +4,6 @@ namespace Rankings.Infrastructure.Data.SqLite
 {
     public interface IRankingContextFactory : IDesignTimeDbContextFactory<RankingContext>
     {
-
+        RankingContext CreateDbContext1();
     }
 }

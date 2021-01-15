@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ardalis.Specification;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 using Rankings.Web.Models;
+using Profile = Rankings.Core.Entities.Profile;
 
 namespace Rankings.Web.Controllers
 {
@@ -214,8 +216,10 @@ namespace Rankings.Web.Controllers
             {
                 var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
                 var oponentPlayers = _gamesService.List(new Oponents(User.Identity.Name))
+                    .Where(profile => profile.IsActive)
                     .OrderBy(profile => profile.DisplayName)
-                    .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
+                    .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress))
+                    .ToList();
 
                 model.OpponentPlayers = oponentPlayers;
                 model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
@@ -225,7 +229,14 @@ namespace Rankings.Web.Controllers
                 return View(model);
             }
 
-            // TODO use auto mapper
+            var sets1 = new List<string> {model.ScoreFirstPlayerSet1, model.ScoreFirstPlayerSet2, model.ScoreFirstPlayerSet3, model.ScoreFirstPlayerSet4, model.ScoreFirstPlayerSet5}
+                .Take(model.ScoreFirstPlayer + model.ScoreSecondPlayer)
+                .Select(int.Parse);
+
+            var sets2 = new List<string> {model.ScoreSecondPlayerSet1, model.ScoreSecondPlayerSet2, model.ScoreSecondPlayerSet3, model.ScoreSecondPlayerSet4, model.ScoreSecondPlayerSet5}
+                .Take(model.ScoreFirstPlayer + model.ScoreSecondPlayer)
+                .Select(int.Parse);
+
             var game = new Game
             {
                 GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
@@ -234,7 +245,8 @@ namespace Rankings.Web.Controllers
                 Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
                 Score1 = model.ScoreFirstPlayer,
                 Score2 = model.ScoreSecondPlayer,
-//                RegistrationDate = DateTime.Parse(model.RegistrationDate) //.ToString("yyyy/MM/dd H:mm"))
+                SetScores1 = string.Join(';', sets1),
+                SetScores2 = string.Join(';', sets2)
             };
 
             _gamesService.RegisterGame(game);
@@ -307,6 +319,10 @@ namespace Rankings.Web.Controllers
 
             var game = _gamesService.Item(new SpecificGame(id));
             // TODO use auto mapper
+
+            var sets1 = game.SetScores1.Split(';').ToList();
+            var sets2 = game.SetScores2.Split(';').ToList();
+
             var viewModel = new GameViewModel
             {
                 Players = _gamesService.List(new AllProfiles())
@@ -324,9 +340,27 @@ namespace Rankings.Web.Controllers
                 GameType = game.GameType.Code,
                 ScoreFirstPlayer = game.Score1,
                 ScoreSecondPlayer = game.Score2,
+                ScoreFirstPlayerSet1 = ScoreSet(sets1, 0),
+                ScoreSecondPlayerSet1 = ScoreSet(sets2, 0),
+                ScoreFirstPlayerSet2 = ScoreSet(sets1, 1),
+                ScoreSecondPlayerSet2 = ScoreSet(sets2, 1),
+                ScoreFirstPlayerSet3 = ScoreSet(sets1, 2),
+                ScoreSecondPlayerSet3 = ScoreSet(sets2, 2),
+                ScoreFirstPlayerSet4 = ScoreSet(sets1, 3),
+                ScoreSecondPlayerSet4 = ScoreSet(sets2, 3),
+                ScoreFirstPlayerSet5 = ScoreSet(sets1, 4),
+                ScoreSecondPlayerSet5 = ScoreSet(sets2, 4),
             };
 
             return View(viewModel);
+        }
+
+        private static string ScoreSet(List<string> sets, int index)
+        {
+            if (sets.Count <= index)
+                return "";
+
+            return sets[index];
         }
 
         [HttpPost]

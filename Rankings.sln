@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rankings.IntegrationTests", "Rankings.IntegrationTests\Rankings.IntegrationTests.csproj", "{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStoreTestConsole", "EventStoreTestConsole\EventStoreTestConsole.csproj", "{3AC351B2-636A-41B8-A5E5-5A8226052746}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1706A81-F8E8-4EB7-AB5A-85B2957EC68E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AC351B2-636A-41B8-A5E5-5A8226052746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AC351B2-636A-41B8-A5E5-5A8226052746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AC351B2-636A-41B8-A5E5-5A8226052746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AC351B2-636A-41B8-A5E5-5A8226052746}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

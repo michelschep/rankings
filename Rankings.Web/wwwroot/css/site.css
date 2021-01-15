@@ -164,3 +164,7 @@ body {
     text-decoration-line: none;
     text-decoration-style: solid;
 }
+
+.top-buffer {
+    margin-top: 20px;
+}
