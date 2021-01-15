@@ -5,7 +5,7 @@ namespace Rankings.Core.Entities
 {
     public class Game : BaseEntity
     {
-        public Guid Identifier { get; set; }
+        public string Identifier { get; set; }
         public Profile Player1 { get; set; }
         public Profile Player2 { get; set; }
         public GameType GameType { get; set; }

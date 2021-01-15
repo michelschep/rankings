@@ -6,7 +6,7 @@ using Rankings.Core.Specifications;
 
 namespace Rankings.Web
 {
-    public class GameEditAuthorizationHandler : AuthorizationHandler<GameEditRequirement, int>
+    public class GameEditAuthorizationHandler : AuthorizationHandler<GameEditRequirement, string>
     {
         private readonly IGamesService _gamesService;
 
@@ -15,7 +15,7 @@ namespace Rankings.Web
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GameEditRequirement requirement, int resource)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GameEditRequirement requirement, string resource)
         {
             if (IsAuthorized(context, resource))
             {
@@ -27,7 +27,7 @@ namespace Rankings.Web
             return Task.CompletedTask;
         }
 
-        private bool IsAuthorized(AuthorizationHandlerContext context, int viewModel)
+        private bool IsAuthorized(AuthorizationHandlerContext context, string resource)
         {
             var user = context.User;
 
@@ -35,7 +35,7 @@ namespace Rankings.Web
             if (user.IsInRole(Roles.Admin))
                 return true;
 
-            var game = _gamesService.Item(new SpecificGame(viewModel));
+            var game = _gamesService.Item(new SpecificGame(resource));
 
             if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return false;

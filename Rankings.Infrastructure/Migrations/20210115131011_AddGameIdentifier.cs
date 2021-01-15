@@ -12,7 +12,7 @@ namespace Rankings.Infrastructure.Migrations
                 table: "Games",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValue: "");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

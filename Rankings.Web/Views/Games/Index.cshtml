@@ -26,13 +26,15 @@
     {
         <tr>
             <td>
-                @if ((await AuthorizationService.AuthorizeAsync(User, item.Id, "GameEditPolicy")).Succeeded)
+                @if ((await AuthorizationService.AuthorizeAsync(User, item.Identifier, "GameEditPolicy")).Succeeded)
                 {
-                    @Html.ActionLink(item.RegistrationDate, "Edit", new {id = item.Id})
+                    @Html.ActionLink(item.RegistrationDate, "Edit", new { id = item.Identifier })
                 }
                 else
                 {
-                    @Html.DisplayFor(modelItem => item.RegistrationDate)
+                    @Html.ActionLink(item.RegistrationDate, "Edit", new { id = item.Identifier })
+
+@*                     @Html.DisplayFor(modelItem => item.RegistrationDate) *@
                 }
             </td>
             <td>

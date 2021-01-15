@@ -94,7 +94,7 @@ namespace Rankings.Web.Controllers
         private List<GameViewModel> CreateGameSummaryViewModels(string gameType)
         {
             gameType ??= "tafeltennis";
-            var daysBack = gameType == "tafeltennis" ? -31 : -365;
+            var daysBack = gameType == "tafeltennis" ? -100 : -365;
 
             var games = _gamesService
                 .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
@@ -104,7 +104,8 @@ namespace Rankings.Web.Controllers
 
             var model = games.Select(type => new GameViewModel
             {
-                Id = type.Id,
+                //Id = type.Id,
+                Identifier = type.Identifier.ToString(),
                 GameType = type.GameType.DisplayName,
                 Venue = type.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = type.Score1 > type.Score2 ? type.Player1.DisplayName : type.Player2.DisplayName,
@@ -121,7 +122,8 @@ namespace Rankings.Web.Controllers
 
             var model2 = doubles.Select(game => new GameViewModel
             {
-                Id = game.Id,
+                //Id = game.Id,
+                Identifier = "",
                 GameType = game.GameType.DisplayName,
                 Venue = game.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = game.Score1 > game.Score2 ? game.Player1Team1.DisplayName + "/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
@@ -321,7 +323,7 @@ namespace Rankings.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
             var authResult = await _authorizationService.AuthorizeAsync(User, id, GameEditPolicy);
             if (!authResult.Succeeded)
@@ -380,13 +382,13 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(GameViewModel model)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, model.Id, GameEditPolicy);
+            var authResult = await _authorizationService.AuthorizeAsync(User, model.Identifier, GameEditPolicy);
             if (!authResult.Succeeded)
             {
                 return RedirectToAction("Index");
             }
 
-            var game = _gamesService.Item(new SpecificGame(model.Id));
+            var game = _gamesService.Item(new SpecificGame(model.Identifier));
 
             if (model.ScoreFirstPlayer != game.Score1 || model.ScoreSecondPlayer != game.Score2)
                 _memoryCache.Remove("ranking-" + game.GameType.Code);
