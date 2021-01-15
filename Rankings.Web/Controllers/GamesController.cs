@@ -115,7 +115,7 @@ namespace Rankings.Web.Controllers
                 ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
             }).ToList();
 
-            var doubles  = _gamesService
+            var doubles = _gamesService
                 .List(new DoubleGamesForPeriodSpecification())
                 .ToList();
 
@@ -125,7 +125,7 @@ namespace Rankings.Web.Controllers
                 GameType = game.GameType.DisplayName,
                 Venue = game.Venue?.DisplayName ?? "Unknown",
                 NameFirstPlayer = game.Score1 > game.Score2 ? game.Player1Team1.DisplayName + "/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
-                NameSecondPlayer = game.Score1 < game.Score2 ? game.Player1Team1.DisplayName +"/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
+                NameSecondPlayer = game.Score1 < game.Score2 ? game.Player1Team1.DisplayName + "/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
                 RegistrationDate = RegistrationDate(game.RegistrationDate),
                 ScoreFirstPlayer = game.Score1 > game.Score2 ? game.Score1 : game.Score2,
                 ScoreSecondPlayer = game.Score1 > game.Score2 ? game.Score2 : game.Score1,
@@ -164,7 +164,7 @@ namespace Rankings.Web.Controllers
 
         private IEnumerable<SelectListItem> OponentPlayers(string nameCurrentUser)
         {
-            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>) new AllProfiles() : new Oponents(nameCurrentUser);
+            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new Oponents(nameCurrentUser);
 
             return _gamesService.List(query)
                 .Where(profile => profile.IsActive)
@@ -174,7 +174,7 @@ namespace Rankings.Web.Controllers
 
         private IEnumerable<SelectListItem> FirstPlayers(string nameCurrentUser)
         {
-            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>) new AllProfiles() : new SpecificProfile(nameCurrentUser);
+            BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new SpecificProfile(nameCurrentUser);
 
             return _gamesService.List(query)
                 .OrderBy(profile => profile.DisplayName)
@@ -224,7 +224,7 @@ namespace Rankings.Web.Controllers
                 model.OpponentPlayers = oponentPlayers;
                 model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
                 model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
-                model.Players = new[] {new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress)};
+                model.Players = new[] { new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) };
 
                 return View(model);
             }
@@ -250,7 +250,7 @@ namespace Rankings.Web.Controllers
 
         private string SerializeSets1(GameViewModel model)
         {
-            var sets = new List<string> {model.ScoreFirstPlayerSet1, model.ScoreFirstPlayerSet2, model.ScoreFirstPlayerSet3, model.ScoreFirstPlayerSet4, model.ScoreFirstPlayerSet5}
+            var sets = new List<string> { model.ScoreFirstPlayerSet1, model.ScoreFirstPlayerSet2, model.ScoreFirstPlayerSet3, model.ScoreFirstPlayerSet4, model.ScoreFirstPlayerSet5 }
                 .TakeWhile(s => !string.IsNullOrEmpty(s))
                 .Select(int.Parse);
 
@@ -259,8 +259,8 @@ namespace Rankings.Web.Controllers
 
         private string SerializeSets2(GameViewModel model)
         {
-           
-            var sets = new List<string> {model.ScoreSecondPlayerSet1, model.ScoreSecondPlayerSet2, model.ScoreSecondPlayerSet3, model.ScoreSecondPlayerSet4, model.ScoreSecondPlayerSet5}
+
+            var sets = new List<string> { model.ScoreSecondPlayerSet1, model.ScoreSecondPlayerSet2, model.ScoreSecondPlayerSet3, model.ScoreSecondPlayerSet4, model.ScoreSecondPlayerSet5 }
                 .TakeWhile(s => !string.IsNullOrEmpty(s))
                 .Select(int.Parse);
 
@@ -332,8 +332,8 @@ namespace Rankings.Web.Controllers
             var game = _gamesService.Item(new SpecificGame(id));
             // TODO use auto mapper
 
-            var sets1 = game.SetScores1.Split(';').ToList();
-            var sets2 = game.SetScores2.Split(';').ToList();
+            var sets1 = (game.SetScores1 ?? "").Split(';').ToList();
+            var sets2 = (game.SetScores2 ?? "").Split(';').ToList();
 
             var viewModel = new GameViewModel
             {
