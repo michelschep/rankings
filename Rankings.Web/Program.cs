@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -10,19 +12,12 @@ namespace Rankings.Web
     {
         public static void Main(string[] args)
         {
+            var configuration = CreateConfiguration();
+
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .ReadFrom.Configuration(configuration)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5341")
-                //.WriteTo.RollingFile(@".\log-{Date}.txt")
-                .WriteTo.File(
-                    @"D:\home\LogFiles\Application\rankings.txt",
-                    fileSizeLimitBytes: 1_000_000,
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1))
                 .CreateLogger();
 
             try
@@ -39,9 +34,25 @@ namespace Rankings.Web
             }
         }
 
+        private static IConfiguration CreateConfiguration()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .AddUserSecrets<Startup>();
+
+            return builder.Build();
+        }
+
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(
+                    webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>();
+                        webBuilder.CaptureStartupErrors(false);
+                    });
     }
 }
