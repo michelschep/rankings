@@ -93,7 +93,6 @@ namespace Rankings.Web.Controllers
 
         private IEnumerable<RankingViewModel> NewRankingViewModels(string gameType, DateTime startDate, DateTime endDate, int precision)
         {
-            precision = 2;
             // Determine list of players with elo score
             var eloScores = _statisticsService.Ranking(gameType, startDate, endDate);
 

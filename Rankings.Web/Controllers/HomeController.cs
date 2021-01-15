@@ -226,7 +226,7 @@ namespace Rankings.Web.Controllers
         {
             var eloCalculator = new EloCalculatorVersion2020();
             var deltaFirstPlayer = eloCalculator.CalculateDeltaPlayer(thisPlayerElo, eloScoreOponent, gameScore1, gameScore2);
-            return deltaFirstPlayer.Round(2);
+            return deltaFirstPlayer.Round(0);
         }
 
         public IActionResult Privacy()
