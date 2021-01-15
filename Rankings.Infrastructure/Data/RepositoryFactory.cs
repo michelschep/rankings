@@ -19,14 +19,6 @@ namespace Rankings.Infrastructure.Data
         {
             var context = _rankingContextFactory.CreateDbContext1();
             context.Database.Migrate();
-            //
-            // foreach (var g in context.Games.ToList())
-            // {
-            //     g.Identifier = Guid.NewGuid().ToString();
-            // }
-            //
-            // context.SaveChanges();
-
 
             return new EfRepository(context);
         }

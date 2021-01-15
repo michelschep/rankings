@@ -38,6 +38,7 @@ namespace Rankings.Core.Services
 
             _repository.Add(new Profile
             {
+                Identifier = Guid.NewGuid().ToString(),
                 EmailAddress = email,
                 DisplayName = displayName
             });
@@ -117,6 +118,7 @@ namespace Rankings.Core.Services
         public void RegisterDoubleGame(DoubleGame game)
         {
             game.RegistrationDate = _clock.Now();
+            game.Identifier = Guid.NewGuid().ToString();
 
             _repository.Add(game);
         }
