@@ -53,6 +53,8 @@ namespace Rankings.Web
                     policy => policy.AddRequirements(new ProfileEditRequirement()));
             });
 
+            services.AddApplicationInsightsTelemetry();
+
             services.AddControllersWithViews(options =>
                 {
                     options.EnableEndpointRouting = false; // TODO new in .net core 3
@@ -88,7 +90,7 @@ namespace Rankings.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseSerilogRequestLogging();
-
+            
             if (env.IsDevelopment() || env.IsEnvironment("Test"))
             {
                 app.UseDeveloperExceptionPage();
