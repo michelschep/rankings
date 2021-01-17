@@ -6,11 +6,13 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Ardalis.Specification;
 using AutoMapper;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Rankings.Core.Commands;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
@@ -26,17 +28,19 @@ namespace Rankings.Web.Controllers
 
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger<GamesController> _logger;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
         public GamesController(IGamesService gamesService, IAuthorizationService authorizationService,
-            IMemoryCache memoryCache, ILogger<GamesController> logger)
+            IMemoryCache memoryCache, ILogger<GamesController> logger, IPublishEndpoint publishEndpoint)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         [HttpGet("/games")]
@@ -212,7 +216,7 @@ namespace Rankings.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(GameViewModel model)
+        public async Task<IActionResult> Create(GameViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -231,6 +235,7 @@ namespace Rankings.Web.Controllers
                 return View(model);
             }
 
+
             var game = new Game
             {
                 GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
@@ -242,8 +247,10 @@ namespace Rankings.Web.Controllers
                 SetScores1 = SerializeSets1(model),
                 SetScores2 = SerializeSets2(model)
             };
+            
+            await _publishEndpoint.Publish(new RegisterSingleGameCommand(game));
 
-            _gamesService.RegisterGame(game);
+            // _gamesService.RegisterGame(game);
 
             ClearCache();
 
