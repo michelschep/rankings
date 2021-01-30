@@ -2,7 +2,7 @@
 
 namespace Rankings.Core.Commands
 {
-    public class RegisterSingleGameCommand
+    public class SingleGameRegistered
     {
         public DateTimeOffset RegistrationDate { get; set; }
         public Guid FirstPlayer { get; set; }
@@ -11,5 +11,6 @@ namespace Rankings.Core.Commands
         public int ScoreSecondPlayer { get; set; }
         public string Venue { get; set; }
         public string GameType { get; set; }
+        public Guid Identifier { get; set; }
     }
 }

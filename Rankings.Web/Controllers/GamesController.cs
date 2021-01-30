@@ -235,7 +235,6 @@ namespace Rankings.Web.Controllers
                 return View(model);
             }
 
-
             var game = new Game
             {
                 GameType = _gamesService.Item(new SpecificGameType(model.GameType)),

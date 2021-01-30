@@ -8,28 +8,34 @@ namespace Rankings.Core.Commands
 {
     public class RegisterSingleGameConsumer : IConsumer<RegisterSingleGameCommand>
     {
-        private readonly IGamesService _gamesService;
+        private readonly IPublishEndpoint _publisher;
         private readonly ILogger<RegisterSingleGameConsumer> _logger;
 
         public RegisterSingleGameConsumer()
         {
         }
 
-        public RegisterSingleGameConsumer(IGamesService gamesService, ILogger<RegisterSingleGameConsumer> logger)
+        public RegisterSingleGameConsumer(IGamesService gamesService, IPublishEndpoint publisher, ILogger<RegisterSingleGameConsumer> logger)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Consume(ConsumeContext<RegisterSingleGameCommand> context)
         {
             _logger.LogInformation("Consume message {message}", context.Message);
-            _gamesService.RegisterGame(context.Message.Game);
 
-            // await context.Publish<OrderSubmitted>(new
-            // {
-            //     context.Message.OrderId
-            // });
+            await _publisher.Publish(new SingleGameRegistered
+            {
+                Identifier = Guid.NewGuid(),
+                RegistrationDate = context.Message.RegistrationDate,
+                Venue = context.Message.Venue,
+                GameType = context.Message.GameType,
+                FirstPlayer = context.Message.FirstPlayer,
+                SecondPlayer = context.Message.SecondPlayer,
+                ScoreFirstPlayer = context.Message.ScoreFirstPlayer,
+                ScoreSecondPlayer = context.Message.ScoreSecondPlayer
+            });
         }
     }
 }
