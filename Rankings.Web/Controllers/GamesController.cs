@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
-using AutoMapper;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Rankings.Core.Commands;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
@@ -26,17 +28,19 @@ namespace Rankings.Web.Controllers
 
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger<GamesController> _logger;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
         public GamesController(IGamesService gamesService, IAuthorizationService authorizationService,
-            IMemoryCache memoryCache, ILogger<GamesController> logger)
+            IMemoryCache memoryCache, ILogger<GamesController> logger, IPublishEndpoint publishEndpoint)
         {
             _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         [HttpGet("/games")]
@@ -212,8 +216,10 @@ namespace Rankings.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(GameViewModel model)
+        public async Task<IActionResult> Create(GameViewModel model)
         {
+            _logger.LogInformation("Register new game {@Game}", model);
+
             if (!ModelState.IsValid)
             {
                 var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
@@ -231,22 +237,26 @@ namespace Rankings.Web.Controllers
                 return View(model);
             }
 
-            var game = new Game
+            var firstPlayer = _gamesService.Item(new SpecificProfile(model.NameFirstPlayer));
+            var secondPlayer = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer));
+            var registerSingleGameCommand = new RegisterSingleGameCommand
             {
-                GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
-                Venue = _gamesService.Item(new SpecificVenue(model.Venue)),
-                Player1 = _gamesService.Item(new SpecificProfile(model.NameFirstPlayer)),
-                Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer)),
-                Score1 = model.ScoreFirstPlayer,
-                Score2 = model.ScoreSecondPlayer,
-                SetScores1 = SerializeSets1(model),
-                SetScores2 = SerializeSets2(model)
+                FirstPlayer = Guid.Parse(firstPlayer.Identifier),
+                SecondPlayer = Guid.Parse(secondPlayer.Identifier),
+                ScoreFirstPlayer = model.ScoreFirstPlayer,
+                SetScoresFirstPlayer = SerializeSets1(model),
+                ScoreSecondPlayer = model.ScoreSecondPlayer,
+                SetScoresSecondPlayer = SerializeSets2(model),
+                GameType = _gamesService.Item(new SpecificGameType(model.GameType)).Code,
+                Venue = _gamesService.Item(new SpecificVenue(model.Venue)).Code,
+                RegistrationDate = DateTimeOffset.UtcNow
             };
 
-            _gamesService.RegisterGame(game);
+            await _publishEndpoint.Publish(registerSingleGameCommand);
 
             ClearCache();
 
+            Thread.Sleep(500);
             return RedirectToAction("Index");
         }
 

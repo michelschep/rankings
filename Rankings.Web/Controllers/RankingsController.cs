@@ -33,8 +33,14 @@ namespace Rankings.Web.Controllers
 
             if (year == 2021)
             {
-                ViewBag.Message = "Vanaf (ongeveer) 1 februari is de ranking voor 2021 te zien!";
-                ViewBag.Message += "<br>Aantal nieuwe features/regels";
+                ViewBag.Message += "De ranking is nog even niet zichtbaar maar (nog even geduld)...";
+                ViewBag.Message += "<br>";
+                ViewBag.Message += "<br>";
+                ViewBag.Message += "<p style='color:red'>...INVOEREN VAN UITSLAGEN KAN NATUURLIJK AL GEWOON ZOALS GEBRUIKELIJK!<br>";
+                ViewBag.Message += "DUS ALLE UITSLAGEN VAN 2021 TELLEN MEE!!!<p/>";
+                ViewBag.Message += "<br>";
+                ViewBag.Message += "<br>";
+                ViewBag.Message += "<br>Aantal nieuwe features/regels/algoritmes/formules";
                 ViewBag.Message += "<ol>";
                 ViewBag.Message += "<li>Ranking zal zichtbaar zijn wanneer we minimaal een podium (top 3) hebben</li>";
                 ViewBag.Message += "<li>Na 7 wedstrijden ben je zichtbaar in de ranking</li>";
@@ -43,8 +49,10 @@ namespace Rankings.Web.Controllers
                 ViewBag.Message += "<li>Voor de echte tafeltennis nerds: ook set standen binnenkort in te voeren</li>";
                 ViewBag.Message += "</ol>";
                 ViewBag.Message += "<br>";
-            }
+                ViewBag.Message += "<br>Voor de nerds: code wordt omgezet naar CQRS/event driven/event sourcing/aggregates/projections/process managers";
 
+                return View("Index", new List<RankingViewModel>());
+            }
 
             var gameType = "tafeltennis";
             var beginEnd = new DateTime(year, 1, 1);

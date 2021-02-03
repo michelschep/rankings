@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,7 +61,7 @@ namespace Rankings.IntegrationTests
             VenuesController = new VenuesController(_gamesService);
             GameTypesController = new GameTypesController(_gamesService);
 
-            GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache, logger);
+            GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache, logger, default(IPublishEndpoint));
         }
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, TypeEloCalculator? typeEloCalculator)

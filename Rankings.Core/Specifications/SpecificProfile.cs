@@ -1,4 +1,5 @@
-﻿using Ardalis.Specification;
+﻿using System;
+using Ardalis.Specification;
 using Rankings.Core.Entities;
 
 namespace Rankings.Core.Specifications
@@ -10,6 +11,10 @@ namespace Rankings.Core.Specifications
         }
 
         public SpecificProfile(int id): base(p=>p.Id == id)
+        {
+        }
+
+        public SpecificProfile(Guid identifier): base(p=>p.Identifier == identifier.ToString())
         {
         }
     }

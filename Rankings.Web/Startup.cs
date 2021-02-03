@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Rankings.Core.Commands;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Models;
 using Rankings.Core.Services;
@@ -83,6 +85,20 @@ namespace Rankings.Web
 
             });
             services.AddTransient<IGamesService, GamesService>();
+
+            services.AddMassTransit(cfg =>
+            {
+                cfg.AddConsumer<RegisterSingleGameCommandConsumer>();
+                cfg.AddConsumer<SingleGameRegisteredProjectionConsumer>();
+                
+                cfg.UsingInMemory((context, cfg) =>
+                {
+                    cfg.TransportConcurrencyLimit = 100;
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+            services.AddMassTransitHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
