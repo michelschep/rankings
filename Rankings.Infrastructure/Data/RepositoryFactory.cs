@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rankings.Core.Interfaces;
 using Rankings.Infrastructure.Data.SqLite;

@@ -70,8 +70,13 @@ namespace Rankings.Web
             // TODO retrieve from app settings/or admin settings page/object
             
             // TODO PBI needed?
-            services.AddSingleton(Log.Logger);
+            //services.AddSingleton(Log.Logger);
             
+            services.AddTransient<RankingContext>(provider =>
+            {
+                var factory = new SqLiteRankingContextFactory(Configuration);
+                return factory.CreateDbContext1();
+            });
             services.AddTransient<IEventStore, EventStore>();
             services.AddSingleton<IRankingsClock, RankingsClock>();
             services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200, 15));
@@ -84,8 +89,8 @@ namespace Rankings.Web
 
             services.AddTransient(provider =>
             {
-                var sqLiteRankingContextFactory = new SqLiteRankingContextFactory(Configuration);
-                var repositoryFactory = new RepositoryFactory(sqLiteRankingContextFactory);
+                var contextFactory = new SqLiteRankingContextFactory(Configuration);
+                var repositoryFactory = new RepositoryFactory(contextFactory);
                 return repositoryFactory.Create();
 
             });

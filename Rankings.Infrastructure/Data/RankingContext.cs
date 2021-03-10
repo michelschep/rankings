@@ -16,5 +16,6 @@ namespace Rankings.Infrastructure.Data
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Game> Games { get; set; }
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<DoubleGame> DoubleGames { get; set; }
         [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Venue> Venues { get; set; }
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] public DbSet<Event> Events { get; set; }
     }
 }
