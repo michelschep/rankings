@@ -16,4 +16,13 @@ namespace Rankings.Core.Entities
         public string SetScores1 { get; set; }
         public string SetScores2 { get; set; }
     }
+    
+    public class Event : BaseEntity
+    {
+        public string Identifier { get; set; }
+        public int Index { get; set; }
+        public DateTime CreationDate { get; set; }
+        public string Type { get; set; }
+        public string Body { get; set; }
+    }
 }
