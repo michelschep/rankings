@@ -24,7 +24,7 @@ namespace Rankings.IntegrationTests
         protected readonly VenuesController VenuesController;
         protected readonly GameTypesController GameTypesController;
         protected readonly GamesController GamesController;
-        private readonly GamesService _gamesService;
+        private readonly GamesProjection _gamesProjection;
         private readonly IMemoryCache _memoryCache;
         protected readonly ILogger Output;
 
@@ -47,7 +47,7 @@ namespace Rankings.IntegrationTests
             var repositoryFactory = new InMemoryRepositoryFactory(rankingContextFactory);
 
             var repository = repositoryFactory.Create(Guid.NewGuid().ToString());
-            _gamesService = new GamesService(repository, new RankingsClock());
+            _gamesProjection = new GamesProjection(repository, new RankingsClock());
             var options = new MemoryCacheOptions();
             var optionsAccessor = Options.Create(options);
             _memoryCache = new MemoryCache(optionsAccessor);
@@ -57,17 +57,17 @@ namespace Rankings.IntegrationTests
                 .ReturnsAsync(AuthorizationResult.Success());
 
             var statisticsService = new Mock<IStatisticsService>();
-            ProfilesController = new ProfilesController(_gamesService, statisticsService.Object, authorizationService.Object);
-            VenuesController = new VenuesController(_gamesService);
-            GameTypesController = new GameTypesController(_gamesService);
+            ProfilesController = new ProfilesController(_gamesProjection, statisticsService.Object, authorizationService.Object);
+            VenuesController = new VenuesController(_gamesProjection);
+            GameTypesController = new GameTypesController(_gamesProjection);
 
-            GamesController = new GamesController(_gamesService, authorizationService.Object, _memoryCache, logger, default(IPublishEndpoint));
+            GamesController = new GamesController(_gamesProjection, authorizationService.Object, _memoryCache, logger, default(IPublishEndpoint));
         }
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, TypeEloCalculator? typeEloCalculator)
         {
             var eloCalculatorFactory = CreateEloCalculatorFactory(typeEloCalculator);
-            var rankingService = new StatisticsService(_gamesService, eloConfiguration, eloCalculatorFactory);
+            var rankingService = new StatisticsService(_gamesProjection, eloConfiguration, eloCalculatorFactory);
 
             return new RankingsController(rankingService, _memoryCache, eloConfiguration);
         }

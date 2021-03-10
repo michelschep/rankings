@@ -2,7 +2,7 @@
 
 namespace Rankings.Core.Interfaces
 {
-    public interface IGamesService: IGamesReporting
+    public interface IGamesProjection: IGamesReporting
     {
         // Venues
         void CreateVenue(Venue venue);

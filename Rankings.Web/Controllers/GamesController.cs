@@ -23,7 +23,7 @@ namespace Rankings.Web.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
         private readonly IAuthorizationService _authorizationService;
 
         private readonly IMemoryCache _memoryCache;
@@ -33,10 +33,10 @@ namespace Rankings.Web.Controllers
         // TODO move to some central place. Now "GameEditPolicy" string is mentioned twice in the code base. DRY!!
         private const string GameEditPolicy = "GameEditPolicy";
 
-        public GamesController(IGamesService gamesService, IAuthorizationService authorizationService,
+        public GamesController(IGamesProjection gamesProjection, IAuthorizationService authorizationService,
             IMemoryCache memoryCache, ILogger<GamesController> logger, IPublishEndpoint publishEndpoint)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -74,7 +74,7 @@ namespace Rankings.Web.Controllers
 
         private List<DoubleGameViewModel> CreateDoubleGameSummaryViewModels(string gameType)
         {
-            var games = _gamesService
+            var games = _gamesProjection
                 .List(new DoubleGamesForPeriodSpecification())
                 .ToList();
 
@@ -100,7 +100,7 @@ namespace Rankings.Web.Controllers
             gameType ??= "tafeltennis";
             var daysBack = gameType == "tafeltennis" ? -365 : -365;
 
-            var games = _gamesService
+            var games = _gamesProjection
                 .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate)
                 .Take(300)
@@ -120,7 +120,7 @@ namespace Rankings.Web.Controllers
                 ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
             }).ToList();
 
-            var doubles = _gamesService
+            var doubles = _gamesProjection
                 .List(new DoubleGamesForPeriodSpecification())
                 .ToList();
 
@@ -163,8 +163,8 @@ namespace Rankings.Web.Controllers
                 NameFirstPlayer = nameCurrentUser,
                 Players = FirstPlayers(nameCurrentUser),
                 OpponentPlayers = OponentPlayers(nameCurrentUser),
-                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
+                GameTypes = _gamesProjection.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesProjection.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code))
             });
         }
 
@@ -172,7 +172,7 @@ namespace Rankings.Web.Controllers
         {
             BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new Oponents(nameCurrentUser);
 
-            return _gamesService.List(query)
+            return _gamesProjection.List(query)
                 .Where(profile => profile.IsActive)
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
@@ -182,7 +182,7 @@ namespace Rankings.Web.Controllers
         {
             BaseSpecification<Profile> query = IsAdmin() ? (BaseSpecification<Profile>)new AllProfiles() : new SpecificProfile(nameCurrentUser);
 
-            return _gamesService.List(query)
+            return _gamesProjection.List(query)
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
         }
@@ -191,7 +191,7 @@ namespace Rankings.Web.Controllers
         {
             BaseSpecification<Profile> query = new AllProfiles();
 
-            return _gamesService.List(query)
+            return _gamesProjection.List(query)
                 .Where((profile, i) => profile.IsActive)
                 .OrderBy(profile => profile.DisplayName)
                 .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress));
@@ -222,23 +222,23 @@ namespace Rankings.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                var currentPlayer = _gamesService.Item(new SpecificProfile(User.Identity.Name));
-                var oponentPlayers = _gamesService.List(new Oponents(User.Identity.Name))
+                var currentPlayer = _gamesProjection.Item(new SpecificProfile(User.Identity.Name));
+                var oponentPlayers = _gamesProjection.List(new Oponents(User.Identity.Name))
                     .Where(profile => profile.IsActive)
                     .OrderBy(profile => profile.DisplayName)
                     .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress))
                     .ToList();
 
                 model.OpponentPlayers = oponentPlayers;
-                model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
-                model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.GameTypes = _gamesProjection.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesProjection.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
                 model.Players = new[] { new SelectListItem(currentPlayer.DisplayName, currentPlayer.EmailAddress) };
 
                 return View(model);
             }
 
-            var firstPlayer = _gamesService.Item(new SpecificProfile(model.NameFirstPlayer));
-            var secondPlayer = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer));
+            var firstPlayer = _gamesProjection.Item(new SpecificProfile(model.NameFirstPlayer));
+            var secondPlayer = _gamesProjection.Item(new SpecificProfile(model.NameSecondPlayer));
             var registerSingleGameCommand = new RegisterSingleGameCommand
             {
                 FirstPlayer = Guid.Parse(firstPlayer.Identifier),
@@ -247,8 +247,8 @@ namespace Rankings.Web.Controllers
                 SetScoresFirstPlayer = SerializeSets1(model),
                 ScoreSecondPlayer = model.ScoreSecondPlayer,
                 SetScoresSecondPlayer = SerializeSets2(model),
-                GameType = _gamesService.Item(new SpecificGameType(model.GameType)).Code,
-                Venue = _gamesService.Item(new SpecificVenue(model.Venue)).Code,
+                GameType = _gamesProjection.Item(new SpecificGameType(model.GameType)).Code,
+                Venue = _gamesProjection.Item(new SpecificVenue(model.Venue)).Code,
                 RegistrationDate = DateTimeOffset.UtcNow
             };
 
@@ -286,8 +286,8 @@ namespace Rankings.Web.Controllers
             return View(new DoubleGameViewModel
             {
                 Players = AllActivePlayers(),
-                GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                GameTypes = _gamesProjection.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
+                Venues = _gamesProjection.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code)),
             });
         }
 
@@ -297,25 +297,25 @@ namespace Rankings.Web.Controllers
             if (!ModelState.IsValid)
             {
                 model.Players = AllActivePlayers();
-                model.GameTypes = _gamesService.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
-                model.Venues = _gamesService.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.GameTypes = _gamesProjection.List(new AllGameTypes()).Select(type => new SelectListItem(type.DisplayName, type.Code));
+                model.Venues = _gamesProjection.List(new AllVenues()).Select(type => new SelectListItem(type.DisplayName, type.Code));
 
                 return View(model);
             }
 
             var game = new DoubleGame
             {
-                GameType = _gamesService.Item(new SpecificGameType(model.GameType)),
-                Venue = _gamesService.Item(new SpecificVenue(model.Venue)),
-                Player1Team1 = _gamesService.Item(new SpecificProfile(model.NameFirstPlayerFirstTeam)),
-                Player2Team1 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayerFirstTeam)),
-                Player1Team2 = _gamesService.Item(new SpecificProfile(model.NameFirstPlayerSecondTeam)),
-                Player2Team2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayerSecondTeam)),
+                GameType = _gamesProjection.Item(new SpecificGameType(model.GameType)),
+                Venue = _gamesProjection.Item(new SpecificVenue(model.Venue)),
+                Player1Team1 = _gamesProjection.Item(new SpecificProfile(model.NameFirstPlayerFirstTeam)),
+                Player2Team1 = _gamesProjection.Item(new SpecificProfile(model.NameSecondPlayerFirstTeam)),
+                Player1Team2 = _gamesProjection.Item(new SpecificProfile(model.NameFirstPlayerSecondTeam)),
+                Player2Team2 = _gamesProjection.Item(new SpecificProfile(model.NameSecondPlayerSecondTeam)),
                 Score1 = model.ScoreFirstTeam,
                 Score2 = model.ScoreSecondTeam
             };
 
-            _gamesService.RegisterDoubleGame(game);
+            _gamesProjection.RegisterDoubleGame(game);
 
             return RedirectToAction("IndexDoubles");
         }
@@ -341,7 +341,7 @@ namespace Rankings.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var game = _gamesService.Item(new SpecificGame(id));
+            var game = _gamesProjection.Item(new SpecificGame(id));
 
             // TODO use auto mapper
 
@@ -350,12 +350,12 @@ namespace Rankings.Web.Controllers
 
             var viewModel = new GameViewModel
             {
-                Players = _gamesService.List(new AllProfiles())
+                Players = _gamesProjection.List(new AllProfiles())
                     .OrderBy(profile => profile.DisplayName)
                     .Select(profile => new SelectListItem(profile.DisplayName, profile.EmailAddress)),
-                GameTypes = _gamesService.List(new AllGameTypes())
+                GameTypes = _gamesProjection.List(new AllGameTypes())
                     .Select(type => new SelectListItem(type.DisplayName, type.Code)),
-                Venues = _gamesService.List(new AllVenues())
+                Venues = _gamesProjection.List(new AllVenues())
                     .Select(type => new SelectListItem(type.DisplayName, type.Code)),
 
                 Id = game.Id,
@@ -398,18 +398,18 @@ namespace Rankings.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var game = _gamesService.Item(new SpecificGame(model.Identifier));
+            var game = _gamesProjection.Item(new SpecificGame(model.Identifier));
 
             if (model.ScoreFirstPlayer != game.Score1 || model.ScoreSecondPlayer != game.Score2)
                 _memoryCache.Remove("ranking-" + game.GameType.Code);
 
             // TODO use auto mapper
-            game.Venue = _gamesService.Item(new SpecificVenue(model.Venue));
+            game.Venue = _gamesProjection.Item(new SpecificVenue(model.Venue));
             game.Score1 = model.ScoreFirstPlayer;
             game.Score2 = model.ScoreSecondPlayer;
-            game.Player2 = _gamesService.Item(new SpecificProfile(model.NameSecondPlayer));
+            game.Player2 = _gamesProjection.Item(new SpecificProfile(model.NameSecondPlayer));
 
-            _gamesService.Save(game);
+            _gamesProjection.Save(game);
             ClearCache();
 
             return RedirectToAction("Index");
@@ -418,7 +418,7 @@ namespace Rankings.Web.Controllers
         [Authorize(Policy = "AdminPolicy")]
         public IActionResult Delete(int id)
         {
-            _gamesService.DeleteGame(id);
+            _gamesProjection.DeleteGame(id);
             ClearCache();
             return RedirectToAction("AdminIndex");
         }

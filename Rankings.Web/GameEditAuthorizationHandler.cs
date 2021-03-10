@@ -8,11 +8,11 @@ namespace Rankings.Web
 {
     public class GameEditAuthorizationHandler : AuthorizationHandler<GameEditRequirement, string>
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
 
-        public GameEditAuthorizationHandler(IGamesService gamesService)
+        public GameEditAuthorizationHandler(IGamesProjection gamesProjection)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GameEditRequirement requirement, string resource)
@@ -35,7 +35,7 @@ namespace Rankings.Web
             if (user.IsInRole(Roles.Admin))
                 return true;
 
-            var game = _gamesService.Item(new SpecificGame(resource));
+            var game = _gamesProjection.Item(new SpecificGame(resource));
 
             if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return false;

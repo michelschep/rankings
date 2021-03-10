@@ -10,12 +10,12 @@ using static System.String;
 
 namespace Rankings.Core.Services
 {
-    public class GamesService : IGamesService
+    public class GamesProjection : IGamesProjection
     {
         private readonly IRepository _repository;
         private readonly IRankingsClock _clock;
 
-        public GamesService(IRepository repository, IRankingsClock rankingsClock)
+        public GamesProjection(IRepository repository, IRankingsClock rankingsClock)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _clock = rankingsClock;
@@ -94,24 +94,6 @@ namespace Rankings.Core.Services
 
         public void RegisterGame(Game game)
         {
-            if (game.GameType == null)
-                throw new Exception("Cannot register game because game type is not specified");
-
-            if (game.Player1 == null)
-                throw new Exception("Cannot register game because player1 is not specified");
-
-            if (_repository.GetById<Profile>(game.Player1.Id) == null)
-                throw new Exception($"Cannot register game because player1 [{game.Player1.DisplayName}] is not registered");
-
-            if (game.Player2 == null)
-                throw new Exception("Cannot register game because player2 is not specified");
-
-            if (_repository.GetById<Profile>(game.Player2.Id) == null)
-                throw new Exception("Cannot register game because player2 is not registered");
-
-            game.RegistrationDate = _clock.Now();
-            game.Identifier = Guid.NewGuid().ToString();
-
             _repository.Add(game);
         }
 

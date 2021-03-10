@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -13,14 +14,19 @@ namespace Rankings.Web
         {
             var configuration = CreateConfiguration();
 
+            var telemetryConfiguration = TelemetryConfiguration.CreateDefault();
+            telemetryConfiguration.InstrumentationKey = "b74bd4fb-1f2b-4326-9a63-97ed60202962";
+            
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
-                .Enrich.FromLogContext()
+                .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces)
                 .WriteTo.Console()
+                .Enrich.FromLogContext()
                 .CreateLogger();
 
             try
             {
+                Log.Information("Create and run host");
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
@@ -35,8 +41,9 @@ namespace Rankings.Web
 
         private static IConfiguration CreateConfiguration()
         {
+            var currentDirectory = Directory.GetCurrentDirectory();
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(currentDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Startup>();
@@ -51,6 +58,7 @@ namespace Rankings.Web
                     webBuilder =>
                     {
                         webBuilder.UseStartup<Startup>();
+                        webBuilder.UseSerilog();
                         webBuilder.CaptureStartupErrors(false);
                     });
     }

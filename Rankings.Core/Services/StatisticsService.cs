@@ -10,20 +10,20 @@ namespace Rankings.Core.Services
 {
     public class StatisticsService : IStatisticsService
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
         private readonly EloConfiguration _eloConfiguration;
         private readonly IEloCalculatorFactory _eloCalculatorFactory;
 
-        public StatisticsService(IGamesService gamesService, EloConfiguration eloConfiguration, IEloCalculatorFactory eloCalculatorFactory)
+        public StatisticsService(IGamesProjection gamesProjection, EloConfiguration eloConfiguration, IEloCalculatorFactory eloCalculatorFactory)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
             _eloConfiguration = eloConfiguration ?? throw new ArgumentNullException(nameof(eloConfiguration));
             _eloCalculatorFactory = eloCalculatorFactory ?? throw new ArgumentNullException(nameof(eloCalculatorFactory));
         }
 
         public Report GenerateReportForPlayers(RealGameTypes gameType, Period period, Properties properties)
         {
-            var playersInScope = _gamesService.List<Profile>(new AllProfiles());
+            var playersInScope = _gamesProjection.List<Profile>(new AllProfiles());
 
             var playerReports = ReportForPlayers(playersInScope, gameType, period, properties);
             return new Report(gameType, period, properties);
@@ -120,7 +120,7 @@ namespace Rankings.Core.Services
 
         public IEnumerable<char> History(string emailAddress, DateTime startDate, DateTime endDate)
         {
-            return _gamesService
+            return _gamesProjection
                 .List(new GamesForPlayerInPeriodSpecification(GameTypes.TableTennis, emailAddress, startDate, endDate))
                 .TakeLast(7)
                 .Select(game => new
@@ -186,7 +186,7 @@ namespace Rankings.Core.Services
 
         private IEnumerable<Profile> AllEternalPlayers(DateTime startDate, DateTime endDate)
         {
-            return _gamesService.List(new AllProfiles()).Where((profile, i) => _gamesService.List(new GamesForPlayerInPeriodSpecification("tafeltennis", profile.EmailAddress, startDate, endDate)).Count() >= 21);
+            return _gamesProjection.List(new AllProfiles()).Where((profile, i) => _gamesProjection.List(new GamesForPlayerInPeriodSpecification("tafeltennis", profile.EmailAddress, startDate, endDate)).Count() >= 21);
         }
 
         public IEnumerable<Streak> LosingStreaks(DateTime startDate, DateTime endDate)
@@ -306,7 +306,7 @@ namespace Rankings.Core.Services
 
         private Dictionary<Profile, T> StatsPerPlayer<T>(DateTime startDate, DateTime endDate, Func<string, DateTime, DateTime, T> calc)
         {
-            var players = _gamesService.List(new AllProfiles()).ToList();
+            var players = _gamesProjection.List(new AllProfiles()).ToList();
 
             return players.ToDictionary(profile => profile, profile => calc(profile.EmailAddress, startDate, endDate));
         }
@@ -395,7 +395,7 @@ namespace Rankings.Core.Services
 
         public IEnumerable<GameSummary> GameSummaries(in DateTime startDate, in DateTime endDate)
         {
-            return _gamesService.List(new GamesForPeriodSpecification(GameTypes.TableTennis, startDate, endDate)).ToList()
+            return _gamesProjection.List(new GamesForPeriodSpecification(GameTypes.TableTennis, startDate, endDate)).ToList()
                 .Select(game =>
                 {
                     if (game.Player1.Id < game.Player2.Id)
@@ -525,7 +525,7 @@ namespace Rankings.Core.Services
         private Dictionary<Profile, EloStatsPlayer> EloStatsPlayers(string gameType, DateTime startDate, DateTime endDate)
         {
             var eloGames = EloGames(gameType, startDate, endDate).ToList();
-            var allPlayers = _gamesService.List(new AllProfiles()).ToList();
+            var allPlayers = _gamesProjection.List(new AllProfiles()).ToList();
 
             // All players have an initial elo score
             var eloStatsPlayers = allPlayers
@@ -690,14 +690,14 @@ namespace Rankings.Core.Services
         public IEnumerable<EloGame> EloGames(string gameType, DateTime startDate, DateTime endDate)
         {
             // All players should be in the ranking. No restrictions (not yet :-))
-            var allPlayers = _gamesService.List(new AllProfiles()).ToList();
+            var allPlayers = _gamesProjection.List(new AllProfiles()).ToList();
 
             // All players have an initial elo score
             var ranking = allPlayers
                 .ToDictionary(player => player, player => new EloStatsPlayer { EloScore = _eloConfiguration.InitialElo, NumberOfGames = 0 });
 
             // Now calculate current elo score based on all games played
-            var games = _gamesService.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
+            var games = _gamesProjection.List(new GamesForPeriodSpecification(gameType, startDate, endDate)).ToList();
             foreach (var game in games.OrderBy(game => game.RegistrationDate))
             {
                 var eloCalculator = _eloCalculatorFactory.Create(game.RegistrationDate.Year);

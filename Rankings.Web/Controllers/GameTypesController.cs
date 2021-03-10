@@ -12,16 +12,16 @@ namespace Rankings.Web.Controllers
     [Authorize(Policy = "AdminPolicy")]
     public class GameTypesController : Controller
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
 
-        public GameTypesController(IGamesService gamesService)
+        public GameTypesController(IGamesProjection gamesProjection)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
         }
 
         public IActionResult Index()
         {
-            var model = _gamesService.List(new AllGameTypes())
+            var model = _gamesProjection.List(new AllGameTypes())
                 .Select(type => new GameTypeViewModel
                 {
                     Code = type.Code,
@@ -39,7 +39,7 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Create(GameTypeViewModel viewModel)
         {
-            _gamesService.CreateGameType(new GameType
+            _gamesProjection.CreateGameType(new GameType
             {
                 Code = viewModel.Code,
                 DisplayName = viewModel.DisplayName

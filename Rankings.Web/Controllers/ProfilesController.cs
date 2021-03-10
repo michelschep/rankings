@@ -16,14 +16,14 @@ namespace Rankings.Web.Controllers
     [Authorize]
     public class ProfilesController : Controller
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
         private readonly IStatisticsService _statisticsService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public ProfilesController(IGamesService gamesService, IStatisticsService statisticsService, IAuthorizationService authorizationService)
+        public ProfilesController(IGamesProjection gamesProjection, IStatisticsService statisticsService, IAuthorizationService authorizationService)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
             _statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
             _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
             // TODO inject?
@@ -32,7 +32,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Index()
         {
-            var list = _gamesService.List(new AllProfiles())
+            var list = _gamesProjection.List(new AllProfiles())
                 .Select(profile => _mapper.Map<Profile, ProfileViewModel>(profile));
 
             return View(list);
@@ -49,14 +49,14 @@ namespace Rankings.Web.Controllers
         public IActionResult Create(ProfileViewModel viewModel)
         {
             var profile = _mapper.Map<ProfileViewModel, Profile>(viewModel);
-            _gamesService.CreateProfile(profile);
+            _gamesProjection.CreateProfile(profile);
 
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var profile = _gamesService.Item(new SpecificProfile(id));
+            var profile = _gamesProjection.Item(new SpecificProfile(id));
             var resolveProfileViewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
 
             var authResult = await _authorizationService.AuthorizeAsync(User, resolveProfileViewModel, "ProfileEditPolicy");
@@ -79,7 +79,7 @@ namespace Rankings.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                _gamesService.UpdateDisplayName(profileViewModel.EmailAddress, profileViewModel.DisplayName);
+                _gamesProjection.UpdateDisplayName(profileViewModel.EmailAddress, profileViewModel.DisplayName);
                 return View("Details", profileViewModel);
             }
 
@@ -90,7 +90,7 @@ namespace Rankings.Web.Controllers
         public async Task<IActionResult> Deactivate(int id)
         {
             if (IsAdmin())
-                _gamesService.DeactivateProfile(id);
+                _gamesProjection.DeactivateProfile(id);
 
             return RedirectToAction("Index");
         }
@@ -104,7 +104,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Details(int id)
         {
-            var profile = _gamesService.Item(new SpecificProfile(id));
+            var profile = _gamesProjection.Item(new SpecificProfile(id));
             var viewModel = _mapper.Map<Profile, ProfileViewModel>(profile);
             var streaks = _statisticsService
                 .WinningStreaksPlayer(profile, DateTime.MinValue, DateTime.MaxValue)
