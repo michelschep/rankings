@@ -10,4 +10,8 @@
     <PackageReference Include="MassTransit" Version="3.4.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Events" />
+  </ItemGroup>
+
 </Project>

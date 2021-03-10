@@ -2,12 +2,14 @@
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Rankings.Core.Aggregates.Games;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Specifications;
 
-namespace Rankings.Core.Commands
+namespace Rankings.Core.Projections
 {
+    [Obsolete("This consumer is needed to update the (soon obsolete) games table")]
     public class SingleGameRegisteredProjectionConsumer : IConsumer<SingleGameRegistered>
     {
         private readonly IGamesProjection _gamesProjection;

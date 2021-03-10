@@ -4,13 +4,10 @@ using MassTransit;
 using Microsoft.Extensions.Logging;
 using Rankings.Core.Interfaces;
 
-namespace Rankings.Core.Commands
+namespace Rankings.Core.Aggregates.Games
 {
     public class RegisterSingleGameCommandConsumer : IConsumer<RegisterSingleGameCommand>
     {
-        private readonly IGamesProjection _gamesProjection;
-        private readonly IRepository _repository;
-        private readonly IPublishEndpoint _publisher;
         private readonly IEventStore _eventStore;
         private readonly ILogger<RegisterSingleGameCommandConsumer> _logger;
 
@@ -18,11 +15,8 @@ namespace Rankings.Core.Commands
         {
         }
 
-        public RegisterSingleGameCommandConsumer(IGamesProjection gamesProjection, IRepository repository, IPublishEndpoint publisher, IEventStore eventStore, ILogger<RegisterSingleGameCommandConsumer> logger)
+        public RegisterSingleGameCommandConsumer(IEventStore eventStore, ILogger<RegisterSingleGameCommandConsumer> logger)
         {
-            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _publisher = publisher;
             _eventStore = eventStore ?? throw new ArgumentNullException(nameof(eventStore));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -33,6 +27,10 @@ namespace Rankings.Core.Commands
             
             _logger.LogInformation("Consume command {@Command}", command);
 
+            // TODO PBI check if game with id already exists
+
+            // TODO PBI Check all fields
+            
             if (command.GameType == null)
                 throw new Exception("Cannot register game because game type is not specified");
 
