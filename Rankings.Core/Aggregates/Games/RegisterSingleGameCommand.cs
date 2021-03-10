@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Rankings.Core.Commands
+namespace Rankings.Core.Aggregates.Games
 {
-    public class SingleGameRegistered
+    public class RegisterSingleGameCommand
     {
-        public Guid Identifier { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public DateTimeOffset RegistrationDate { get; set; }
         public Guid FirstPlayer { get; set; }
         public Guid SecondPlayer { get; set; }
         public int ScoreFirstPlayer { get; set; }

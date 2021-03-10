@@ -1,13 +1,13 @@
 ﻿using System;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Rankings.Core.Commands;
+using Rankings.Core.Aggregates.Games;
 using Rankings.Core.Entities;
+using Rankings.Core.Interfaces;
 
 namespace Rankings.Infrastructure.Data
 {

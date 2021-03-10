@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Rankings.Core.Aggregates.Games;
 
-namespace Rankings.Core.Commands
+namespace Rankings.Core.Interfaces
 {
     public interface IEventStore
     {

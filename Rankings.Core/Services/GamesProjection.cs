@@ -4,6 +4,7 @@ using System.Linq;
 using Ardalis.Specification;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
+using Rankings.Core.Projections;
 using Rankings.Core.SharedKernel;
 using Rankings.Core.Specifications;
 using static System.String;
@@ -93,6 +94,11 @@ namespace Rankings.Core.Services
         }
 
         public void RegisterGame(Game game)
+        {
+            _repository.Add(game);
+        }
+
+        public void RegisterGame(GameProjection game)
         {
             _repository.Add(game);
         }

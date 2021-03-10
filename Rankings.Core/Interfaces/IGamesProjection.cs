@@ -1,4 +1,6 @@
-﻿using Rankings.Core.Entities;
+﻿using System;
+using Rankings.Core.Entities;
+using Rankings.Core.Projections;
 
 namespace Rankings.Core.Interfaces
 {
@@ -18,7 +20,9 @@ namespace Rankings.Core.Interfaces
         void UpdateDisplayName(string emailAddress, string displayName);
 
         // Games
+        [Obsolete("When we can get rid of Games table this method can be deleted")]
         void RegisterGame(Game game);
+        void RegisterGame(GameProjection game);
         void RegisterDoubleGame(DoubleGame game);
         void Save(Game entity);
         void DeleteGame(int registrationDate);

@@ -3,9 +3,9 @@ using Rankings.Core.Entities;
 
 namespace Rankings.Core.Specifications
 {
-    public sealed class SpecificGame : BaseSpecification<Game>
+    public sealed class AllGames : BaseSpecification<Game>
     {
-        public SpecificGame(string id) : base(g => g.Identifier == id)
+        public AllGames() : base(g => true)
         {
             AddInclude(g => g.GameType);
             AddInclude(g => g.Player1);
