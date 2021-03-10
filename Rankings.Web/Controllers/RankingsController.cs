@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Rankings.Core.Interfaces;
 using Rankings.Core.Models;
 using Rankings.Core.Services;
@@ -17,17 +18,21 @@ namespace Rankings.Web.Controllers
         private readonly IStatisticsService _statisticsService;
         private readonly IMemoryCache _memoryCache;
         private readonly EloConfiguration _eloConfiguration;
+        private readonly ILogger<RankingsController> _logger;
 
-        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache, EloConfiguration eloConfiguration)
+        public RankingsController(IStatisticsService rankingService, IMemoryCache memoryCache, EloConfiguration eloConfiguration, ILogger<RankingsController> logger)
         {
             _statisticsService = rankingService ?? throw new ArgumentNullException(nameof(rankingService));
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             _eloConfiguration = eloConfiguration ?? throw new ArgumentNullException(nameof(eloConfiguration));
+            _logger = logger;
         }
 
         [HttpGet("/rankings/{year}")]
         public IActionResult YearRanking(int year)
         {
+            _logger.LogError("Get ranking for year {Year}", year);
+            
             ViewBag.Title = $"The {year} Ranking";
             ViewBag.Message = "";
 

@@ -10,7 +10,7 @@ namespace Rankings.Core.Commands
 {
     public class SingleGameRegisteredProjectionConsumer : IConsumer<SingleGameRegistered>
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
         private readonly IPublishEndpoint _publisher;
         private readonly ILogger<SingleGameRegisteredProjectionConsumer> _logger;
 
@@ -18,9 +18,9 @@ namespace Rankings.Core.Commands
         {
         }
 
-        public SingleGameRegisteredProjectionConsumer(IGamesService gamesService, IPublishEndpoint publisher, ILogger<SingleGameRegisteredProjectionConsumer> logger)
+        public SingleGameRegisteredProjectionConsumer(IGamesProjection gamesProjection, IPublishEndpoint publisher, ILogger<SingleGameRegisteredProjectionConsumer> logger)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
             _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -31,17 +31,19 @@ namespace Rankings.Core.Commands
 
             var game = new Game
             {
-                GameType = _gamesService.Item(new SpecificGameType(context.Message.GameType)),
-                Venue = _gamesService.Item(new SpecificVenue(context.Message.Venue)),
-                Player1 = _gamesService.Item(new SpecificProfile(context.Message.FirstPlayer)),
-                Player2 = _gamesService.Item(new SpecificProfile(context.Message.SecondPlayer)),
+                Identifier = context.Message.Identifier.ToString(),
+                RegistrationDate = context.Message.RegistrationDate,
+                GameType = _gamesProjection.Item(new SpecificGameType(context.Message.GameType)),
+                Venue = _gamesProjection.Item(new SpecificVenue(context.Message.Venue)),
+                Player1 = _gamesProjection.Item(new SpecificProfile(context.Message.FirstPlayer)),
+                Player2 = _gamesProjection.Item(new SpecificProfile(context.Message.SecondPlayer)),
                 Score1 = context.Message.ScoreFirstPlayer,
                 Score2 = context.Message.ScoreSecondPlayer,
                 SetScores1 = context.Message.SetScoresFirstPlayer,
                 SetScores2 = context.Message.SetScoresSecondPlayer
             };
 
-            _gamesService.RegisterGame(game);
+            _gamesProjection.RegisterGame(game);
         }
     }
 }

@@ -13,18 +13,18 @@ namespace Rankings.Web.Controllers
     [Authorize(Policy = "AdminPolicy")]
     public class VenuesController : Controller
     {
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
         private readonly IMapper _mapper;
 
-        public VenuesController(IGamesService gamesService)
+        public VenuesController(IGamesProjection gamesProjection)
         {
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
             _mapper = CreateMapper();
         }
 
         public IActionResult Index()
         {
-            var model = _gamesService.List(new AllVenues())
+            var model = _gamesProjection.List(new AllVenues())
                 .Select(venue => _mapper.Map<Venue, VenueViewModel>(venue))
                 .OrderBy(viewModel => viewModel.DisplayName)
                 .ToList();
@@ -44,7 +44,7 @@ namespace Rankings.Web.Controllers
                 return View(model);
             }
 
-            _gamesService.CreateVenue(new Venue
+            _gamesProjection.CreateVenue(new Venue
             {
                 Code = model.Code,
                 DisplayName = model.DisplayName
@@ -55,7 +55,7 @@ namespace Rankings.Web.Controllers
 
         public IActionResult Edit(int id)
         {
-            var venue = _gamesService.Item(new SpecificVenue(id));
+            var venue = _gamesProjection.Item(new SpecificVenue(id));
             var viewModel = _mapper.Map<Venue, VenueViewModel>(venue);
 
             return View(viewModel);
@@ -64,10 +64,10 @@ namespace Rankings.Web.Controllers
         [HttpPost]
         public IActionResult Edit(VenueViewModel viewModel)
         {
-            var venue = _gamesService.Item(new SpecificVenue(viewModel.Id));
+            var venue = _gamesProjection.Item(new SpecificVenue(viewModel.Id));
             _mapper.Map(viewModel, venue);
 
-            _gamesService.Save(venue);
+            _gamesProjection.Save(venue);
 
             return RedirectToAction("Index");
         }

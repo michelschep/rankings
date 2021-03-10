@@ -68,6 +68,11 @@ namespace Rankings.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             // TODO retrieve from app settings/or admin settings page/object
+            
+            // TODO PBI needed?
+            services.AddSingleton(Log.Logger);
+            
+            services.AddTransient<IEventStore, EventStore>();
             services.AddSingleton<IRankingsClock, RankingsClock>();
             services.AddSingleton<EloConfiguration, EloConfiguration>(ctx => new EloConfiguration(50, 400, true, 1200, 15));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -84,7 +89,7 @@ namespace Rankings.Web
                 return repositoryFactory.Create();
 
             });
-            services.AddTransient<IGamesService, GamesService>();
+            services.AddTransient<IGamesProjection, GamesProjection>();
 
             services.AddMassTransit(cfg =>
             {

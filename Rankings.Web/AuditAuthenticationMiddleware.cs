@@ -13,13 +13,13 @@ namespace Rankings.Web
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<AuditAuthenticationMiddleware> _logger;
-        private readonly IGamesService _gamesService;
+        private readonly IGamesProjection _gamesProjection;
 
-        public AuditAuthenticationMiddleware(RequestDelegate next, ILogger<AuditAuthenticationMiddleware> logger, IGamesService gamesService)
+        public AuditAuthenticationMiddleware(RequestDelegate next, ILogger<AuditAuthenticationMiddleware> logger, IGamesProjection gamesProjection)
         {
             _next = next ?? throw new ArgumentNullException(nameof (next));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _gamesService = gamesService ?? throw new ArgumentNullException(nameof(gamesService));
+            _gamesProjection = gamesProjection ?? throw new ArgumentNullException(nameof(gamesProjection));
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -31,7 +31,7 @@ namespace Rankings.Web
             {
                 var email = context.User.FindFirst(ClaimTypes.Name).Value;
                 var name = context.User.FindFirst(ClaimTypes.Surname).Value;
-                _gamesService.ActivateProfile(email, name);
+                _gamesProjection.ActivateProfile(email, name);
             }
             catch (Exception ex)
             {

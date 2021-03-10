@@ -8,7 +8,7 @@ namespace Rankings.Web.Models
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var gameService = (IGamesService) validationContext.GetService(typeof(IGamesService));
+            var gameService = (IGamesProjection) validationContext.GetService(typeof(IGamesProjection));
             if (gameService == null)
                 throw new ArgumentNullException(nameof(gameService));
 
