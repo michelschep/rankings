@@ -4,7 +4,6 @@ using System.Linq;
 using Ardalis.Specification;
 using Rankings.Core.Entities;
 using Rankings.Core.Interfaces;
-using Rankings.Core.Projections;
 using Rankings.Core.SharedKernel;
 using Rankings.Core.Specifications;
 using static System.String;
