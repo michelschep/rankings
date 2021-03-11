@@ -101,6 +101,7 @@ namespace Rankings.Web
             {
                 cfg.AddConsumer<RegisterSingleGameCommandConsumer>();
                 cfg.AddConsumer<SingleGameRegisteredProjectionConsumer>();
+                cfg.AddConsumer<SingleGamesProjectionConsumer>();
                 
                 cfg.UsingInMemory((context, cfg) =>
                 {
