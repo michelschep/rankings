@@ -35,7 +35,9 @@ namespace Rankings.Infrastructure.Data
             if (index == 0)
             {
                 index = 1;
-                foreach (var g in _dbContext.Games.Include(game => game.Player1).Include(game=>game.Player2).Include(game=>game.Venue).Include(game=>game.GameType).OrderBy(game => game.RegistrationDate))
+                foreach (var g in _dbContext.Games.Include(game => game.Player1)
+                    .Include(game=>game.Player2).Include(game=>game.Venue).Include(game=>game.GameType)
+                    .OrderBy(game => game.RegistrationDate))
                 {
                     var sgr = new SingleGameRegistered
                     {
@@ -54,6 +56,7 @@ namespace Rankings.Infrastructure.Data
                     await _dbContext.Events.AddAsync(new Event
                     {
                         Identifier = Guid.NewGuid().ToString(),
+                        AggregateId = sgr.Identifier.ToString(),
                         Index = index++,
                         CreationDate = g.RegistrationDate,
                         Type = nameof(SingleGameRegistered),

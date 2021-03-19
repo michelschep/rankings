@@ -53,6 +53,17 @@ namespace Rankings.Web.Controllers
 
             return View(model);
         }
+        
+        [HttpGet("/games2")]
+        [HttpGet("/games2/{gametype}")]
+        public IActionResult Index2(string gameType)
+        {
+            _logger.LogInformation("Get index page games");
+
+            var model = CreateGameSummaryViewModels2(gameType);
+
+            return View("Index", model);
+        }
 
         [HttpGet("/games/doubles")]
         public IActionResult IndexDoubles(string gameType)
@@ -101,6 +112,50 @@ namespace Rankings.Web.Controllers
             var daysBack = gameType == "tafeltennis" ? -365 : -365;
 
             var games = _gamesProjection
+                .List(new GamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
+                .OrderByDescending(game => game.RegistrationDate)
+                .Take(300)
+                .ToList();
+
+            var model = games.Select(type => new GameViewModel
+            {
+                //Id = type.Id,
+                Identifier = type.Identifier.ToString(),
+                GameType = type.GameType.DisplayName,
+                Venue = type.Venue?.DisplayName ?? "Unknown",
+                NameFirstPlayer = type.Score1 > type.Score2 ? type.Player1.DisplayName : type.Player2.DisplayName,
+                NameSecondPlayer = type.Score1 > type.Score2 ? type.Player2.DisplayName : type.Player1.DisplayName,
+                // TODO fix issue with dates. Add timezone
+                RegistrationDate = RegistrationDate(type.RegistrationDate),
+                ScoreFirstPlayer = type.Score1 > type.Score2 ? type.Score1 : type.Score2,
+                ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
+            }).ToList();
+
+            var doubles = _gamesProjection
+                .List(new DoubleGamesForPeriodSpecification())
+                .ToList();
+
+            var model2 = doubles.Select(game => new GameViewModel
+            {
+                //Id = game.Id,
+                Identifier = "",
+                GameType = game.GameType.DisplayName,
+                Venue = game.Venue?.DisplayName ?? "Unknown",
+                NameFirstPlayer = game.Score1 > game.Score2 ? game.Player1Team1.DisplayName + "/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
+                NameSecondPlayer = game.Score1 < game.Score2 ? game.Player1Team1.DisplayName + "/" + game.Player2Team1.DisplayName : game.Player1Team2.DisplayName + "/" + game.Player2Team2.DisplayName,
+                RegistrationDate = RegistrationDate(game.RegistrationDate),
+                ScoreFirstPlayer = game.Score1 > game.Score2 ? game.Score1 : game.Score2,
+                ScoreSecondPlayer = game.Score1 > game.Score2 ? game.Score2 : game.Score1,
+            }).ToList();
+            return model.Union(model2).OrderByDescending(viewModel => viewModel.Id).ToList();
+        }
+        
+        private List<GameViewModel> CreateGameSummaryViewModels2(string gameType)
+        {
+            gameType ??= "tafeltennis";
+            var daysBack = gameType == "tafeltennis" ? -365 : -365;
+
+            var games = _gamesProjection
                 .List(new ProjectionGamesForPeriodSpecification(gameType, DateTime.Now.AddDays(daysBack), DateTime.MaxValue))
                 .OrderByDescending(game => game.RegistrationDate)
                 .Take(300)
@@ -119,19 +174,6 @@ namespace Rankings.Web.Controllers
                 ScoreFirstPlayer = type.Score1 > type.Score2 ? type.Score1 : type.Score2,
                 ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
             }).ToList();
-            //var model = games.Select(type => new GameViewModel
-            //{
-            //    //Id = type.Id,
-            //    Identifier = type.Identifier.ToString(),
-            //    GameType = type.GameType.DisplayName,
-            //    Venue = type.Venue?.DisplayName ?? "Unknown",
-            //    NameFirstPlayer = type.Score1 > type.Score2 ? type.Player1.DisplayName : type.Player2.DisplayName,
-            //    NameSecondPlayer = type.Score1 > type.Score2 ? type.Player2.DisplayName : type.Player1.DisplayName,
-            //    // TODO fix issue with dates. Add timezone
-            //    RegistrationDate = RegistrationDate(type.RegistrationDate),
-            //    ScoreFirstPlayer = type.Score1 > type.Score2 ? type.Score1 : type.Score2,
-            //    ScoreSecondPlayer = type.Score1 > type.Score2 ? type.Score2 : type.Score1,
-            //}).ToList();
 
             var doubles = _gamesProjection
                 .List(new DoubleGamesForPeriodSpecification())

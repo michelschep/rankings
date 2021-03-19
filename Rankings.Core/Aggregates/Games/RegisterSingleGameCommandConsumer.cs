@@ -28,7 +28,10 @@ namespace Rankings.Core.Aggregates.Games
             _logger.LogInformation("Consume command {@Command}", command);
 
             // TODO PBI check if game with id already exists
-
+            // Two options:
+            // - Ask event store if event with id already exists
+            // - Create own internal aggregate projection and check
+            
             // TODO PBI Check all fields
             
             if (command.GameType == null)
