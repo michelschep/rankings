@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Rankings.Infrastructure.Migrations
 {
-    public partial class AddGAmesProjection : Migration
+    public partial class AddGamesProjection : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
