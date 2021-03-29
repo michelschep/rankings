@@ -61,7 +61,7 @@ namespace Rankings.IntegrationTests
             VenuesController = new VenuesController(_gamesProjection);
             GameTypesController = new GameTypesController(_gamesProjection);
 
-            GamesController = new GamesController(_gamesProjection, authorizationService.Object, _memoryCache, logger, default(IPublishEndpoint));
+            GamesController = new GamesController(_gamesProjection, authorizationService.Object, _memoryCache, logger, new Mock<IPublishEndpoint>().Object);
         }
 
         protected RankingsController CreateRankingController(EloConfiguration eloConfiguration, TypeEloCalculator? typeEloCalculator)
