@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ardalis.Specification" Version="2.0.0" />
+    <PackageReference Include="Ardalis.Specification" Version="5.1.0" />
     <PackageReference Include="Microsoft.Data.SQLite" Version="5.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.2" />
