@@ -1,0 +1,61 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: FluentValidation.AspNetCore
+    versions:
+    - 10.0.0
+    - 10.0.1
+    - 10.0.2
+    - 10.0.3
+    - 9.5.0
+    - 9.5.1
+    - 9.5.2
+    - 9.5.3
+    - 9.5.4
+  - dependency-name: MassTransit.AspNetCore
+    versions:
+    - 7.1.4
+    - 7.1.5
+    - 7.1.6
+    - 7.1.7
+  - dependency-name: MassTransit.RabbitMQ
+    versions:
+    - 7.1.4
+    - 7.1.5
+    - 7.1.6
+    - 7.1.7
+  - dependency-name: MassTransit
+    versions:
+    - 7.1.4
+    - 7.1.5
+    - 7.1.6
+    - 7.1.7
+  - dependency-name: Ardalis.Specification
+    versions:
+    - 4.1.0
+    - 4.2.0
+    - 5.0.3
+  - dependency-name: SpecFlow
+    versions:
+    - 3.6.23
+    - 3.7.13
+  - dependency-name: SpecFlow.Tools.MsBuild.Generation
+    versions:
+    - 3.6.23
+    - 3.7.13
+  - dependency-name: SpecFlow.xUnit
+    versions:
+    - 3.6.23
+    - 3.7.13
+  - dependency-name: Moq
+    versions:
+    - 4.16.0
+  - dependency-name: coverlet.collector
+    versions:
+    - 3.0.2
