@@ -37,6 +37,9 @@ namespace Rankings.Web
 
             var game = _gamesProjection.Item(new SpecificGame(resource));
 
+            if (game == null)
+                return false;
+            
             if (game.RegistrationDate < DateTime.Now.AddHours(-24))
                 return false;
 
