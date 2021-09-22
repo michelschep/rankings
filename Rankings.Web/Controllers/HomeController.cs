@@ -50,32 +50,32 @@ namespace Rankings.Web.Controllers
             };
 
             // *************** 2020 *************************
-            startDate = new DateTime(2019, 1, 1);
-            endDate = new DateTime(2019, 12, 31);
+            startDate = new DateTime(2012, 1, 1);
+            endDate = new DateTime(2020, 12, 31);
             mainStats.HallOfFame = new List<Summary>
             {
-                Top3Elo("Vitas 2019 Ranking", startDate, endDate),
-                Top3TimeNumberOne("Vitas 2019 Time Number One", startDate, endDate),
-                Top3RecordWinningStreak("Best Winning Streak 2019", startDate, endDate),
-                Top3RecordEloStreak("Best Elo Streak 2019", startDate, endDate),
-                Top3Fibonacci("Fibonacci 2019", startDate, endDate)
-            };
-
-            // *************** 2020 *************************
-            startDate = new DateTime(2020, 1, 1);
-            endDate = new DateTime(2020, 12, 31);
-            mainStats.RunningBattles = new List<Summary>
-            {
-                PlayerOfTheYear("Average Elo Score", startDate, endDate),
                 Top3Elo("Vitas 2020 Ranking", startDate, endDate),
                 Top3TimeNumberOne("Vitas 2020 Time Number One", startDate, endDate),
-                Top3GoatScores("Goat 2020", startDate, endDate),
                 Top3RecordWinningStreak("Best Winning Streak 2020", startDate, endDate),
                 Top3RecordEloStreak("Best Elo Streak 2020", startDate, endDate),
                 Top3Fibonacci("Fibonacci 2020", startDate, endDate)
             };
 
-            mainStats.GameSummaries = _statisticsService.GameSummaries(new DateTime(2020, 1, 1), DateTime.MaxValue)
+            // *************** 2021 *************************
+            startDate = new DateTime(2021, 1, 1);
+            endDate = new DateTime(2021, 12, 31);
+            mainStats.RunningBattles = new List<Summary>
+            {
+                PlayerOfTheYear("Average Elo Score", startDate, endDate),
+                Top3Elo("Vitas 2021 Ranking", startDate, endDate),
+                //Top3TimeNumberOne("Vitas 2021 Time Number One", startDate, endDate),
+                Top3GoatScores("Goat 2021", startDate, endDate),
+                Top3RecordWinningStreak("Best Winning Streak 2021", startDate, endDate),
+                Top3RecordEloStreak("Best Elo Streak 2021", startDate, endDate),
+                //Top3Fibonacci("Fibonacci 2021", startDate, endDate)
+            };
+
+            mainStats.GameSummaries = _statisticsService.GameSummaries(new DateTime(2021, 1, 1), DateTime.MaxValue)
                 .OrderByDescending(summary => summary.Score1 + summary.Score2)
                 .Take(10);
 
@@ -95,7 +95,7 @@ namespace Rankings.Web.Controllers
         private Summary PlayerOfTheYear(string title, DateTime startDate, DateTime endDate)
         {
             var result = _statisticsService
-                .TotalElo(GameTypes.TableTennis, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31))
+                .TotalElo(GameTypes.TableTennis, new DateTime(2021, 1, 1), new DateTime(2021, 12, 31))
                 .OrderByDescending(pair => pair.Value["avg elo"])
                 .ToDictionary(pair => pair.Key, pair => pair.Value["avg elo"])
                 .ToList();

@@ -6,7 +6,7 @@ namespace Rankings.Core.Services
     {
         public IEloCalculator Create(int year)
         {
-            if (year == 2020)
+            if (year == 2020 || year == 2021)
                 return new EloCalculatorVersion2020();
 
             if (year == 2019)

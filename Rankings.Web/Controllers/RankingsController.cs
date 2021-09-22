@@ -36,6 +36,7 @@ namespace Rankings.Web.Controllers
             ViewBag.Title = $"The {year} Ranking";
             ViewBag.Message = "";
 
+            /*
             if (year == 2021)
             {
                 ViewBag.Message += "De ranking is nog even niet zichtbaar maar (nog even geduld)...";
@@ -58,7 +59,7 @@ namespace Rankings.Web.Controllers
 
                 return View("Index", new List<RankingViewModel>());
             }
-
+*/
             var gameType = "tafeltennis";
             var beginEnd = new DateTime(year, 1, 1);
             var endDate = new DateTime(year, 12, 31);
@@ -146,6 +147,9 @@ namespace Rankings.Web.Controllers
                 return 7;
 
             if (startDate.Year == 2020)
+                return 7;
+            
+            if (startDate.Year == 2021)
                 return 7;
 
             if (_eloConfiguration.NumberOfGames.HasValue)
