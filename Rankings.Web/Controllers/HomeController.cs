@@ -77,7 +77,7 @@ namespace Rankings.Web.Controllers
 
             mainStats.GameSummaries = _statisticsService.GameSummaries(new DateTime(2021, 1, 1), DateTime.MaxValue)
                 .OrderByDescending(summary => summary.Score1 + summary.Score2)
-                .Take(10);
+                .Take(20);
 
             return mainStats;
         }
@@ -95,7 +95,7 @@ namespace Rankings.Web.Controllers
         private Summary PlayerOfTheYear(string title, DateTime startDate, DateTime endDate)
         {
             var result = _statisticsService
-                .TotalElo(GameTypes.TableTennis, new DateTime(2021, 1, 1), new DateTime(2021, 12, 31))
+                .TotalElo(GameTypes.TableTennis, new DateTime(2021, 1, 1), endDate)
                 .OrderByDescending(pair => pair.Value["avg elo"])
                 .ToDictionary(pair => pair.Key, pair => pair.Value["avg elo"])
                 .ToList();

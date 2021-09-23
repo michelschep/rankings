@@ -580,7 +580,7 @@ namespace Rankings.Core.Services
         public Dictionary<Profile, Dictionary<string, decimal>> TotalElo(string gameType, DateTime startDate, DateTime endDate)
         {
             // TODO HACK
-            var dateTimeNow = startDate.Year == 2020 ? DateTime.Now : new DateTime(2019, 12, 31, 23, 59, 59);
+            var dateTimeNow = startDate.Year == 2021 ? DateTime.Now : new DateTime(2019, 12, 31, 23, 59, 59);
 
             var decay = 1000;
             var eloGames = EloGames(gameType, startDate, endDate);
