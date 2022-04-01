@@ -377,7 +377,7 @@ namespace Rankings.Web.Controllers
 
         private void ClearCache()
         {
-            _memoryCache.Remove("ranking-tafeltennis-2021");
+            _memoryCache.Remove("ranking-tafeltennis-2022");
             _memoryCache.Remove("ranking-tafeltennis-eternal");
             _memoryCache.Remove("homepage");
         }
