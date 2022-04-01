@@ -100,7 +100,7 @@ namespace Rankings.Web.Controllers
             return View("Index", cacheEntry);
         }
 
-        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int precision = 1)
+        private IEnumerable<RankingViewModel> RankingViewModelsFor(string gameType, DateTime startDate, DateTime endDate, int precision = 2)
         {
             return NewRankingViewModels(gameType, startDate, endDate, precision);
         }
@@ -138,7 +138,10 @@ namespace Rankings.Web.Controllers
                 rankingViewModel.CurrentEloStreak = (int) _statisticsService.CurrentEloStreak(rankingViewModel.EmailAddress, startDate, endDate).Round();
             }
 
-            return list;
+            if (list.Count() >= 3)
+                return list;
+            
+            return Enumerable.Empty<RankingViewModel>();
         }
 
         private int NumberOfGames(DateTime startDate)
@@ -151,6 +154,9 @@ namespace Rankings.Web.Controllers
             
             if (startDate.Year == 2021)
                 return 7;
+            
+            if (startDate.Year == 2022)
+                return 1;
 
             if (_eloConfiguration.NumberOfGames.HasValue)
                 return _eloConfiguration.NumberOfGames.Value;

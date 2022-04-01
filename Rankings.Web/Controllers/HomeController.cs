@@ -62,20 +62,20 @@ namespace Rankings.Web.Controllers
             };
 
             // *************** 2021 *************************
-            startDate = new DateTime(2021, 1, 1);
-            endDate = new DateTime(2021, 12, 31);
+            startDate = new DateTime(2022, 1, 1);
+            endDate = new DateTime(2022, 12, 31);
             mainStats.RunningBattles = new List<Summary>
             {
                 PlayerOfTheYear("Average Elo Score", startDate, endDate),
-                Top3Elo("Vitas 2021 Ranking", startDate, endDate),
+                Top3Elo("Vitas Ranking", startDate, endDate),
                 //Top3TimeNumberOne("Vitas 2021 Time Number One", startDate, endDate),
-                Top3GoatScores("Goat 2021", startDate, endDate),
-                Top3RecordWinningStreak("Best Winning Streak 2021", startDate, endDate),
-                Top3RecordEloStreak("Best Elo Streak 2021", startDate, endDate),
+                Top3GoatScores("Goat", startDate, endDate),
+                Top3RecordWinningStreak("Best Winning Streak", startDate, endDate),
+                Top3RecordEloStreak("Best Elo Streak", startDate, endDate),
                 //Top3Fibonacci("Fibonacci 2021", startDate, endDate)
             };
 
-            mainStats.GameSummaries = _statisticsService.GameSummaries(new DateTime(2021, 1, 1), DateTime.MaxValue)
+            mainStats.GameSummaries = _statisticsService.GameSummaries(new DateTime(2022, 1, 1), DateTime.MaxValue)
                 .OrderByDescending(summary => summary.Score1 + summary.Score2)
                 .Take(20);
 
@@ -95,7 +95,7 @@ namespace Rankings.Web.Controllers
         private Summary PlayerOfTheYear(string title, DateTime startDate, DateTime endDate)
         {
             var result = _statisticsService
-                .TotalElo(GameTypes.TableTennis, new DateTime(2021, 1, 1), endDate)
+                .TotalElo(GameTypes.TableTennis, new DateTime(2022, 1, 1), endDate)
                 .OrderByDescending(pair => pair.Value["avg elo"])
                 .ToDictionary(pair => pair.Key, pair => pair.Value["avg elo"])
                 .ToList();
@@ -143,7 +143,7 @@ namespace Rankings.Web.Controllers
             var numberOne = winningStreaks.First();
             var numberTwo = winningStreaks.Skip(1).First();
             var numberThree = winningStreaks.Skip(2).First();
-
+            
             return new Summary
             {
                 Title = title,
