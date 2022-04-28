@@ -66,7 +66,7 @@ namespace Rankings.Web.Controllers
             endDate = new DateTime(2022, 12, 31);
             mainStats.RunningBattles = new List<Summary>
             {
-                PlayerOfTheYear("Average Elo Score (at 31/12 this year)", startDate, endDate),
+                PlayerOfTheYear("Average Elo Score (on 31/12 this year)", startDate, endDate),
                 Top3Elo("Vitas Ranking", startDate, endDate),
                 //Top3TimeNumberOne("Vitas 2021 Time Number One", startDate, endDate),
                 Top3GoatScores("Goat", startDate, endDate),
